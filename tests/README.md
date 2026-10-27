@@ -24,8 +24,9 @@ node spectest.mjs                # prints PASS or FAIL per target, then "N/M tar
 Run against this repository's first commit, from a fresh server: **28 of 29 targets pass, with a plant caught in each**.
 One fails, and it should:
 
-- **S17 (listed):** the page shows the word *hand* to a reader, the vocabulary map files it as *posed*, and §8 of the
-  page does not declare it. This is the check that stops a posed word being read as settled. It fired.
+- **S17 (listed):** the page's §8 tells a reader that the word *hand* has no map entry and is posed, while the
+  vocabulary map shipped beside it files *hand* as "filed · narrower". The page and the map disagree. This is the check
+  that keeps the page's typed standings in line with the map. It fired.
 
 SPEC.md is fable's copy of 2026-10-24. Its status line and a few comments still name the local working folders and say
 "live at /fable/brotoid/". They are left as written.

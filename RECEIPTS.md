@@ -7,6 +7,30 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-10-27 · correction · what the first release said it contained and checked
+
+Three claims in the entry below were wrong or incomplete. brotbot's re-gate of the pushed page found them (re-gate 7,
+2026-10-27); the bytes are unchanged by this commit.
+
+- **Claimed:** the scan found "one local link in a comment". **Wrong because:** the scan looked for local addresses and
+  home paths, not for `/tmp/`. `insights/brotoid_flow/index.html` line 1323 renders `<a href="/tmp/rcm/qmodel/needles.html">`
+  in the notes panel (visible at `?layout=scope`, a 404 on the site), not in a comment. **Now:** the scan also looks
+  for `/tmp/` paths and rendered `href`s, and finds only that one. insights has removed the sentence in their source;
+  it reaches the repo with the next restamp. **The tell:** brotbot's gate loaded the page and read the link.
+- **Claimed:** page 1.0 "adds the version and date in the footer, richer head metadata, the update log, and the moved
+  sources" over the gated page. **Wrong because:** it also carries fable's T-215 fixes 1 to 3, which a reader can see (slider
+  range and step, the r steps, the gallery seed, a show-me that no longer throws). **Now:** stated here. **The tell:**
+  brotbot stripped sites' layer from the page and the result was fable's T-215 page byte for byte.
+- **Claimed:** the files "mirror the served paths", and sites' closure check (66/66) was taken as the repo being
+  complete. **Wrong because:** the closure was measured against the site's docroot, not the repository.
+  `brotoid_light/index.html` loads `../assets/sphere_setter.js` and `../assets/site.css`, which are not among the 39
+  files, so from a clone the light page has no setter. Five icon and manifest links are missing too (cosmetic).
+  `brotoid_light` also carries sites' edits (stylesheet and script paths changed, a DRAFT comment dropped) with no
+  `<!-- sites -->` markers, unlike `/brotoid/`. **Now:** the README says the light page is not self-contained.
+  **The tell:** brotbot ran the page from a clone.
+- brotbot's gate of the pushed page (fb38332f) is done: 19 of 20, S17 (listed) failing on *hand*. The page said *hand*
+  had no map entry while the map shipped beside it files it. fable's fix (map: 'hand') exists and is waiting for a restamp.
+
 ## 2026-10-27 · change · spec test added (`tests/`)
 
 - **What:** `tests/spectest.mjs` (fable's test, 10-23), its helper `s11_words.mjs`, `SPEC.md` (fable's copy of 10-24, as written),
@@ -16,8 +40,8 @@ trace the change back to its commit.
 - **Asked:** Doug Bristor ("yes, add the spec test now").
 - **Checked by:** git ran it from this repository, served by `serve.mjs`: **28 of 29 targets pass, a plant caught in each.**
   The first run failed with a missing helper file (`s11_words.mjs`), which showed the test had a hidden dependency on the
-  local folder. The second run, with the helper, completed. The one failing target is **S17 (listed)**: *hand* is
-  seen by a reader, filed as posed in the map, and not declared in §8. Sites' own run on the staged set gives the same
+  local folder. The second run, with the helper, completed. The one failing target is **S17 (listed)**: the page's §8 says *hand* has
+  no map entry and is posed, while the map files it "filed · narrower". Sites' own run on the staged set gives the same
   result. The page is not changed by this commit. fable and sites were told.
 - **Not checked:** the test was not run in Firefox or on a second machine. The test has no plant for itself.
 

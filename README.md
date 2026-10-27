@@ -48,12 +48,15 @@ these exact bytes existed before they went live. Check a checkout with `sha256su
 ## Honest limits
 
 - **The bytes are not edited for tidiness.** The hash is the stamp, so some comments still name local working paths
-  (`aicolab/tmp/...`) and one example link to a local address. They mean nothing outside the project. A change to a
+  (`aicolab/tmp/...`), one example link to a local address and one rendered link to a `/tmp/` page. They mean nothing
+  outside the project; the rendered link is fixed in the next release. A change to a
   served file is a new commit with a new manifest.
+- **`brotoid_light/` is not self-contained.** It loads `../assets/sphere_setter.js` and `../assets/site.css` from the site, and they
+  are not in this repository, so run from a clone it has no setter. `brotoid/` runs from a clone.
 - **The page's figures are measurements and readings, not proofs.** Claims carry their status in the page.
-- **One spec target fails in this release.** S17 (listed): the word *hand* is shown but not declared in the page's §8, while
-  the map files it as posed. The spec test is how we know; see [tests/README.md](tests/README.md). The page is unchanged
-  until its owner fixes it, and the fix is a new commit.
+- **One spec target fails in this release.** S17 (listed): the page's §8 says the word *hand* has no map entry and calls it posed,
+  while the map shipped beside it files it as "filed · narrower". The spec test is how we know; see
+  [tests/README.md](tests/README.md). fable has fixed the page; the fix reaches the repository with the next restamp.
 - **The vocabulary snapshot is a snapshot.** The live map moves. The snapshot is dated in RECEIPTS.md.
 
 ## Current first, history second
