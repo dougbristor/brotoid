@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brotoid: light and collapse</title>
+<meta name="description" content="A bright ball travelling over the surface of the brotoid, and the brotoid flattened to rank 2 by multiplying on the right.">
+<link rel="canonical" href="https://bristorbrot.org/brotoid_light/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Bristorbrot">
+<meta property="fb:app_id" content="1521422937905578">
+<meta property="og:title" content="Brotoid: light and collapse">
+<meta property="og:description" content="A bright ball travelling over the surface of the brotoid, and the brotoid flattened to rank 2 by multiplying on the right.">
+<meta property="og:url" content="https://bristorbrot.org/brotoid_light/">
+<meta property="og:image" content="https://bristorbrot.org/media/og_home.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Brotoid: light and collapse">
+<meta name="twitter:description" content="A bright ball travelling over the surface of the brotoid, and the brotoid flattened to rank 2 by multiplying on the right.">
+<meta name="twitter:image" content="https://bristorbrot.org/media/og_home.jpg">
+<link rel="icon" href="../favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/site.css?v=82b121b90b">
+<style>
+  section.text { padding-top: 40px; padding-bottom: 28px; }
+  section.wide { max-width: 1100px; padding-top: 24px; padding-bottom: 40px; }
+  h1 { font: 40px/1.05 var(--title); text-transform: uppercase; margin: 0 0 14px; }
+  .lead { font: italic 23px/1.3 var(--lede); margin-bottom: 18px; }
+  .note { font-size: 14px; color: var(--dim); }
+  .ct { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; padding: 1px 6px; border-radius: 3px;
+    border: 1px solid #ffffff55; color: #fff; white-space: nowrap; margin-left: 4px; }
+  .pick { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 0 0 10px; font: 12px var(--mono); color: var(--dim); }
+  .pick button { font: 12px var(--mono); background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 3px; padding: 5px 9px; cursor: pointer; }
+  .pick button:hover { border-color: var(--cyan); } .pick button.on { border-color: var(--cyan); color: var(--cyan); }
+  .pick button.seam { border-color: #7c4dcc; } .pick button.fold { border-color: #2f9e4f; }
+  .pick label { display: inline-flex; gap: 6px; align-items: center; }
+  .sliders { display: grid; gap: 6px 18px; grid-template-columns: 1fr; font: 12px var(--mono); color: var(--dim); margin-bottom: 12px; }
+  @media (min-width: 760px) { .sliders { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .sliders label { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
+  .sliders input { width: 100%; accent-color: #19e0ff; }
+  canvas { display: block; width: 100%; background: #000; border: 1px solid var(--line); border-radius: 3px; touch-action: none; cursor: grab; }
+  #lit { aspect-ratio: 16 / 10; }
+  .litbox { position: relative; }
+  #qset { position: absolute; left: 8px; top: 8px; width: clamp(104px, 22%, 180px); aspect-ratio: 1; background: rgba(0,0,0,.5);
+    border: 1px solid #ffffff2a; border-radius: 6px; }
+  .three { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 760px) { .three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .three figure, .flat figure { margin: 0; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); overflow: hidden; }
+  .three canvas { aspect-ratio: 1; border: 0; border-radius: 0; }
+  figcaption { font: 12px/1.45 var(--mono); padding: 8px 10px; color: var(--dim); }
+  figcaption b { color: var(--fg); font-weight: 500; }
+  figcaption .v { display: block; font-size: 15px; color: #fff; margin-top: 2px; }
+  .flat { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); margin-top: 12px; }
+  @media (min-width: 760px) { .flat { grid-template-columns: 1fr 1fr; } }
+  .two { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); margin-top: 12px; }
+  @media (min-width: 760px) { .two { grid-template-columns: 1fr 1fr; } }
+  .two figure { margin: 0; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); overflow: hidden; }
+  .two canvas { aspect-ratio: 1; border: 0; border-radius: 0; }
+  #face { aspect-ratio: 1; border: 0; border-radius: 0; cursor: default; }
+  .verdict { border: 1px solid var(--line); border-radius: 4px; background: var(--panel); padding: 12px 14px; font-size: 15px; }
+  .verdict h3 { margin: 0 0 8px; font: 14px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--cyan); }
+  .key { font: 12px var(--mono); color: var(--dim); display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0 0; }
+  .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: 6px; }
+  .rule { font: 15px var(--mono); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 12px 16px; margin: 6px 0 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0 14px; font-size: 15px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+  th { font: 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--dim); }
+  #checks { font: 12px var(--mono); color: var(--dim); }
+</style>
+</head>
+<body>
+<p style="max-width:760px;margin:18px auto 0;padding:0 20px;font:13px var(--mono)"><a href="../brotoid/">← The brotoid</a></p>
+
+<section class="text">
+  <h1>Light and collapse</h1>
+  <p class="lead">Two ways to look at the squared ball: run a bright light over its skin, and flatten it into a plane by
+    multiplying it on one side.</p>
+  <div class="pick" id="presets">
+    <span>the ball:</span>
+    <button data-q="0,0.9,0" data-s="0.65">Doug's conch</button><button data-q="0,0,0" data-s="0.9">whole ball at the origin</button>
+    <button data-q="0.4086,0,0.8019" data-s="0.3">a thin one</button><button data-q="0,0.6364,0.6364" data-s="0.6">on the seam</button>
+  </div>
+</section>
+
+<section class="wide">
+  <h2>A light over the surface</h2>
+  <div class="litbox"><canvas id="lit" aria-label="The squared ball, shaded, with a bright ball travelling over its surface; drag to turn"></canvas>
+    <canvas id="qset" aria-label="q setter: roll the sphere under the pin to choose the direction of q; the wheel or the |q| slider sets its length"></canvas></div>
+  <div class="pick" style="margin-top:10px">
+    <label>|q| <input id="qr" type="range" min="0" max="1.5" step="0.01" value="0.9"></label>
+    <label title="radius of the ball around q, before it is squared">ball radius s <input id="bs" type="range" min="0.02" max="1.2" step="0.01" value="0.65"></label>
+    <span id="qv" style="color:var(--fg)"></span>
+  </div>
+  <div class="pick">
+    <button id="pause" type="button">pause light</button>
+    <label>light speed <input id="speed" type="range" min="0" max="2" step="0.05" value="0.6"></label>
+    <label>light height <input id="height" type="range" min="0.02" max="0.4" step="0.01" value="0.08"></label>
+    <label title="motion blur: the light is drawn along the path it ran in this frame; 0 = a sharp dot, 1 = the whole frame's run">light blur <input id="blur" type="range" min="0" max="1" step="0.05" value="0.5"></label>
+    <label>skin <input id="skin" type="range" min="0" max="1" step="0.05" value="0.4"></label>
+    <label><input id="spin" type="checkbox" checked> turn slowly</label>
+    <label><input id="tint" type="checkbox" checked> tint by hand</label>
+    <label>tail fades after <input id="tail" type="range" min="0" max="7" step="1" value="4"><output id="tailv"></output></label>
+    <button id="tailclear" type="button">clear tail</button>
+    <label>weave <input id="weave" type="range" min="0" max="4" step="1" value="0"><output id="weavev"></output></label>
+    <button id="weaveall" type="button">weave a full tail now</button>
+    <label title="while the view is still, keep the tail's drawn paths and add only the newest points"><input id="tailcache" type="checkbox" checked> reuse the tail while the view is still</label>
+    <output id="framev" style="color:var(--fg)"></output>
+  </div>
+  <div class="key"><span>drag to turn</span><span><i class="sw" style="background:#fff"></i>the light rides just above the skin</span>
+    <span>its tail: <i class="sw" style="background:#19e0ff"></i>riding a point that keeps its hand <i class="sw" style="background:#ff5a1f;margin-left:10px"></i>riding a mirrored point</span></div>
+  <p class="note" style="margin-top:10px">The light starts on the input ball and follows a looping path over it. Every point
+    of the path is squared like the rest of the ball, so the light rides the brotoid's own skin, lifted a little along the
+    surface's normal. Where the skin creases or folds back over itself, the highlight jumps or doubles. The shading uses the
+    surface's tilt toward the light and fades with distance. Both sides of the skin are lit, because the skin turns inside
+    out wherever squaring mirrors.</p>
+  <p class="note">The tail is where the light has been. Set it to <em>never</em> and the path winds over the skin like
+    a ball of wool, showing how the squaring stretches it. The tail keeps its last 30 000 points. Its colour is the hand
+    of the input point the light was riding, so the light always knows its hand even where the skin does not.
+    <strong>The whole ball at the origin has no single hand:</strong> x and −x square to the same point with opposite
+    hands, so every point of that skin is covered twice, once by each hand. Squaring also doubles angles there, so the
+    light laps the skin twice for each lap of the input ball. That is why it looks like it jumps. <span class="ct">checked</span></p>
+  <p class="note"><strong>The q setter</strong> (top left) chooses the ball's centre q. The sphere rolls under a fixed pin:
+    drag it like a trackball, and the point of the sphere under the pin is the direction of q. The pin's length is |q|
+    (one sphere radius is |q| = 1); set it with the wheel over the sphere or the |q| slider. The brotoid is rebuilt as you
+    roll, and the panels further down catch up when you stop. The sphere's lines are coloured by the hand of q in each
+    direction, cyan or orange, so the fold shows on the sphere as the border between the colours. The hand does not
+    depend on |q|.</p>
+  <p class="note"><strong>Light blur</strong> is a camera's shutter: the light is drawn along the path it ran during the
+    frame, up to 32 copies added together, each rimmed in the hand it was riding. At 0 it is a sharp dot that hops from frame
+    to frame. With weave it becomes a streak, capped at about 50 tail points of path.</p>
+  <p class="note"><strong>Weave</strong> runs the light faster than the speed slider allows, ×4 to ×256, so the tail
+    winds up quickly. <em>Weave a full tail now</em> lays all 30 000 points at once: the path costs about 1.5 µs a
+    point, so the full tail takes about 45 ms. Drawing is the limit. While the view is still, the tail's drawn paths are
+    kept and only the newest points are added, so a full tail draws as fast as no tail: 33 ms a frame against 49 ms when
+    redrawn every frame (measured in turns). Turning the view, or turning slowly, redraws it every frame. The reused tail is
+    pixel for pixel the redrawn one.</p>
+</section>
+
+<section class="text opsw">
+  <h2>Collapse to rank 2</h2>
+  <p>Multiply every point x of the brotoid by u, an imaginary of size 1: a point on the unit circle that runs from i through j (u = cos a·i + sin a·j). In this algebra the side u goes on matters:</p>
+  <ul>
+    <li><strong>u on the left, u·x:</strong> at u = i or j this is a rigid turn. The brotoid keeps its shape and its size.</li>
+    <li><strong>u on the right, x·u:</strong> at u = i or j it flattens. Every number lands in the plane of 1 and u, a copy
+      of ℂ, so the 3-D brotoid collapses to a flat picture (rank 2). <span class="ct">proved</span></li>
+  </ul>
+  <p>That is the split pair: rigid on the left, collapse on the right. The product of two units keeps the right-hand one,
+    e<sub>a</sub>·e<sub>b</sub> = ±e<sub>b</sub>, so anything multiplied by u on the right can only come out along 1 or u.</p>
+</section>
+
+<section class="wide">
+  <div class="pick" id="algpick">
+    <span>algebra:</span><button data-op="0" class="on">B · right-handed</button><button data-op="1">Bᵒᵖ · left-handed</button>
+  </div>
+  <p class="note" style="margin:4px 0 12px">Bᵒᵖ is B read backwards: x∘y = y·x. Squaring reads the same both ways, so the
+    brotoid and its light do not change. What changes is which side collapses. B keeps the right-hand unit
+    (e<sub>a</sub>·e<sub>b</sub> = ±e<sub>b</sub>) and collapses on the right. Bᵒᵖ keeps the left-hand unit and collapses on the
+    left. The panels below stay where they are: under Bᵒᵖ the flat picture moves to the left panel. The text on this page
+    swaps every product and side to match, and the splats further down still show the side that collapses.</p>
+  <div class="pick" id="upick">
+    <span>u points along:</span>
+    <button data-u="0">i</button><button class="seam" data-u="45">i + j · seam</button><button data-u="90">j</button><button class="fold" data-u="135">i − j · fold</button>
+  </div>
+  <div class="sliders">
+    <label>u around i → j <input id="uang" type="range" min="0" max="180" step="1" value="0"><output id="uangv"></output></label>
+    <label>how far multiplied <input id="t" type="range" min="0" max="1" step="0.01" value="1"><output id="tv"></output></label>
+    <label style="visibility:hidden">.</label>
+  </div>
+  <div class="three">
+    <figure><canvas id="c0" aria-label="The brotoid"></canvas><figcaption><b>the brotoid</b>, x<span class="v">&nbsp;</span></figcaption></figure>
+    <figure><canvas id="cL" aria-label="u times the brotoid"></canvas><figcaption><b>u on the left</b>, u·x<span class="v" id="vL"></span><span id="sL"></span></figcaption></figure>
+    <figure><canvas id="cR" aria-label="the brotoid times u"></canvas><figcaption><b>u on the right</b>, x·u<span class="v" id="vR"></span><span id="sR"></span></figcaption></figure>
+  </div>
+  <div class="key"><span><i class="sw" style="background:#19e0ff"></i>keeps its hand</span><span><i class="sw" style="background:#ff5a1f"></i>turned to its mirror (colour from the squaring, carried along)</span><span>drag any panel to turn all three</span><span>when a panel is flat, turn it edge-on: it is a sheet</span></div>
+  <div class="flat">
+    <figure><canvas id="face" aria-label="The flattened brotoid seen face-on"></canvas><figcaption id="facecap"></figcaption></figure>
+    <div class="verdict opsw"><h3>Where the pair splits</h3>
+      <p>For u = p·i + q·j:</p>
+      <div class="rule">det(x ↦ x·u) = pq(p − q)<br>det(x ↦ u·x) = (p − q)(p² + pq + q²)</div>
+      <table>
+        <tr><th>u</th><th>u·x</th><th>x·u</th></tr>
+        <tr><td>i, j</td><td>rigid turn</td><td>flat: plane of 1 and u</td></tr>
+        <tr><td>seam, i + j</td><td>flat</td><td>flat, on the same plane</td></tr>
+        <tr><td>fold, i − j</td><td>stretched, not flat</td><td>stretched, not flat</td></tr>
+        <tr><td>anywhere else</td><td>stretched</td><td>stretched</td></tr>
+      </table>
+      <p style="font-size:15px">So the collapse to rank 2 by the right-hand product happens at i, at j and at the seam. Only at i and
+        j is the left-hand product rigid at the same time. At the seam both sides flatten, onto one tilted plane, the plane
+        perpendicular to 1 − i + j. <span class="ct">proved</span></p>
+      <p style="font-size:15px"><strong>The collapse is a shadow.</strong> x·i throws every point along 1 + j onto the plane of
+        1 and i, stretching it by √2 one way: a camera view of the brotoid, written as a product.</p>
+    </div>
+  </div>
+</section>
+
+<section class="text opsw">
+  <h2>Two flats as two splats</h2>
+  <p>Take the flat results at u = i and at u = j, and draw each one as a single Gaussian splat. A splat is an ellipse with
+    the centre and spread of the flattened brotoid. x·i lies in the plane of 1 and i, and x·j lies in the plane of 1 and j.
+    So the two splats stand in two planes at right angles that share the 1 axis.</p>
+  <p>Each one is missing a term. Write x = a + b i + c j:</p>
+  <div class="rule">x·i = −b + (a − c) i <span style="color:#ff5a1f">+ 0 j</span> &nbsp;· no j term · the direction 1 + j is lost<br>
+    x·j = −c <span style="color:#ff5a1f">+ 0 i</span> + (a + b) j &nbsp;· no i term · the direction 1 − i is lost</div>
+  <p>What one splat drops, the other keeps. Together, x ↦ (x·i, x·j) loses nothing: it has rank 3, and x can be read back
+    from the pair. <span class="ct">proved</span>
+    That holds for points, not for splats. The two wing Gaussians do not fix the bsplat. One symmetric matrix,
+    H = [[2,−1,1],[−1,0,−1],[1,−1,0]], is invisible to both wings, so the bsplats C + tH all cast the same two wings. To
+    rebuild the bsplat, keep it: the wings alone cannot. <span class="ct">checked</span> (caro) Doug's reading is that these two splats make the split pair.
+    <span class="ct">posed</span></p>
+  <p>Doug's structure for the splats is one bsplat, two wings and four splats:</p>
+  <ul>
+    <li>The <strong>bsplat</strong> is the brotoid's own 3-D Gaussian, drawn dashed.</li>
+    <li>Its two shadows, through x·i and x·j, are the two <strong>wings</strong>.</li>
+    <li>Each wing splits again by hand. A cyan splat holds the skin that keeps its hand. An orange splat holds the skin that
+      squaring mirrored, which on the x·j wing is folded inside the cyan.</li>
+  </ul>
+  <p>A wing is exactly the mix of its two hand splats. Its spread is their two spreads, weighted by each one's share of the skin,
+    plus the gap between their centres. <span class="ct">checked</span></p>
+  <p>Brightness is density: each splat's peak is its share of the skin divided by its own area in the plane. A thin fold
+    of orange shows up dense instead of vanishing.</p>
+</section>
+
+<section class="wide">
+  <canvas id="splat" style="aspect-ratio:16/10" aria-label="Two Gaussian splats: the brotoid flattened by x·i in the plane of 1 and i, and by x·j in the plane of 1 and j; drag to turn"></canvas>
+  <div class="pick" style="margin-top:10px">
+    <label><input id="shand" type="checkbox" checked> split each wing by hand</label>
+    <label><input id="sbsp" type="checkbox" checked> show the bsplat</label>
+    <label><input id="spts" type="checkbox" checked> show the flattened points</label>
+    <label><input id="srings" type="checkbox" checked> show the rings</label>
+    <label title="one small Gaussian for each of the 3 200 skin patches, carried through the same product, instead of one filled Gaussian per splat"><input id="sskin" type="checkbox"> draw the skin as splats</label>
+    <label title="the same splats, drawn in one GPU pass or as canvas sprites">drawn by <select id="sgl"><option value="gpu">GPU (WebGL)</option><option value="sprites">canvas sprites</option></select></label>
+    <label>markers <input id="mark" type="range" min="0" max="1" step="0.05" value="1"></label>
+  </div>
+  <div class="key opsw"><span>drag to turn</span><span><i class="sw" style="background:#f5d142"></i>x·i, in the plane of 1 and i</span>
+    <span><i class="sw" style="background:#ff6fb1"></i>x·j, in the plane of 1 and j</span><span>rings at 1σ and 2σ</span>
+    <span><i class="sw" style="background:#19e0ff"></i>skin that keeps its hand <i class="sw" style="background:#ff5a1f;margin-left:10px"></i>skin that squaring mirrored</span><span>dashed: the bsplat</span></div>
+  <p class="note" id="splatcap" style="margin-top:10px"></p>
+  <p class="note"><strong>Draw the skin as splats</strong> puts one small Gaussian on each of the 3 200 skin patches, each the
+    patch's own spread carried through the same product, weighted by its share of the skin, on the same brightness scale as
+    the filled splats. The rings still show the one Gaussian per splat. So you see what a single splat stands in for: the
+    skin's own density, folds and all. On the GPU, all 6 400 go in one instanced draw: each patch's spread is uploaded once,
+    and only the camera changes as you turn: they add under 1 ms. As canvas sprites (one pre-drawn Gaussian per colour)
+    they take about 80 ms, so while you turn, the sprites draw every 4th patch and fill in when you let go. The two pictures
+    agree to within 18 of 255 levels at every pixel (measured).</p>
+  <div class="two">
+    <figure style="border-color:#f5d14266"><canvas id="cI" aria-label="the brotoid times i"></canvas><figcaption class="opsw"><b>u = i on the right</b>, x·i<span class="v" id="vI"></span><span id="sI"></span><br><span style="color:#ff5a1f">no j term · loses 1 + j</span></figcaption></figure>
+    <figure style="border-color:#ff6fb166"><canvas id="cJ" aria-label="the brotoid times j"></canvas><figcaption class="opsw"><b>u = j on the right</b>, x·j<span class="v" id="vJ"></span><span id="sJ"></span><br><span style="color:#ff5a1f">no i term · loses 1 − i</span></figcaption></figure>
+  </div>
+  <div class="key"><span><i class="sw" style="background:#19e0ff"></i>keeps its hand</span><span><i class="sw" style="background:#ff5a1f"></i>turned to its mirror</span><span>these two panels turn with the splats above</span></div>
+</section>
+
+<section class="text">
+  <h2>The brotoid and its Jacobian</h2>
+  <p>A splat is a small ball carried through the map that made the point. Squaring is the map here. Near the ball's centre
+    q, squaring acts like its Jacobian J, so a small enough brotoid is just the ball stretched by J. Weighting the input sphere evenly, its spread is
+    s²/3 · J·Jᵀ, the <strong>Jacobian ghost</strong>. As the ball grows, the brotoid parts from its ghost: it creases,
+    folds over and splits by hand, and no single J can hold that. <span class="ct">checked</span></p>
+  <p>insights' inverse walk runs the other way, pulling points back through the square root. Its splat is
+    J⁻¹·J⁻ᵀ, the ghost of the <strong>inverse brotoid</strong>: the set of every x whose square lands in the ball. That
+    set has one lobe for each real square root of the ball's centre. Here q² has 2, 4 or 6 of them, in ± pairs of
+    opposite hand. Near the fold a lobe <strong>tears</strong>: the solver either fails to land a point or lands
+    it far from J⁻¹'s guess. Such a point is marked torn and left out of the lobe's shape. It may be a jump to another root,
+    but the page does not certify that (caro's audit found that the tears it tested were failed solves). <span class="ct">checked</span></p>
+  <p><strong>Chain n</strong> (caro's inverse_direction test). In the walk, q came from p₁ = q² + c, which came from p₂, and so
+    on: p₁…pₙ are the points the walk just left. Pull a ball at pₙ back down that same path and you get the gold lobe. Its
+    ghost is Mₙ = J(p₀)⁻¹·J(p₁)⁻¹·…·J(pₙ₋₁)⁻¹, the one-step ghosts multiplied. Each factor stretches much the same way
+    again, so the long axis settles onto the direction the set runs. The path forward has one branch, so the chain never
+    picks a root. Gold is drawn at the one-step lobe's volume. Raw, it would be far bigger or smaller, which is why caro
+    keeps the one-step widths and borrows only the direction. c is fixed at caro's (.28, −.52, .18). <span class="ct">checked</span></p>
+</section>
+
+<section class="wide">
+  <div class="sliders">
+    <label>ball size s <input id="js" type="range" min="0" max="100" step="1" value="77"><output id="jsv"></output></label>
+    <label title="pull back a ball n steps up q's path under x² + c, c = (.28, −.52, .18)">chain n <input id="jn" type="range" min="1" max="4" step="1" value="1"><output id="jnv"></output></label>
+    <label style="visibility:hidden">.</label>
+  </div>
+  <div class="two" style="margin-top:0">
+    <figure><canvas id="cF" aria-label="The brotoid and its Jacobian ghost"></canvas><figcaption id="capF"></figcaption></figure>
+    <figure><canvas id="cV" aria-label="The inverse brotoid: the ball pulled back through each square root found"></canvas><figcaption id="capV"></figcaption></figure>
+  </div>
+  <div class="key"><span>drag either panel to turn both</span><span><i class="sw" style="background:#19e0ff"></i>keeps its hand
+    <i class="sw" style="background:#ff5a1f;margin-left:10px"></i>mirrored</span><span>solid rings: the shape's own Gaussian</span>
+    <span>dashed grey: its Jacobian ghost</span><span><i class="sw" style="background:#ff3355"></i>torn: the solve failed or left its lobe (not a certified root jump)</span>
+    <span><i class="sw" style="background:#ffd34d"></i>gold: chain n, a ball n steps up q's path pulled back</span></div>
+  <p class="note">The ball is the one picked at the top; this slider sets its size here only. Both panels scale to fit,
+    so a small ball fills the frame just like a big one. Shape is compared with the skin-area weighting used everywhere
+    on this page. That weighting keeps J·Jᵀ's axes exactly, and makes the ghost about 5 to 7% rounder than plain J·Jᵀ/3.</p>
+</section>
+
+<section class="text">
+  <h2>How we checked</h2>
+  <p class="opsw">Both determinants were found and factored symbolically from the product (i-roll, as on the
+    <a href="../brotoid/">brotoid</a> page). The skeleton result behind the collapse, that right multiplication by a unit
+    has rank 2 at every rank n, is proved in the canon (the diagonal-right skeleton, Theorem 1). This page draws only
+    B2.</p>
+  <p id="checks">Checks running…</p>
+  <p class="note">The brotoid is caro's; the BROT reading, the light and the collapse question are Doug's; the page is by
+    fable. Every picture is computed in your browser from the product. The display is a proper rotation (right = i, up = 1,
+    toward you = −j), never a mirror, so the hand you see is the hand the algebra has.</p>
+</section>
+
+<script src="../assets/sphere_setter.js"></script>
+<script>
+'use strict';
+const mulI = (a, b) => [a[0]*b[0] - a[1]*b[1] - a[2]*b[2], a[0]*b[1] + a[1]*b[0] - a[2]*b[1], a[0]*b[2] + a[2]*b[0] + a[1]*b[2]];
+const mulJ = (a, b) => [a[0]*b[0] - a[1]*b[1] - a[2]*b[2], a[0]*b[1] + a[1]*b[0] + a[2]*b[1], a[0]*b[2] + a[2]*b[0] - a[1]*b[2]];
+let mul = mulI;
+const E = [[1,0,0],[0,1,0],[0,0,1]], sq = x => mul(x, x);
+const add = (a, b) => a.map((v, k) => v + b[k]), sub = (a, b) => a.map((v, k) => v - b[k]), sc = (a, s) => a.map(v => v * s);
+const dot = (a, b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2], nrm = a => Math.hypot(...a);
+const cross = (a, b) => [a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]];
+const cols = f => { const M = [[0,0,0],[0,0,0],[0,0,0]]; E.forEach((e, c) => { const v = f(e); for (let r = 0; r < 3; r++) M[r][c] = v[r]; }); return M; };
+// OP: Bᵒᵖ, the same product read backwards (x∘y = y·x). Squaring reads the same both ways; the sides swap.
+let OP = false;
+const Lm = u => cols(e => OP ? mul(e, u) : mul(u, e)), Rm = u => cols(e => OP ? mul(u, e) : mul(e, u)), Cside = u => OP ? Lm(u) : Rm(u);
+// every product and side word in the text swaps under Bᵒᵖ; whole words only, so 'Brightness' and 'right angles' stay
+const OPMAP = new Map([['x·u', 'u·x'], ['x·i', 'i·x'], ['x·j', 'j·x'], ['left', 'right'], ['Left', 'Right'], ['±e<sub>b</sub>', '±e<sub>a</sub>']].flatMap(([a, b]) => [[a, b], [b, a]]));
+const opText = h => !OP ? h : h.replace(/right angles/g, '\u0001').replace(/x·u|u·x|x·i|i·x|x·j|j·x|\bleft\b|\bright\b|\bLeft\b|\bRight\b|±e<sub>[ab]<\/sub>/g, t => OPMAP.get(t)).replace(/\u0001/g, 'right angles');
+const det3 = M => M[0][0]*(M[1][1]*M[2][2] - M[1][2]*M[2][1]) - M[0][1]*(M[1][0]*M[2][2] - M[1][2]*M[2][0]) + M[0][2]*(M[1][0]*M[2][1] - M[1][1]*M[2][0]);
+const T = A => A[0].map((_, j) => A.map(r => r[j])), mm = (A, B) => A.map(r => B[0].map((_, j) => r.reduce((s, v, k) => s + v * B[k][j], 0)));
+const mv = (M, v) => M.map(r => r[0]*v[0] + r[1]*v[1] + r[2]*v[2]);
+const detJ = ([x, y, z]) => 4 * (2*x**3 + x*x*y - x*x*z + 2*x*y*y + 2*x*z*z + y**3 + y*y*z - y*z*z - z**3);
+function eigSym(A0) { const A = A0.map(r => r.slice()); let V = [[1,0,0],[0,1,0],[0,0,1]];
+  for (let sw = 0; sw < 50; sw++) { let off = 0; for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) off += A[i][j] ** 2; if (off < 1e-30) break;
+    for (let p = 0; p < 3; p++) for (let q = p + 1; q < 3; q++) { if (Math.abs(A[p][q]) < 1e-300) continue;
+      const th = (A[q][q] - A[p][p]) / (2 * A[p][q]), t = Math.sign(th || 1) / (Math.abs(th) + Math.sqrt(th * th + 1)), c = 1 / Math.sqrt(t * t + 1), s = t * c;
+      for (let k = 0; k < 3; k++) { const a = A[k][p], b = A[k][q]; A[k][p] = c*a - s*b; A[k][q] = s*a + c*b; }
+      for (let k = 0; k < 3; k++) { const a = A[p][k], b = A[q][k]; A[p][k] = c*a - s*b; A[q][k] = s*a + c*b; }
+      for (let k = 0; k < 3; k++) { const a = V[k][p], b = V[k][q]; V[k][p] = c*a - s*b; V[k][q] = s*a + c*b; } } }
+  return { w: [A[0][0], A[1][1], A[2][2]], V }; }
+// sqrt lifts an exact zero eigenvalue to ~1e-8, so 'flat' below means smallest stretch < 1e-7
+const svals = M => eigSym(mm(T(M), M)).w.map(v => Math.sqrt(Math.max(0, v))).sort((a, b) => b - a);
+const dirOf = (lo, la) => { lo *= Math.PI / 180; la *= Math.PI / 180; return [Math.sin(la), Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo)]; };
+const $ = id => document.getElementById(id), DPR = () => devicePixelRatio || 1;
+
+// shared camera: right = i, up = 1, toward you = −j (proper rotation), then yaw/pitch
+function viewer(yaw, pitch) { const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+  return p => { const X = p[1], Y = p[0], Z = -p[2], x1 = cy * X + sy * Z, z1 = -sy * X + cy * Z; return [x1, cp * Y - sp * z1, sp * Y + cp * z1]; }; }
+function fit(cv) { const w = Math.round(cv.clientWidth * DPR()), h = Math.round(cv.clientHeight * DPR()); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; } return [w, h]; }
+function dragTurn(cv, cam, redraw) { let d = null;
+  cv.addEventListener('pointerdown', e => { d = [e.clientX, e.clientY, cam.yaw, cam.pitch]; cv.setPointerCapture(e.pointerId); cam.held = true; });
+  cv.addEventListener('pointermove', e => { if (!d) return; cam.yaw = d[2] + (e.clientX - d[0]) * 0.01; cam.pitch = Math.max(-1.5, Math.min(1.5, d[3] + (e.clientY - d[1]) * 0.01)); redraw(); });
+  const up = () => { d = null; cam.held = false; }; cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); }
+
+// the ball
+const S = { q: [0, 0.9, 0], s: 0.65 };
+const image = u => sub(sq(add(S.q, sc(u, S.s))), sq(S.q));
+
+// ===== 1. the light =====
+const NLAT = 40, NLON = 80, lit = $('lit'), lx = lit.getContext('2d'), camL = { yaw: -0.7, pitch: 0.35, held: false };
+let G = null;   // geometry: verts, quads (corner idx, normal, centre, hand), centroid, radius
+function build() {
+  const V = [], H = [];
+  for (let a = 0; a <= NLAT; a++) for (let b = 0; b < NLON; b++) { const u = dirOf(360 * b / NLON, -90 + 180 * a / NLAT); V.push(image(u)); H.push(detJ(add(S.q, sc(u, S.s))) >= 0); }
+  const id = (a, b) => a * NLON + (b % NLON), Q = [];
+  let cen = [0, 0, 0]; V.forEach(v => cen = add(cen, v)); cen = sc(cen, 1 / V.length);
+  let R = 1e-9; V.forEach(v => R = Math.max(R, nrm(sub(v, cen))));
+  for (let a = 0; a < NLAT; a++) for (let b = 0; b < NLON; b++) {
+    const k = [id(a, b), id(a + 1, b), id(a + 1, b + 1), id(a, b + 1)], P = k.map(i => V[i]);
+    let n = cross(sub(P[2], P[0]), sub(P[3], P[1])); const l = nrm(n); n = l > 1e-14 ? sc(n, 1 / l) : [0, 0, 0];
+    Q.push({ k, n, c: sc(add(add(P[0], P[1]), add(P[2], P[3])), 0.25), h: detJ(add(S.q, sc(dirOf(360 * (b + 0.5) / NLON, -90 + 180 * (a + 0.5) / NLAT), S.s))) >= 0, hand: H[k[0]] && H[k[1]] && H[k[2]] && H[k[3]] ? 1 : !H[k[0]] && !H[k[1]] && !H[k[2]] && !H[k[3]] ? -1 : 0 });
+  }
+  // the brotoid's own Gaussian: centre and spread of the skin, each quad weighted by its area on the brotoid
+  let wsum = 0, mu = [0, 0, 0]; const ar = Q.map(q => { const P = q.k.map(i => V[i]), w = 0.5 * nrm(cross(sub(P[2], P[0]), sub(P[3], P[1]))); wsum += w; mu = add(mu, sc(q.c, w)); return w; });
+  mu = sc(mu, 1 / wsum); const C = [[0,0,0],[0,0,0],[0,0,0]];
+  Q.forEach((q, n) => { const d = sub(q.c, mu); for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) C[r][c] += ar[n] * d[r] * d[c] / wsum; });
+  // the same Gaussian split by hand: each quad goes with the hand of the input point at its centre
+  const parts = [true, false].map(h => { let w = 0, m = [0, 0, 0]; Q.forEach((q, n) => { if (q.h === h) { w += ar[n]; m = add(m, sc(q.c, ar[n])); } });
+    m = w > 0 ? sc(m, 1 / w) : mu.slice(); const Ch = [[0,0,0],[0,0,0],[0,0,0]];
+    Q.forEach((q, n) => { if (q.h !== h) return; const d = sub(q.c, m); for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) Ch[r][c] += ar[n] * d[r] * d[c] / w; });
+    return { h, w: w / wsum, mu: m, C: Ch }; });
+  Q.forEach((q, n) => { q.w = ar[n] / wsum; const P = q.k.map(i => V[i]), Cq = [[0,0,0],[0,0,0],[0,0,0]];
+    P.forEach(v => { const d = sub(v, q.c); for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) Cq[r][c] += d[r] * d[c] / 4; }); q.C = Cq; });
+  G = { V, Q, cen, R, mu, C, parts, gen: (G?.gen || 0) + 1 };
+}
+function lightAt(t) {   // a looping path on the input ball, carried through the square, lifted along the normal; hand of the input point under it
+  const lo = 360 * 0.13 * t, la = 62 * Math.sin(2 * Math.PI * 0.047 * t), h = 0.6, u = dirOf(lo, la);
+  const p = image(u), pa = image(dirOf(lo, la + h)), pb = image(dirOf(lo + h, la));
+  let n = cross(sub(pa, p), sub(pb, p)); const l = nrm(n); n = l > 1e-14 ? sc(n, 1 / l) : sc(sub(p, G.cen), 1 / Math.max(1e-9, nrm(sub(p, G.cen))));
+  if (dot(n, sub(p, G.cen)) < 0) n = sc(n, -1);
+  return { p: add(p, sc(n, +$('height').value * G.R)), hand: detJ(add(S.q, sc(u, S.s))) >= 0 };
+}
+// the tail: [point, hand, birth in ms]; sampled every TSTEP of the light's clock, so its density does not depend on the frame rate
+const TAILS = [0, 1, 3, 8, 20, 60, 180, Infinity], TAILNAME = ['off', '1 s', '3 s', '8 s', '20 s', '1 min', '3 min', 'never'], TAILCAP = 30000, TSTEP = 0.04;
+let trail = [], tclock = 0, tailBase = 0;   // tailBase: absolute index of trail[0], so the tail cache knows which points it holds
+const clearTail = () => { tailBase += trail.length; trail = []; tclock = clock; };
+// weave: the light's clock runs faster than the speed slider allows; at most WCAP new tail points a frame, so a slow frame cannot snowball
+const WEAVE = [1, 4, 16, 64, 256], WCAP = 8000;
+let paused = false;   // pause stops the light's clock only: the view still turns and drags, the tail still fades
+$('pause').addEventListener('click', () => { paused = !paused; $('pause').textContent = paused ? 'run light' : 'pause light'; $('pause').classList.toggle('on', paused); });
+const weaveText = () => { const w = WEAVE[+$('weave').value]; $('weavev').textContent = `×${w} · ${Math.round(250 * +$('speed').value * w).toLocaleString('en-US')} points/s`; };
+$('weave').addEventListener('input', weaveText); $('speed').addEventListener('input', weaveText); weaveText();
+$('weaveall').addEventListener('click', () => {
+  if (!+$('tail').value) { $('tail').value = 7; $('tail').dispatchEvent(new Event('input')); }
+  const now = performance.now(); tclock = clock;
+  for (let n = 0; n < TAILCAP; n++) { tclock += TSTEP; const L = lightAt(tclock); trail.push([L.p, L.hand, now]); }
+  clock = tclock; if (trail.length > TAILCAP) { tailBase += trail.length - TAILCAP; trail = trail.slice(-TAILCAP); } });
+$('tail').addEventListener('input', () => $('tailv').textContent = TAILNAME[+$('tail').value]); $('tailv').textContent = TAILNAME[+$('tail').value];
+$('tailclear').addEventListener('click', () => clearTail());
+let clock = 0, last = performance.now(), prevClock = 0;
+const BLURCAP = 2;   // blur spans at most 2 units of the light's clock (~50 tail points), so a weave jump cannot smear the whole path
+function drawLit(now) {
+  if (QS.dirty) { QS.dirty = false; qLive(); }
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; if (!paused) clock += dt * 10 * +$('speed').value * WEAVE[+$('weave').value];
+  if (clock - tclock > WCAP * TSTEP) tclock = clock - WCAP * TSTEP;
+  if ($('spin').checked && !camL.held) camL.yaw += dt * 0.15;
+  const life = TAILS[+$('tail').value] * 1000;
+  if (!life) clearTail(); else { while (tclock + TSTEP <= clock) { tclock += TSTEP; const L = lightAt(tclock); trail.push([L.p, L.hand, now]); }
+    let cut = Math.max(0, trail.length - TAILCAP); while (cut < trail.length && now - trail[cut][2] > life) cut++; if (cut) { tailBase += cut; trail = trail.slice(cut); } }
+  const t0 = performance.now(), [W, H] = fit(lit), ctx = lx; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  const view = viewer(camL.yaw, camL.pitch), k = 0.42 * Math.min(W, H) / G.R, ox = W / 2, oy = H / 2;
+  const L0 = lightAt(clock), Lw = L0.p;
+  const Vv = G.V.map(v => view(sub(v, G.cen))), Lv = view(sub(Lw, G.cen)), tint = $('tint').checked, d0 = 0.45 * G.R;
+  const items = G.Q.map(q => { const z = (Vv[q.k[0]][2] + Vv[q.k[1]][2] + Vv[q.k[2]][2] + Vv[q.k[3]][2]) / 4; return [z, q]; });
+  items.sort((a, b) => a[0] - b[0]);
+  // 48 depth slabs over the skin's own depth range: each slab's tail is stroked after that slab's skin and under every
+  // nearer slab; the light goes in at its own depth
+  const z0 = items[0][0], zs = NSLAB / Math.max(1e-9, items[items.length - 1][0] - z0), slabOf = z => Math.max(0, Math.min(NSLAB - 1, Math.floor((z - z0) * zs)));
+  tailPaths(view, k, ox, oy, now, life, slabOf, W, H);
+  const lz = Lv[2]; let li = items.findIndex(it => it[0] > lz); if (li < 0) li = items.length; items.splice(li, 0, [lz, null]);
+  const skin = +$('skin').value; let slab = 0;
+  const strokeTo = sl => { ctx.lineWidth = 1; for (; slab < sl; slab++) for (const [st, P] of TC.paths[slab]) { ctx.strokeStyle = st; ctx.stroke(P); } };
+  for (const [z, q] of items) {
+    strokeTo(slabOf(z));
+    if (!q) {   // the bright ball, its rim in the hand of the point it rides; with blur, the path it ran this frame
+      const r = Math.max(4 * DPR(), 0.035 * G.R * k), span = Math.min(BLURCAP, Math.max(0, clock - prevClock) * +$('blur').value);
+      const scr = L => { const v = view(sub(L.p, G.cen)); return [ox + k * v[0], oy - k * v[1]]; }, [hx, hy] = [ox + k * Lv[0], oy - k * Lv[1]];
+      let K = 1; if (span > 0) { const [tx, ty] = scr(lightAt(clock - span)); K = Math.min(32, Math.max(1, Math.ceil(Math.hypot(hx - tx, hy - ty) / (0.5 * r)), Math.ceil(span / TSTEP))); }
+      if (K > 1) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.min(1, 1.3 / K); }
+      for (let m = K - 1; m >= 0; m--) { const L = m ? lightAt(clock - span * m / (K - 1)) : L0, [x, y] = m ? scr(L) : [hx, hy], g = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+        g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,244,220,.9)'); g.addColorStop(0.6, L.hand ? 'rgba(25,224,255,.45)' : 'rgba(255,90,31,.45)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, 7); ctx.fill(); }
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; continue; }
+    const toL = sub(Lw, q.c), d = nrm(toL), lam = Math.abs(dot(q.n, sc(toL, 1 / d))), I = Math.min(1.25, 0.05 + 1.5 * lam / (1 + (d / d0) ** 2));
+    const base = !tint ? [238, 233, 224] : q.hand > 0 ? [25, 224, 255] : q.hand < 0 ? [255, 90, 31] : [150, 140, 150];
+    const c = base.map(v => Math.round(Math.min(255, v * I)));
+    if (skin <= 0) continue;
+    ctx.fillStyle = `rgb(${c})`; ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 0.6; ctx.globalAlpha = skin;
+    ctx.beginPath(); q.k.forEach((i, j) => { const p = Vv[i]; j ? ctx.lineTo(ox + k * p[0], oy - k * p[1]) : ctx.moveTo(ox + k * p[0], oy - k * p[1]); }); ctx.closePath(); ctx.fill();
+    // the seam-hiding stroke only when opaque: on a see-through skin it would draw the mesh
+    if (skin > 0.98) ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  strokeTo(NSLAB);
+  prevClock = clock;
+  drawQ();
+  frameMs.push(performance.now() - t0); if (frameMs.length > 60) frameMs.shift();
+  if (now - frameShown > 500) { frameShown = now; const m = [...frameMs].sort((a, b) => a - b)[frameMs.length >> 1];
+    $('framev').textContent = `draw ${m.toFixed(1)} ms · ${TC.mode}`; }
+  requestAnimationFrame(drawLit);
+}
+// the tail as per-slab paths, one Path2D per slab and style. Rebuilt from scratch when the view, the shape, the canvas or the
+// tail setting changes (so while turning it is rebuilt every frame, as before); while the view is still only the newest
+// points are appended. A fading tail is rebuilt every FADEREB of its life, so its fade steps and its cut stay within that.
+const NSLAB = 48, FADEREB = 1 / 40, TC = { key: '', paths: [], next: 0, base: 0, at: 0, mode: '' };
+let frameMs = [], frameShown = 0;
+function tailPaths(view, k, ox, oy, now, life, slabOf, W, H) {
+  const key = [camL.yaw, camL.pitch, G.gen, W, H, life, $('tailcache').checked ? 1 : now].join();
+  const stale = key !== TC.key || TC.base !== tailBase && life === Infinity && tailBase - TC.base > 1500 || life !== Infinity && now - TC.at > life * FADEREB
+    || TC.next < tailBase;
+  if (stale) { TC.key = key; TC.paths = Array.from({ length: NSLAB }, () => new Map()); TC.next = tailBase; TC.base = tailBase; TC.at = now; TC.mode = 'tail redrawn'; }
+  else TC.mode = 'tail reused';
+  // runs of up to 6 segments of one hand, from absolute point TC.next on
+  let i = TC.next - tailBase; const n = trail.length; if (n < 2 || i >= n - 1) return;
+  const Tv = new Array(n); const tv = j => Tv[j] ??= view(sub(trail[j][0], G.cen));
+  while (i + 1 < n) { let j = i + 1, z = tv(i)[2]; while (j < n && j - i < 6 && trail[j][1] === trail[i + 1][1]) z += tv(j++)[2];
+    const b = trail[j - 1], fade = life === Infinity ? 1 : Math.max(0, 1 - (now - b[2]) / life);
+    const st = (b[1] ? 'rgba(25,224,255,' : 'rgba(255,90,31,') + (Math.ceil(fade * 6) / 6 * 0.85).toFixed(2) + ')';
+    const M = TC.paths[slabOf(z / (j - i))]; let P = M.get(st); if (!P) M.set(st, P = new Path2D());
+    P.moveTo(ox + k * Tv[i][0], oy - k * Tv[i][1]); for (let m = i + 1; m < j; m++) P.lineTo(ox + k * Tv[m][0], oy - k * Tv[m][1]);
+    i = j - 1; }
+  TC.next = tailBase + i;
+}
+dragTurn(lit, camL, () => {});
+
+// ===== 2. the collapse =====
+const camC = { yaw: -0.7, pitch: 0.35, held: false }, U = { ang: 0, t: 1 };
+const uvec = () => { const a = U.ang * Math.PI / 180; return [0, Math.cos(a), Math.sin(a)]; };
+let wire = null;   // lines of input points: [[point, hand], ...]
+function buildWire() { const lines = [], N = 18, M = 60;
+  for (let a = 1; a < N; a++) { const la = -90 + 180 * a / N, L = []; for (let b = 0; b <= M; b++) { const u = dirOf(360 * b / M, la); L.push([image(u), detJ(add(S.q, sc(u, S.s))) >= 0]); } lines.push(L); }
+  for (let b = 0; b < N; b++) { const lo = 360 * b / N, L = []; for (let a = 0; a <= M; a++) { const u = dirOf(lo, -90 + 180 * a / M); L.push([image(u), detJ(add(S.q, sc(u, S.s))) >= 0]); } lines.push(L); }
+  wire = lines; }
+function drawWire(cv, f, R, cam = camC) {
+  const [W, H] = fit(cv), ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  const view = viewer(cam.yaw, cam.pitch), k = 0.43 * Math.min(W, H) / R, segs = [];
+  for (const L of wire) { let pv = null; for (const [p, hand] of L) { const v = view(f(p)); if (pv) segs.push([pv[0], v, hand && pv[1], (pv[0][2] + v[2]) / 2]); pv = [v, hand]; } }
+  segs.sort((a, b) => a[3] - b[3]); ctx.lineWidth = DPR();
+  for (const [a, b, keep] of segs) { ctx.strokeStyle = keep ? 'rgba(25,224,255,.55)' : 'rgba(255,90,31,.6)'; ctx.beginPath();
+    ctx.moveTo(W / 2 + k * a[0], H / 2 - k * a[1]); ctx.lineTo(W / 2 + k * b[0], H / 2 - k * b[1]); ctx.stroke(); }
+  // axes stub: 1 (up) and i (right) at the corner, so the turn is readable
+  const o = [26 * DPR(), H - 22 * DPR()], ax = [[[1,0,0], '1'], [[0,1,0], 'i'], [[0,0,1], 'j']];
+  ctx.font = `${10 * DPR()}px "JetBrains Mono", monospace`; ctx.fillStyle = '#8a8a93'; ctx.strokeStyle = '#8a8a93';
+  for (const [e, l] of ax) { const v = view(e); ctx.beginPath(); ctx.moveTo(...o); ctx.lineTo(o[0] + 14 * DPR() * v[0], o[1] - 14 * DPR() * v[1]); ctx.stroke(); ctx.fillText(l, o[0] + 18 * DPR() * v[0] - 3, o[1] - 18 * DPR() * v[1] + 3); }
+}
+function verdict(M) { const s = svals(M); const word = s[2] < 1e-7 ? 'flat: rank 2' : s.every(v => Math.abs(v - 1) < 1e-9) ? 'rigid turn' : 'stretched, not flat';
+  return [word, `stretches ${s.map(v => v.toFixed(2)).join(' · ')}`]; }
+function drawCollapse() {
+  const u = uvec(), L = Lm(u), Rr = Rm(u), t = U.t, mix = M => p => add(sc(p, 1 - t), sc(mv(M, p), t));
+  let R = 1e-9; for (const Ln of wire) for (const [p] of Ln) R = Math.max(R, nrm(p), nrm(mv(L, p)), nrm(mv(Rr, p)));
+  drawWire($('c0'), p => p, R); drawWire($('cL'), mix(L), R); drawWire($('cR'), mix(Rr), R);
+  const [wl, sl] = verdict(L), [wr, sr] = verdict(Rr); $('vL').textContent = wl; $('sL').textContent = sl; $('vR').textContent = wr; $('sR').textContent = sr;
+  $('uangv').textContent = U.ang + '°'; $('tv').textContent = t.toFixed(2); $('uang').value = U.ang; $('t').value = t;
+  document.querySelectorAll('#upick button').forEach(b => b.classList.toggle('on', +b.dataset.u === U.ang));
+  drawFace(OP ? L : Rr, u);
+}
+function drawFace(Rr, u) {   // the flattened brotoid, face-on in its plane
+  const cv = $('face'), [W, H] = fit(cv), ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  const s = svals(Rr); if (s[2] > 1e-7) { ctx.fillStyle = '#8a8a93'; ctx.font = `${13 * DPR()}px "JetBrains Mono", monospace`; ctx.textAlign = 'center';
+    ctx.fillText(opText('not flat here: x·u keeps all three dimensions'), W / 2, H / 2); $('facecap').innerHTML = opText('<b>Face-on</b>: only at i, j and the seam does x·u lie in a plane.'); return; }
+  // plane axes: 1 and u when the plane holds them (i, j); otherwise an orthonormal pair
+  const img = E.map(e => mv(Rr, e)); let nrmv = cross(img[0], img[1]); if (nrm(nrmv) < 1e-9) nrmv = cross(img[0], img[2]); if (nrm(nrmv) < 1e-9) nrmv = cross(img[1], img[2]); nrmv = sc(nrmv, 1 / nrm(nrmv));
+  let a1, a2, la, lb;
+  if (Math.abs(nrmv[0]) < 1e-9 && Math.abs(dot(nrmv, u)) < 1e-9) { a1 = u; a2 = [1, 0, 0]; la = U.ang === 0 ? 'i' : U.ang === 90 ? 'j' : 'u'; lb = '1'; }
+  else { a2 = [1, 0, 0]; a2 = sub(a2, sc(nrmv, dot(a2, nrmv))); a2 = sc(a2, 1 / nrm(a2)); a1 = cross(a2, nrmv); la = '→'; lb = 'toward 1'; }
+  let R = 1e-9; const pts = []; for (const Ln of wire) { const P = Ln.map(([p, h]) => { const v = mv(Rr, p); const xy = [dot(v, a1), dot(v, a2)]; R = Math.max(R, Math.hypot(...xy)); return [xy, h]; }); pts.push(P); }
+  const k = 0.43 * Math.min(W, H) / R; ctx.lineWidth = DPR();
+  ctx.strokeStyle = '#23252d'; ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+  for (const P of pts) for (let i = 1; i < P.length; i++) { ctx.strokeStyle = P[i][1] && P[i - 1][1] ? 'rgba(25,224,255,.35)' : 'rgba(255,90,31,.4)';
+    ctx.beginPath(); ctx.moveTo(W / 2 + k * P[i - 1][0][0], H / 2 - k * P[i - 1][0][1]); ctx.lineTo(W / 2 + k * P[i][0][0], H / 2 - k * P[i][0][1]); ctx.stroke(); }
+  ctx.fillStyle = '#8a8a93'; ctx.font = `${11 * DPR()}px "JetBrains Mono", monospace`; ctx.fillText(la, W - 16 * DPR(), H / 2 - 6 * DPR()); ctx.fillText(lb, W / 2 + 6 * DPR(), 14 * DPR());
+  $('facecap').innerHTML = opText((U.ang === 0 || U.ang === 90) ? `<b>Face-on, x·u</b>: the brotoid flattened into the plane of 1 and ${la}, a copy of ℂ. Overlapping lines are points of the brotoid that the product sends to the same place.`
+    : '<b>Face-on, x·u</b>: at the seam the brotoid flattens onto a tilted plane, perpendicular to 1 − i + j. u·x lands on the same plane.');
+}
+['c0', 'cL', 'cR'].forEach(id => dragTurn($(id), camC, drawCollapse));
+document.querySelectorAll('#upick button').forEach(b => b.addEventListener('click', () => { U.ang = +b.dataset.u; drawCollapse(); }));
+$('uang').addEventListener('input', e => { U.ang = +e.target.value; drawCollapse(); });
+$('t').addEventListener('input', e => { U.t = +e.target.value; drawCollapse(); });
+
+// ===== 3. two flats as two splats =====
+// x·u is linear, so the splat of the flattened brotoid is the brotoid's Gaussian carried through: centre Ru·mu, spread Ru·C·Ruᵀ
+const camS = { yaw: -0.62, pitch: 0.55, held: false };
+const SPL = [{ u: [0, 1, 0], rgb: [245, 209, 66], name: 'x·i', miss: 'no j term · loses 1 + j' },
+             { u: [0, 0, 1], rgb: [255, 111, 177], name: 'x·j', miss: 'no i term · loses 1 − i' }];
+// WebGL2 skin splats: per patch [mean (already through the product), 3-D spread (6), colour, weight, 3-D area], uploaded once
+// per shape / algebra / hand split; per frame only the camera goes up. Same ellipse, floor and brightness as the sprites.
+const GLS = (() => { const cv = document.createElement('canvas'), gl = cv.getContext('webgl2', { premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true });
+  if (!gl) return null;
+  const sh = (t, src) => { const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, `#version 300 es
+layout(location=0) in vec2 aCorner; layout(location=1) in vec3 aM; layout(location=2) in vec3 aCd; layout(location=3) in vec3 aCo; layout(location=4) in vec3 aCol; layout(location=5) in vec2 aWA;
+uniform vec3 uP0, uP1; uniform vec2 uO, uRes; uniform float uK, uKb, uFl, uStep;
+out vec2 vL; flat out vec3 vC; flat out float vAmp;
+void main() {
+  mat3 C = mat3(aCd.x, aCo.x, aCo.y, aCo.x, aCd.y, aCo.z, aCo.y, aCo.z, aCd.z);
+  float a = dot(uP0, C * uP0), b = dot(uP0, C * uP1), d = dot(uP1, C * uP1), tr = 0.5 * (a + d), df = length(vec2(0.5 * (a - d), b));
+  float s1 = max(uFl, sqrt(tr + df) * uK), s2 = max(uFl, sqrt(max(0.0, tr - df)) * uK), th = 0.5 * atan(2.0 * b, a - d);
+  vec2 u1 = vec2(cos(th), sin(th)), u2 = vec2(-u1.y, u1.x), c = vec2(uO.x + uK * dot(uP0, aM), uRes.y - uO.y + uK * dot(uP1, aM));
+  vec2 p = c + 3.0 * (aCorner.x * s1 * u1 + aCorner.y * s2 * u2);
+  vAmp = min(0.95, uKb * aWA.x * uStep / max((uFl / uK) * (uFl / uK), aWA.y)); vC = aCol; vL = 3.0 * aCorner;
+  gl_Position = vec4(p / uRes * 2.0 - 1.0, 0.0, 1.0); }`));
+  gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `#version 300 es
+precision highp float; in vec2 vL; flat in vec3 vC; flat in float vAmp; out vec4 o;
+void main() { float r2 = dot(vL, vL); if (r2 > 9.0) discard; float a = vAmp * exp(-0.5 * r2); o = vec4(vC * a, a); }`));
+  gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pr));
+  const U = {}; for (const n of ['uP0', 'uP1', 'uO', 'uRes', 'uK', 'uKb', 'uFl', 'uStep']) U[n] = gl.getUniformLocation(pr, n);
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  const qb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  const ib = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, ib); const STR = 16 * 4;
+  [[1, 3, 0], [2, 3, 12], [3, 3, 24], [4, 3, 36], [5, 2, 48]].forEach(([l, n, off]) => { gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, n, gl.FLOAT, false, STR, off); gl.vertexAttribDivisor(l, 1); });
+  let key = '', count = 0;
+  return { cv, upload(k2, make) { if (k2 === key) return; key = k2; const rows = make(), f = new Float32Array(rows.length * 16);
+      rows.forEach((r, n) => f.set(r, n * 16)); gl.bindBuffer(gl.ARRAY_BUFFER, ib); gl.bufferData(gl.ARRAY_BUFFER, f, gl.STATIC_DRAW); count = rows.length; },
+    draw(W, H, P2, k, ox, oy, Kb, fl) { if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+      gl.viewport(0, 0, W, H); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.useProgram(pr); gl.bindVertexArray(vao);
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+      gl.uniform3fv(U.uP0, P2[0]); gl.uniform3fv(U.uP1, P2[1]); gl.uniform2f(U.uO, ox, oy); gl.uniform2f(U.uRes, W, H);
+      gl.uniform1f(U.uK, k); gl.uniform1f(U.uKb, Kb); gl.uniform1f(U.uFl, fl); gl.uniform1f(U.uStep, 1);
+      gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count); return count; } };
+})();
+const SPR = new Map();
+function sprite(rgb) { const key = rgb.join(); let c = SPR.get(key); if (c) return c;
+  c = document.createElement('canvas'); c.width = c.height = 96; const x = c.getContext('2d'), g = x.createRadialGradient(48, 48, 0, 48, 48, 48);
+  for (let r = 0; r <= 3; r += 0.25) g.addColorStop(r / 3, `rgba(${rgb},${Math.exp(-r * r / 2).toFixed(4)})`);
+  x.fillStyle = g; x.fillRect(0, 0, 96, 96); SPR.set(key, c); return c; }
+function drawSplat() {
+  const cv = $('splat'), [W, H] = fit(cv), ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  const view = viewer(camS.yaw, camS.pitch), P2 = T(E.map(e => view(e))).slice(0, 2), ox = W / 2, oy = H / 2;
+  const sp = SPL.map(o => { const M = Cside(o.u); return { ...o, M, m: mv(M, G.mu), C: mm(mm(M, G.C), T(M)) }; });
+  let R = 1e-9; for (const o of sp) for (const Ln of wire) for (const [p] of Ln) R = Math.max(R, nrm(mv(o.M, p)));
+  const k = 0.36 * Math.min(W, H) / R, scr = v => { const w = view(v); return [ox + k * w[0], oy - k * w[1]]; };
+  // the axes 1, i, j through the origin, and a faint frame for each splat's plane
+  // the markers (axes, plane frames, points, rings, tags) fade together, so the splats can be seen on their own
+  const mk = +$('mark').value;
+  ctx.globalAlpha = mk; ctx.lineWidth = DPR(); ctx.font = `${12 * DPR()}px "JetBrains Mono", monospace`;
+  for (const [e, l] of [[[1, 0, 0], '1'], [[0, 1, 0], 'i'], [[0, 0, 1], 'j']]) { const a = scr(sc(e, -R)), b = scr(sc(e, R));
+    ctx.strokeStyle = '#3a3c46'; ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); ctx.fillStyle = '#8a8a93'; ctx.fillText(l, b[0] + 4 * DPR(), b[1] - 4 * DPR()); }
+  for (const o of sp) { const F = 0.85 * R, c = [[F, F], [F, -F], [-F, -F], [-F, F]].map(([a, b]) => scr(add(sc([1, 0, 0], a), sc(o.u, b))));
+    ctx.strokeStyle = `rgba(${o.rgb},.22)`; ctx.beginPath(); c.forEach((p, n) => n ? ctx.lineTo(...p) : ctx.moveTo(...p)); ctx.closePath(); ctx.stroke(); }
+  if ($('spts').checked) for (const o of sp) { ctx.strokeStyle = `rgba(${o.rgb},.12)`; ctx.beginPath();
+    for (const Ln of wire) Ln.forEach(([p], n) => { const s = scr(mv(o.M, p)); n ? ctx.lineTo(...s) : ctx.moveTo(...s); }); ctx.stroke(); }
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'lighter';
+  // one entry per splat: [centre, 3-D spread, fill colour or null, skin share, ring colour, ring radii in σ, dashed]
+  const CYAN = [25, 224, 255], ORANGE = [255, 90, 31], WHITE = [235, 235, 235], list = [], thru = (M, C3) => mm(mm(M, C3), T(M));
+  for (const o of sp) {
+    if (!$('shand').checked) { list.push([o.m, o.C, o.rgb, 1, o.rgb, [1, 2]]); continue; }
+    for (const p of G.parts) if (p.w > 1e-6) { const col = p.h ? CYAN : ORANGE; list.push([mv(o.M, p.mu), thru(o.M, p.C), col, p.w, col, [1]]); }
+    list.push([o.m, o.C, null, 0, o.rgb, [1, 2]]);   // the wing's own rings, around its two hand splats
+  }
+  if ($('sbsp').checked) list.push([G.mu, G.C, null, 0, WHITE, [1, 2], true]);
+  // brightness is density: peak = skin share / in-plane area (σ1·σ2), on one scale, so the wider wing peaks at 0.4 in every mode
+  const area = C3 => { const e = svals(C3); return Math.sqrt(e[0] * e[1]); }, K = 0.4 * Math.max(...sp.map(o => area(o.C)));
+  const rings = $('srings').checked;   // off: the splats' own rings go, the dashed bsplat stays under its own switch
+  const skinSplats = $('sskin').checked; let nSpr = 0, tSpr = 0;
+  const useGL = skinSplats && GLS && $('sgl').value === 'gpu';
+  if (useGL) { const t0 = performance.now(), hand = $('shand').checked;
+    GLS.upload([G.gen, OP, hand].join(), () => sp.flatMap(o => G.Q.map(q => { const C3 = thru(o.M, q.C), m = mv(o.M, q.c), col = (hand ? (q.h ? CYAN : ORANGE) : o.rgb).map(v => v / 255);
+      return [...m, C3[0][0], C3[1][1], C3[2][2], C3[0][1], C3[0][2], C3[1][2], ...col, q.w, area(C3)]; })));
+    nSpr = GLS.draw(W, H, P2, k, ox, oy, K, 0.7 * DPR()); ctx.drawImage(GLS.cv, 0, 0); tSpr = performance.now() - t0; }
+  else if (skinSplats) { const t0 = performance.now(), fl = 0.7 * DPR(), step = camS.held ? 4 : 1;   // while turning: every 4th patch at 4x weight
+    for (const o of sp) for (let n = 0; n < G.Q.length; n += step) { const q = G.Q[n];
+      const C3 = thru(o.M, q.C), S2 = mm(mm(P2, C3), T(P2)), a = S2[0][0], b = S2[0][1], d = S2[1][1], tr = (a + d) / 2, df = Math.hypot((a - d) / 2, b);
+      const s1 = Math.max(fl, Math.sqrt(tr + df) * k), s2 = Math.max(fl, Math.sqrt(Math.max(0, tr - df)) * k), th = -0.5 * Math.atan2(2 * b, a - d), [cx, cy] = scr(mv(o.M, q.c));
+      const amp = Math.min(0.95, K * q.w * step / Math.max((fl / k) ** 2, area(C3))); if (amp < 0.004) continue;
+      const cs = Math.cos(th), sn = Math.sin(th); ctx.setTransform(cs * s1, sn * s1, -sn * s2, cs * s2, cx, cy); ctx.globalAlpha = amp;
+      ctx.drawImage(sprite($('shand').checked ? (q.h ? CYAN : ORANGE) : o.rgb), -3, -3, 6, 6); nSpr++; }
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; tSpr = performance.now() - t0; }
+  for (const [m, C3, fill, share, ring, radii, dashed] of list) {   // seen through the camera as a 2x2 covariance
+    const S2 = mm(mm(P2, C3), T(P2)), a = S2[0][0], b = S2[0][1], d = S2[1][1], tr = (a + d) / 2, df = Math.hypot((a - d) / 2, b);
+    const s1 = Math.sqrt(tr + df) * k, s2 = Math.max(0.7 * DPR(), Math.sqrt(Math.max(0, tr - df)) * k), th = 0.5 * Math.atan2(2 * b, a - d), [cx, cy] = scr(m);
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(-th); ctx.scale(s1, s2);
+    if (fill && !skinSplats) { const amp = Math.min(0.95, K * share / Math.max(1e-12, area(C3))), g = ctx.createRadialGradient(0, 0, 0, 0, 0, 3);
+      for (let r = 0; r <= 3; r += 0.25) g.addColorStop(r / 3, `rgba(${fill},${(amp * Math.exp(-r * r / 2)).toFixed(3)})`);
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, 3, 0, 7); ctx.fill(); }
+    ctx.beginPath(); for (const r of radii) { ctx.moveTo(r, 0); ctx.arc(0, 0, r, 0, 7); } ctx.restore();
+    ctx.strokeStyle = `rgba(${ring},${fill ? 0.7 : 0.9})`; ctx.lineWidth = (fill && radii.length === 1 ? 0.8 : 1.2) * DPR(); ctx.setLineDash(dashed ? [5 * DPR(), 5 * DPR()] : []);
+    if (rings || dashed) { ctx.globalAlpha = mk; ctx.stroke(); ctx.globalAlpha = 1; } ctx.setLineDash([]);
+  }
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = mk;
+  // each tag sits at the outer top corner of its own plane, since the two centres can nearly coincide
+  for (const o of sp) { let [cx, cy] = scr(add(sc([1, 0, 0], 0.8 * R), sc(o.u, 0.8 * R))); cx = Math.min(cx, W - 190 * DPR()); cy = Math.max(cy, 18 * DPR()); ctx.fillStyle = `rgb(${o.rgb})`; ctx.font = `${13 * DPR()}px "JetBrains Mono", monospace`;
+    ctx.fillText(opText(o.name), cx + 8 * DPR(), cy - 8 * DPR()); ctx.fillStyle = '#ff5a1f'; ctx.font = `${11 * DPR()}px "JetBrains Mono", monospace`; ctx.fillText(o.miss, cx + 8 * DPR(), cy + 8 * DPR()); }
+  ctx.globalAlpha = 1;
+  // the two flats as wire panels, like 'u on the right' above, turned with the splats
+  drawWire($('cI'), p => mv(sp[0].M, p), R, camS); drawWire($('cJ'), p => mv(sp[1].M, p), R, camS);
+  const [wi, si] = verdict(sp[0].M), [wj, sj] = verdict(sp[1].M); $('vI').textContent = wi; $('sI').textContent = si; $('vJ').textContent = wj; $('sJ').textContent = sj;
+  const sd = o => svals(o.C).slice(0, 2).map(v => Math.sqrt(v).toFixed(3)).join(' × '), pair = eigSym(add3(mm(T(sp[0].M), sp[0].M), mm(T(sp[1].M), sp[1].M))).w.map(v => Math.sqrt(Math.max(0, v))).sort((x, y) => y - x);
+  // the wings: how far out the flattened skin itself reaches, in σ of its own splat (Mahalanobis radius of each quad centre)
+  const edge = o => { const { w, V } = eigSym(o.C), ax = [0, 1, 2].sort((a, b) => w[b] - w[a]).slice(0, 2); let r = 0;
+    for (const q of G.Q) { const d = sub(mv(o.M, q.c), o.m); r = Math.max(r, Math.hypot(...ax.map(k => (d[0] * V[0][k] + d[1] * V[1][k] + d[2] * V[2][k]) / Math.sqrt(w[k])))); } return r.toFixed(2); };
+  $('splatcap').innerHTML = opText(`Spread (1σ, along its two axes): <b>x·i</b> ${sd(sp[0])}, <b>x·j</b> ${sd(sp[1])}. Each splat is flat: its third spread is 0. ` +
+    `The blur has no edge: it fades as a Gaussian and is cut at 3σ, where it is 1% of its centre. The flattened skin does have an edge, at ${edge(sp[0])}σ for x·i and ${edge(sp[1])}σ for x·j, just past the 2σ ring. So the blur beyond that is the Gaussian's, not the brotoid's. ` +
+    `Hand split: ${(100 * G.parts[0].w).toFixed(1)}% of the skin keeps its hand, ${(100 * G.parts[1].w).toFixed(1)}% is mirrored. ` +
+    `The pair together stretches by ${pair.map(v => v.toFixed(2)).join(' · ')}, none of them 0, so together they keep all three dimensions. ` +
+    `The spread is weighted by the area of the brotoid's skin. The splat is the brotoid's own Gaussian carried through the product, because x·u is linear.`
+    + (skinSplats ? ` <b>Skin as splats:</b> ${nSpr.toLocaleString('en-US')} ${useGL ? 'splats drawn on the GPU' : 'sprites drawn'} in ${tSpr < 1 ? 'under 1' : tSpr.toFixed(0)} ms${!useGL && camS.held ? ' (turning: every 4th patch)' : ''}.` : ''));
+}
+const add3 = (A, B) => A.map((r, i) => r.map((v, j) => v + B[i][j]));
+['splat', 'cI', 'cJ'].forEach(id => dragTurn($(id), camS, drawSplat));
+$('sskin').addEventListener('change', drawSplat);
+['splat', 'cI', 'cJ'].forEach(id => $(id).addEventListener('pointerup', () => { if ($('sskin').checked) drawSplat(); }));
+$('sgl').addEventListener('change', drawSplat); if (!GLS) { $('sgl').value = 'sprites'; $('sgl').disabled = true; }   // full skin again on release
+['spts', 'shand', 'sbsp', 'srings'].forEach(id => $(id).addEventListener('change', drawSplat)); $('mark').addEventListener('input', drawSplat);
+
+// ===== 4. the Jacobian: the forward ghost and the inverse brotoid =====
+const camJ = { yaw: -0.7, pitch: 0.35, held: false }, JN = [20, 40], jid = (a, b) => a * JN[1] + (b % JN[1]);
+const Jof = x => cols(e => add(mul(x, e), mul(e, x)));
+const inv3 = M => { const [a, b, c] = M[0], [d, e, f] = M[1], [g, h, i] = M[2], A = e*i - f*h, B = -(d*i - f*g), C = d*h - e*g, dt = a*A + b*B + c*C;
+  return [[A, -(b*i - c*h), b*f - c*e], [B, a*i - c*g, -(a*f - c*d)], [C, -(a*h - b*g), a*e - b*d]].map(r => r.map(v => v / dt)); };
+const jsVal = () => 0.005 * Math.pow(200, +$('js').value / 100);
+const gridDirs = () => { const D = []; for (let a = 0; a <= JN[0]; a++) for (let b = 0; b < JN[1]; b++) D.push(dirOf(360 * b / JN[1], -90 + 180 * a / JN[0])); return D; };
+// skin-area-weighted centre and spread of a grid surface; quads touching a torn vertex are left out
+function gridMoments(V, bad) { let W = 0, m = [0, 0, 0]; const Qs = [];
+  for (let a = 0; a < JN[0]; a++) for (let b = 0; b < JN[1]; b++) { const k = [jid(a, b), jid(a + 1, b), jid(a + 1, b + 1), jid(a, b + 1)];
+    if (bad && k.some(i => bad[i])) continue; const P = k.map(i => V[i]), w = 0.5 * nrm(cross(sub(P[2], P[0]), sub(P[3], P[1]))), c = sc(add(add(P[0], P[1]), add(P[2], P[3])), 0.25);
+    Qs.push([w, c]); W += w; m = add(m, sc(c, w)); }
+  const mu = sc(m, 1 / Math.max(W, 1e-300)), C = [[0,0,0],[0,0,0],[0,0,0]];
+  for (const [w, c] of Qs) { const d = sub(c, mu); for (let r = 0; r < 3; r++) for (let k = 0; k < 3; k++) C[r][k] += w * d[r] * d[k] / W; }
+  return { mu, C }; }
+const jRel = (A, B) => { let n = 0, d = 0; for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) { n += (A[r][c] - B[r][c]) ** 2; d += B[r][c] ** 2; } return Math.sqrt(n / d); };
+const longAx = C => { const { w, V } = eigSym(C), k = [0, 1, 2].reduce((a, b) => w[b] > w[a] ? b : a, 0); return [V[0][k], V[1][k], V[2][k]]; };
+const axAngle = (A, B) => { const a = longAx(A), b = longAx(B); return Math.acos(Math.min(1, Math.abs(dot(a, b)))) * 180 / Math.PI; };
+// forward: the brotoid of the ball (q, s) and the same ball through J alone
+function forwardJ(q, s) { const J = Jof(q), D = gridDirs();
+  return { V: D.map(u => sub(sq(add(q, sc(u, s))), sq(q))), L: D.map(u => mv(J, sc(u, s))), H: D.map(u => detJ(add(q, sc(u, s))) >= 0) }; }
+// every real square root of p: Newton from a fixed spread of starts, kept when distinct
+function sqrtsOf(p) { const R = [], r0 = Math.sqrt(Math.max(1e-6, nrm(p)));
+  for (const rad of [0.5, 1, 2]) for (let a = 1; a < 6; a++) for (let b = 0; b < 8; b++) { let x = sc(dirOf(45 * b + 9 * a, -90 + 30 * a), rad * r0);
+    for (let k = 0; k < 60; k++) { const e = sub(sq(x), p); if (nrm(e) < 1e-14) break; const Jm = Jof(x); if (Math.abs(det3(Jm)) < 1e-13) break; x = sub(x, mv(inv3(Jm), e)); }
+    if (nrm(sub(sq(x), p)) < 1e-10 && !R.some(y => nrm(sub(x, y)) < 1e-6 * (1 + nrm(y)))) R.push(x); }
+  return R; }
+// inverse: pull the ball (p, s) back to the lobe at root x. A direction is torn when Newton fails or lands far from J⁻¹'s guess
+function pullback(p, s, x) { const Ji = inv3(Jof(x)), D = gridDirs(), V = [], L = [], bad = [], H = [];
+  for (const u of D) { const lin = add(x, mv(Ji, sc(u, s))), t = add(p, sc(u, s)); let y = lin.slice(), okN = false;
+    for (let k = 0; k < 40; k++) { const e = sub(sq(y), t); if (nrm(e) < 1e-13 * (1 + nrm(t))) { okN = true; break; } const Jm = Jof(y); if (Math.abs(det3(Jm)) < 1e-14) break; y = sub(y, mv(inv3(Jm), e)); }
+    const torn = !okN || nrm(sub(y, x)) > 3 * nrm(sub(lin, x)) + 1e-12; V.push(torn ? lin : y); L.push(lin); bad.push(torn); H.push(detJ(torn ? lin : y) >= 0); }
+  return { V, L, bad, H, x, dJ: det3(Jof(x)) }; }
+// a grid surface as lat/long lines, coloured by hand; torn vertices break the lines and get a red dot
+function jWire(ctx, V, H, bad, scr, alpha, dash, gold) { ctx.lineWidth = DPR(); ctx.setLineDash(dash ? [3 * DPR(), 3 * DPR()] : []);
+  const seg = (i, j) => { if (bad && (bad[i] || bad[j])) return; ctx.strokeStyle = gold ? `rgba(255,211,77,${alpha})` : dash ? `rgba(160,160,170,${alpha})` : H[i] && H[j] ? `rgba(25,224,255,${alpha})` : `rgba(255,90,31,${alpha})`;
+    const a = scr(V[i]), b = scr(V[j]); ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); };
+  for (let a = 1; a < JN[0]; a += 2) for (let b = 0; b < JN[1]; b++) seg(jid(a, b), jid(a, b + 1));
+  for (let b = 0; b < JN[1]; b += 2) for (let a = 0; a < JN[0]; a++) seg(jid(a, b), jid(a + 1, b));
+  ctx.setLineDash([]);
+  if (bad) { ctx.fillStyle = '#ff3355'; V.forEach((v, i) => { if (bad[i]) { const p = scr(v); ctx.fillRect(p[0] - 1.5 * DPR(), p[1] - 1.5 * DPR(), 3 * DPR(), 3 * DPR()); } }); } }
+// a 3-D Gaussian's 1σ and 2σ rings, seen through the camera
+function jRings(ctx, g, view, k, scr, css, dash) { const P2 = T(E.map(e => view(e))).slice(0, 2), S2 = mm(mm(P2, g.C), T(P2)), a = S2[0][0], b = S2[0][1], d = S2[1][1];
+  const tr = (a + d) / 2, df = Math.hypot((a - d) / 2, b), s1 = Math.sqrt(tr + df) * k, s2 = Math.max(0.5, Math.sqrt(Math.max(0, tr - df)) * k), th = 0.5 * Math.atan2(2 * b, a - d), [cx, cy] = scr(g.mu);
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-th); ctx.scale(s1, s2); ctx.beginPath(); ctx.moveTo(1, 0); ctx.arc(0, 0, 1, 0, 7); ctx.moveTo(2, 0); ctx.arc(0, 0, 2, 0, 7); ctx.restore();
+  ctx.setLineDash(dash ? [5 * DPR(), 4 * DPR()] : []); ctx.strokeStyle = css; ctx.lineWidth = 1.4 * DPR(); ctx.stroke(); ctx.setLineDash([]); }
+// chain n (caro, inverse_direction): follow q forward n steps of F(x) = x² + c, take a ball at the end, pull it back down the same path
+const CC = [0.28, -0.52, 0.18], Fc = x => add(sq(x), CC);
+// the n-step map and its derivative J(pₙ₋₁)…J(p₀)
+function Fn(x, n) { let D = E.map(r => r.slice()); for (let k = 0; k < n; k++) { D = mm(Jof(x), D); x = Fc(x); } return [x, D]; }
+// the ball at pₙ gets radius s / raw, so the lobe has the one-step lobe's volume; raw is how much bigger the chain lobe is from the same s
+function chainPull(q, n, s) { const [pn, D] = Fn(q, n), dn = det3(D), d1 = det3(Jof(q));
+  if (!isFinite(dn) || Math.abs(dn) < 1e-14 || Math.abs(d1) < 1e-14) return null;
+  const M = inv3(D), raw = Math.cbrt(Math.abs(d1 / dn)), sn = s / raw, V = [], L = [], bad = [];
+  for (const u of gridDirs()) { const lin = add(q, mv(M, sc(u, sn))), t = add(pn, sc(u, sn)); let y = lin.slice(), okN = false;
+    for (let k = 0; k < 40; k++) { const [f, Dy] = Fn(y, n), e = sub(f, t); if (nrm(e) < 1e-12 * (1 + nrm(t))) { okN = true; break; } if (Math.abs(det3(Dy)) < 1e-14) break; y = sub(y, mv(inv3(Dy), e)); }
+    const torn = !okN || nrm(sub(y, lin)) > 0.5 * nrm(sub(lin, q)) + 1e-12; V.push(torn ? lin : y); L.push(lin); bad.push(torn); }
+  return { V, L, bad, M, pn, raw, x: q }; }
+const elong = C => { const w = eigSym(C).w.slice().sort((a, b) => b - a); return Math.sqrt(w[0] / Math.max(w[1], 1e-300)); };
+function drawJac() { const s = jsVal(), q = S.q, n = +$('jn').value; $('jsv').textContent = s.toFixed(3); $('jnv').textContent = n;
+  const view = viewer(camJ.yaw, camJ.pitch);
+  // forward
+  { const cv = $('cF'), [W, H] = fit(cv), ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    const f = forwardJ(q, s), gV = gridMoments(f.V), gL = gridMoments(f.L); let R = 1e-12; f.V.concat(f.L).forEach(v => R = Math.max(R, nrm(v)));
+    const k = 0.42 * Math.min(W, H) / R, scr = v => { const w = view(v); return [W / 2 + k * w[0], H / 2 - k * w[1]]; };
+    jWire(ctx, f.L, f.H, null, scr, 0.35, true); jWire(ctx, f.V, f.H, null, scr, 0.5, false);
+    jRings(ctx, gL, view, k, scr, 'rgba(170,170,180,.9)', true); jRings(ctx, gV, view, k, scr, 'rgba(255,255,255,.95)', false);
+    const dJ = det3(Jof(q));
+    $('capF').innerHTML = `<b>Forward: the brotoid and its ghost</b><span class="v">${(100 * jRel(gV.C, gL.C)).toFixed(s < 0.05 ? 3 : 1)}% from its ghost</span>` +
+      `long axes ${axAngle(gV.C, gL.C).toFixed(1)}° apart · |det J| at q ${Math.abs(dJ).toFixed(3)}` + (Math.abs(dJ) < 1e-9 ? ' · q sits on the fold, so J is flat' : ''); }
+  // inverse
+  { const cv = $('cV'), [W, H] = fit(cv), ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    const p = sq(q), roots = sqrtsOf(p).sort((a, b) => nrm(sub(a, q)) - nrm(sub(b, q)));
+    const live = roots.filter(x => Math.abs(det3(Jof(x))) > 1e-6), lobes = live.map(x => pullback(p, s, x)), ch = n > 1 ? chainPull(q, n, s) : null;
+    // when the lobes are tiny next to the spread of the roots, draw each one magnified about its own root (and say so)
+    let ext = 1e-12, Rr = 1e-12; lobes.concat(ch ? [ch] : []).forEach(l => l.V.forEach((v, i) => { if (!l.bad[i]) ext = Math.max(ext, nrm(sub(v, l.x))); })); roots.forEach(x => Rr = Math.max(Rr, nrm(x)));
+    const mag = Math.max(1, 0.15 * Rr / ext), tf = (l, v) => add(l.x, sc(sub(v, l.x), mag)), tg = (l, g) => ({ mu: tf(l, g.mu), C: g.C.map(r => r.map(v => v * mag * mag)) });
+    let R = Rr; lobes.concat(ch ? [ch] : []).forEach(l => l.V.forEach((v, i) => { if (!l.bad[i]) R = Math.max(R, nrm(tf(l, v))); }));
+    const k = 0.42 * Math.min(W, H) / R, scr = v => { const w = view(v); return [W / 2 + k * w[0], H / 2 - k * w[1]]; };
+    for (const l of lobes) { const sl = v => scr(tf(l, v)); jWire(ctx, l.L, l.H, null, sl, 0.3, true); jWire(ctx, l.V, l.H, l.bad, sl, 0.5, false); }
+    for (const l of lobes) { jRings(ctx, tg(l, gridMoments(l.L)), view, k, scr, 'rgba(170,170,180,.9)', true);
+      if (!l.bad.some(Boolean)) jRings(ctx, tg(l, gridMoments(l.V)), view, k, scr, 'rgba(255,255,255,.95)', false); }
+    if (ch) { const sl = v => scr(tf(ch, v)); jWire(ctx, ch.V, null, ch.bad, sl, 0.75, false, true); jRings(ctx, tg(ch, gridMoments(ch.L)), view, k, scr, 'rgba(255,211,77,.85)', true);
+      if (!ch.bad.some(Boolean)) jRings(ctx, tg(ch, gridMoments(ch.V)), view, k, scr, 'rgba(255,211,77,1)', false); }
+    ctx.fillStyle = '#fff'; roots.forEach(x => { const [a, b] = scr(x); ctx.beginPath(); ctx.arc(a, b, 2.5 * DPR(), 0, 7); ctx.fill(); });
+    const home = lobes.find(l => nrm(sub(l.x, q)) < 1e-6 * (1 + nrm(q))), torn = lobes.reduce((n, l) => n + l.bad.filter(Boolean).length, 0), tot = lobes.length * JN[1] * (JN[0] + 1);
+    const hm = !home ? 'q is on the fold, so it has no lobe of its own' : home && !home.bad.some(Boolean) ? `home lobe (around q) ${(100 * jRel(gridMoments(home.V).C, gridMoments(home.L).C)).toFixed(s < 0.05 ? 3 : 1)}% from its ghost` : 'home lobe torn';
+    $('capV').innerHTML = `<b>Inverse: the ball pulled back through each square root found</b><span class="v">${roots.length} square roots of q² · ${hm}</span>` +
+      `${torn ? `<span style="color:#ff3355">${(100 * torn / tot).toFixed(1)}% of directions torn</span> · ` : 'nothing torn · '}|det J| at the roots: ${roots.map(x => Math.abs(det3(Jof(x))).toFixed(2)).join(', ')}` +
+      (live.length < roots.length ? ' · a root on the fold has no inverse and no lobe' : '') + (mag > 1.01 ? ` · <b>lobes drawn ${mag.toFixed(mag < 10 ? 1 : 0)}× about their roots</b>` : '') +
+      (n < 2 ? '' : !ch ? `<br><span style="color:#ffd34d">chain ${n}: q's path meets the fold, no chain</span>` : (() => { const g1 = inv3(Jof(q)), C1 = mm(g1, T(g1)), Cn = mm(ch.M, T(ch.M)), tn = ch.bad.filter(Boolean).length;
+        return `<br><span style="color:#ffd34d"><b>chain ${n}</b>: long axis ${axAngle(Cn, C1).toFixed(1)}° from one step · stretch ${elong(Cn).toFixed(1)} : 1 against ${elong(C1).toFixed(1)} : 1 · raw it would be ${ch.raw < 0.1 || ch.raw > 10 ? ch.raw.toExponential(1) : ch.raw.toFixed(2)}× the one-step size` +
+          (tn ? ` · ${(100 * tn / ch.bad.length).toFixed(1)}% torn` : ' · nothing torn') + `</span>`; })()); }
+}
+['cF', 'cV'].forEach(id => dragTurn($(id), camJ, drawJac));
+$('js').addEventListener('input', drawJac); $('jn').addEventListener('input', drawJac);
+
+// ===== the q setter: a sphere rolling under a fixed pin; the sphere's point under the pin is q's direction, the pin's length |q| =====
+// QS.M turns sphere (body) coordinates 1, i, j into the setter's screen: x right, y up, z toward you. It starts as the page's
+// camera without yaw (right = i, up = 1, toward you = −j). P0 is where the pin stands, fixed on the screen, leaning right and toward you.
+// the setter itself lives in ../lib/sphere_setter.js (one source for every page that uses it); rot and ortho stay here for the checks
+const qc = $('qset');
+const QS = Object.assign(SphereSetter.mount(qc, { M0: [[0, 1, 0], [1, 0, 0], [0, 0, -1]], r: 0.9, rMax: 1.5, hand: v => detJ(v) >= 0, tip: 'q',
+  onInput: () => { $('qr').value = QS.r; QS.dirty = true; } }), { dirty: false, idle: 0 });
+const rot = (ax, an) => { const l = nrm(ax); if (l < 1e-15 || !an) return E.map(r => r.slice()); const [x, y, z] = sc(ax, 1 / l), c = Math.cos(an), s = Math.sin(an), t = 1 - c;
+  return [[t*x*x + c, t*x*y - s*z, t*x*z + s*y], [t*x*y + s*z, t*y*y + c, t*y*z - s*x], [t*x*z - s*y, t*y*z + s*x, t*z*z + c]]; };
+const ortho = M => { const a = sc(M[0], 1 / nrm(M[0])), b0 = sub(M[1], sc(a, dot(M[1], a))), b = sc(b0, 1 / nrm(b0)); return [a, b, cross(a, b)]; };
+const qOf = () => QS.get(), syncQ = q => QS.set(q);   // set: roll the least that puts q under the pin, |q| = the pin's length
+const fq = q => q.map((v, n) => (n ? (v < 0 ? ' − ' : ' + ') + Math.abs(v).toFixed(3) + ['', 'i', 'j'][n] : v.toFixed(3))).join('');
+function qLive() {   // the light's brotoid now; the rest when the rolling stops
+  S.q = qOf(); build(); clearTail(); document.querySelectorAll('#presets button').forEach(b => b.classList.remove('on'));
+  clearTimeout(QS.idle); QS.idle = setTimeout(() => setBall(S.q, S.s), 180); }
+function drawQ() { QS.draw(); $('qv').textContent = `q = ${fq(S.q)} · |q| ${nrm(S.q).toFixed(2)} · s ${S.s.toFixed(2)}`; }
+$('qr').addEventListener('input', () => { QS.r = +$('qr').value; QS.dirty = true; });
+$('bs').addEventListener('input', () => { S.s = +$('bs').value; QS.dirty = true; });
+
+function setBall(q, s) { S.q = q; S.s = s; syncQ(q); $('qr').value = QS.r; $('bs').value = s; build(); buildWire(); clearTail(); drawCollapse(); drawSplat(); $('js').value = Math.round(100 * Math.log(s / 0.005) / Math.log(200)); drawJac();
+  document.querySelectorAll('#presets button').forEach(b => b.classList.toggle('on', b.dataset.q.split(',').map(Number).every((v, i) => Math.abs(v - q[i]) < 1e-3) && +b.dataset.s === s)); }
+document.querySelectorAll('#presets button').forEach(b => b.addEventListener('click', () => setBall(b.dataset.q.split(',').map(Number), +b.dataset.s)));
+addEventListener('resize', () => { drawCollapse(); drawSplat(); drawJac(); });
+
+// ===== checks (the last two run on the j-roll and must come out different) =====
+const checks = [], ok = (n, p) => checks.push([n, !!p]);
+{
+  let rnd = 777; const r = () => (rnd = (rnd * 16807) % 2147483647) / 2147483647 * 2 - 1; let eR = 0, eL = 0, eIm = 0;
+  for (let n = 0; n < 300; n++) { const p = r(), q = r(), u = [0, p, q];
+    eR = Math.max(eR, Math.abs(det3(Rm(u)) - p * q * (p - q))); eL = Math.max(eL, Math.abs(det3(Lm(u)) - (p - q) * (p * p + p * q + q * q)));
+    const x = [r(), r(), r()]; eIm = Math.max(eIm, Math.abs(mul(x, [0, 1, 0])[2]), Math.abs(mul(x, [0, 0, 1])[1])); }
+  ok('det(x ↦ x·u) = pq(p − q) (300 random u)', eR < 1e-12);
+  ok('det(x ↦ u·x) = (p − q)(p² + pq + q²) (300 random u)', eL < 1e-12);
+  ok('x·i has no j part and x·j has no i part: flat in the plane of 1 and u', eIm < 1e-12);
+  const rig = M => svals(M).every(v => Math.abs(v - 1) < 1e-9);
+  ok('u·x is rigid at i and at j', rig(Lm([0, 1, 0])) && rig(Lm([0, 0, 1])));
+  const s2 = Math.SQRT1_2, seam = [0, s2, s2], fold = [0, s2, -s2];
+  const plane = M => { const c = E.map(e => mv(M, e)); let n = cross(c[0], c[1]); if (nrm(n) < 1e-9) n = cross(c[0], c[2]); return sc(n, 1 / nrm(n)); };
+  const nS = plane(Rm(seam)), nL = plane(Lm(seam)), want = sc([1, -1, 1], 1 / Math.sqrt(3));
+  ok('at the seam both sides flatten onto the plane perpendicular to 1 − i + j', svals(Rm(seam))[2] < 1e-7 && svals(Lm(seam))[2] < 1e-7 && Math.abs(Math.abs(dot(nS, want)) - 1) < 1e-9 && Math.abs(Math.abs(dot(nL, want)) - 1) < 1e-9);
+  ok('at the fold neither side is flat', svals(Rm(fold))[2] > 0.1 && svals(Lm(fold))[2] > 0.1);
+  const Ri = Rm([0, 1, 0]); ok('x·i kills 1 + j and stretches by √2 and 1: a shadow along 1 + j', nrm(mv(Ri, [1, 0, 1])) < 1e-12 && Math.abs(svals(Ri)[0] - Math.SQRT2) < 1e-9 && Math.abs(svals(Ri)[1] - 1) < 1e-9);
+  ok('the display is a proper rotation (det +1), not a mirror', (() => { const v = viewer(0.7, 0.3), M = T(E.map(e => v(e))); return Math.abs(det3(M) - 1) < 1e-9; })());
+  ok('i-roll: ×i on the left keeps orientation, ×j on the left flips it', det3(Lm([0, 1, 0])) > 0 && det3(Lm([0, 0, 1])) < 0);
+  const Rj = Rm([0, 0, 1]); ok('x·j kills 1 − i: the term the j splat loses', nrm(mv(Rj, [1, -1, 0])) < 1e-12 && svals(Rj)[2] < 1e-7);
+  ok('the pair x ↦ (x·i, x·j) has rank 3: what one splat drops, the other keeps', Math.min(...eigSym(add3(mm(T(Ri), Ri), mm(T(Rj), Rj))).w) > 0.5);
+  { const xs = [0.3, -0.7, 0.5], mx = sc(xs, -1); ok('whole ball at the origin: x and −x square to the same point with opposite hands', nrm(sub(sq(xs), sq(mx))) < 1e-12 && detJ(xs) * detJ(mx) < 0); }
+  { const save = [S.q, S.s]; S.q = [0, 0.9, 0]; S.s = 0.65; build(); const Ci = (M => mm(mm(M, G.C), T(M)));
+    ok('the x·i splat has no j spread and the x·j splat no i spread', Math.abs(Ci(Ri)[2][2]) < 1e-12 && Math.abs(Ci(Rj)[1][1]) < 1e-12 && G.C[0][0] > 1e-3);
+    const mix = add3(...G.parts.map(p => { const d = sub(p.mu, G.mu); return E.map((_, r) => E.map((_, c) => p.w * (p.C[r][c] + d[r] * d[c]))); }));
+    ok('a wing is exactly the mix of its two hand splats (law of total covariance)', Math.max(...mix.flat().map((v, n) => Math.abs(v - G.C.flat()[n]))) < 1e-12);
+    ok('control: at Doug\'s conch the two hand splats are apart', nrm(sub(G.parts[0].mu, G.parts[1].mu)) > 0.05 && G.parts[1].w > 0.01);
+    S.q = [0, 0, 0]; S.s = 0.9; build();
+    ok('whole ball at the origin: the two hand splats coincide, half the skin each', nrm(sub(G.parts[0].mu, G.parts[1].mu)) < 1e-9 && Math.abs(G.parts[0].w - 0.5) < 1e-9
+      && Math.max(...G.parts[0].C.flat().map((v, n) => Math.abs(v - G.parts[1].C.flat()[n]))) < 1e-9);
+    [S.q, S.s] = save; }
+  { const Hc = [[2,-1,1],[-1,0,-1],[1,-1,0]], z = M => Math.max(...mm(mm(M, Hc), T(M)).flat().map(Math.abs));
+    ok('the wings cannot rebuild the bsplat: H (caro) is invisible to both, Ri H Riᵀ = Rj H Rjᵀ = 0', z(Ri) < 1e-12 && z(Rj) < 1e-12 && z(Lm([0, 1, 0])) > 0.1); }
+  { const q = [0, 0.9, 0], fr = s => { const f = forwardJ(q, s); return jRel(gridMoments(f.V).C, gridMoments(f.L).C); };
+    ok('a small brotoid is its Jacobian ghost: under 0.1% apart at s = 0.001 (conch centre)', fr(0.001) < 1e-3);
+    ok('control: the conch brotoid at s = 0.65 is more than 5% from its ghost', fr(0.65) > 0.05);
+    const p = sq(q), R6 = sqrtsOf(p), hb = pullback(p, 0.005, R6.reduce((a, b) => nrm(sub(a, q)) < nrm(sub(b, q)) ? a : b));
+    ok('inverse: a small ball pulls back to its J⁻¹ ghost, nothing torn, under 0.1% apart (s = 0.005)', !hb.bad.some(Boolean) && jRel(gridMoments(hb.V).C, gridMoments(hb.L).C) < 1e-3);
+    ok('the square roots of q² come in ± pairs of opposite hand (6 at the conch centre)', R6.length === 6 && R6.every(x => R6.some(y => nrm(add(x, y)) < 1e-8) && detJ(x) * detJ(sc(x, -1)) < 0)); }
+  { const save = QS.M.map(r => r.slice()), sr = QS.r; let e = 0, eR = 0, moved = 1;
+    for (const q of [[0.3, -0.5, 0.7], [0, 0.9, 0], [-0.8, 0.1, -0.2]]) { syncQ(q); e = Math.max(e, nrm(sub(qOf(), q)));
+      QS.M = ortho(mm(rot([0.3, -0.7, 0.2], 1.1), QS.M)); eR = Math.max(eR, Math.abs(nrm(qOf()) - nrm(q))); moved = Math.min(moved, nrm(sub(qOf(), q))); }
+    ok('q setter: the pin reads back the q it was set to; rolling moves q and keeps |q|', e < 1e-12 && eR < 1e-12 && moved > 0.1);
+    QS.M = save; QS.r = sr; }
+  { const q = [0, 0.9, 0], one = chainPull(q, 1, 0.1), pb = pullback(sq(q), 0.1, q), c4 = chainPull(q, 4, 0.002);
+    ok('chain 1 is the one-step pullback: the same lobe, point for point', one && Math.abs(one.raw - 1) < 1e-12 && !one.bad.some(Boolean) && !pb.bad.some(Boolean) && Math.max(...one.V.map((v, i) => nrm(sub(v, pb.V[i])))) < 1e-9);
+    ok('chain 4: a small ball pulled back four steps is its Mₙ ghost, nothing torn, under 0.1% apart', c4 && !c4.bad.some(Boolean) && jRel(gridMoments(c4.V).C, gridMoments(c4.L).C) < 1e-3);
+    const g1 = inv3(Jof(q)); ok('control: at the conch centre the chain 4 ghost is over twice as stretched as the one-step ghost', c4 && elong(mm(c4.M, T(c4.M))) > 2 * elong(mm(g1, T(g1)))); }
+  { const save = [S.q, S.s]; S.q = [0, 0.9, 0]; S.s = 0.65; build(); const M = Rm([0, 1, 0]); let m = [0, 0, 0], w = 0;
+    for (const q of G.Q) { m = add(m, sc(mv(M, q.c), q.w)); w += q.w; }
+    ok('skin as splats: the patch weights sum to 1 and their centre is the wing splat\'s centre', Math.abs(w - 1) < 1e-12 && nrm(sub(m, mv(M, G.mu))) < 1e-12 && G.Q.every(q => q.C[0][0] >= 0));
+    [S.q, S.s] = save; build(); }
+  { OP = true; const li = svals(Lm([0, 1, 0])), ri = svals(Rm([0, 1, 0])), ci = svals(Cside([0, 1, 0]));
+    const t = opText('x·u on the right; Brightness; right angles; ±e<sub>b</sub>'); OP = false;
+    ok('Bᵒᵖ: at i the left side collapses and the right side is a rigid turn; the splats keep the collapsing side',
+      li[2] < 1e-7 && ri.every(v => Math.abs(v - 1) < 1e-9) && ci[2] < 1e-7 && svals(Lm([0, 1, 0])).every(v => Math.abs(v - 1) < 1e-9));
+    ok('Bᵒᵖ text swap: products and whole side words swap; Brightness and right angles do not', t === 'u·x on the left; Brightness; right angles; ±e<sub>a</sub>'); }
+  mul = mulJ;
+  ok('control: under the j-roll it is the other way round', !(det3(Lm([0, 1, 0])) > 0 && det3(Lm([0, 0, 1])) < 0));
+  ok('control: under the j-roll det(x ↦ x·u) is no longer pq(p − q)', Math.abs(det3(Rm([0, 0.3, 0.8])) - 0.3 * 0.8 * (0.3 - 0.8)) > 1e-6);
+  mul = mulI;
+}
+window.__checks = checks;
+const np = checks.filter(c => c[1]).length;
+$('checks').innerHTML = `This page runs ${checks.length} checks when it loads: <b style="color:${np === checks.length ? '#19e0ff' : '#ff5a1f'}">${np} of ${checks.length} pass</b>. The last two swap in the older j-roll product and confirm the results move with it, so the checks can fail.` + (np < checks.length ? ' Failing: ' + checks.filter(c => !c[1]).map(c => c[0]).join('; ') : '');
+
+document.querySelectorAll('.opsw').forEach(e => e.dataset.orig = e.innerHTML);
+function setOP(on) { OP = on; document.querySelectorAll('.opsw').forEach(e => e.innerHTML = opText(e.dataset.orig));
+  document.querySelectorAll('#algpick button').forEach(b => b.classList.toggle('on', +b.dataset.op === +on)); drawCollapse(); drawSplat(); }
+document.querySelectorAll('#algpick button').forEach(b => b.addEventListener('click', () => setOP(b.dataset.op === '1')));
+setBall([0, 0.9, 0], 0.65); requestAnimationFrame(t => { last = t; drawLit(t); });
+</script>
+</body>
+</html>

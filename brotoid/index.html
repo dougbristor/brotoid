@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BROT: one number, four readings</title>
+<meta name="description" content="BROT reads as Bristor, Rotation, Order, Torsion. Pick one Bristorian number and see all four readings at once; the fractal can show only B and the unmirrored half of R.">
+<!-- sites layer (head only): everything between these markers is sites'; the page's own bytes are untouched -->
+<link rel="canonical" href="https://bristorbrot.org/brotoid/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Bristorbrot">
+<meta property="fb:app_id" content="1521422937905578">
+<meta property="og:title" content="BROT: one number, four readings">
+<meta property="og:description" content="BROT reads as Bristor, Rotation, Order, Torsion. Pick one Bristorian number and see all four readings at once; the fractal can show only B and the unmirrored half of R.">
+<meta property="og:url" content="https://bristorbrot.org/brotoid/">
+<meta property="og:image" content="https://bristorbrot.org/media/og_home.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BROT: one number, four readings">
+<meta name="twitter:description" content="BROT reads as Bristor, Rotation, Order, Torsion. Pick one Bristorian number and see all four readings at once; the fractal can show only B and the unmirrored half of R.">
+<meta name="twitter:image" content="https://bristorbrot.org/media/og_home.jpg">
+<link rel="icon" href="../favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<meta name="version" content="1.0">
+<meta name="date" content="2026-10-27">
+<meta name="dcterms.modified" content="2026-10-27">
+<meta property="article:published_time" content="2026-10-27">
+<meta property="article:modified_time" content="2026-10-27">
+<meta property="og:updated_time" content="2026-10-27T00:00:00Z">
+<meta name="author" content="Doug Bristor">
+<link rel="alternate" type="text/markdown" href="https://bristorbrot.org/brotoid/changes.md" title="BROT page: update log">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"BROT: one number, four readings","url":"https://bristorbrot.org/brotoid/","version":"1.0","datePublished":"2026-10-27","dateModified":"2026-10-27","author":{"@type":"Person","name":"Doug Bristor"},"isPartOf":{"@type":"WebSite","name":"Bristorbrot","url":"https://bristorbrot.org/"},"subjectOf":{"@type":"DataFeed","name":"BROT page: update log","url":"https://bristorbrot.org/brotoid/changes.md","encodingFormat":"text/markdown"}}</script>
+<!-- /sites layer -->
+<!--
+  fable 2026-10-19: the clean rewrite of /fable/brotoid/, with BROT as the whole (Doug: "a, BROT as the whole. write the spec first").
+  SPEC: ./SPEC.md (S1-S12). Test: aicolab/tmp/proto_brotoid/spectest.mjs. brotbot tests the live page against the spec: the shipping gate.
+  Method from the tour (proto_explorer_tour): the whole first and in view, each part lit in its place, words caught, numbers from atoms.
+-->
+<style>
+:root { --bg: #07080b; --panel: #0d0e12; --line: #23252d; --fg: #eee9e0; --dim: #8a8a93; --keep: #19e0ff; --mirror: #ff5a1f; --cross: #ff4fa3;
+  --weft: #ffdb6b; --self: #3fd16b; --lite: #ffe14d; --link: #7fb8ff; --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+@media print { :root { --bg: #ffffff; --panel: #ffffff; --line: #cccccc; --fg: #222222; --dim: #555555; --keep: #0b7f93; --mirror: #c2470f; --cross: #c2185b;
+  --weft: #8a6d00; --self: #1f7a3a; --lite: #8a6d00; --link: #1a4f9c; } }
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 Georgia, 'Iowan Old Style', serif; overflow-x: hidden; }
+header.top { max-width: 1400px; margin: 0 auto; padding: 22px 16px 6px; }
+h1 { font-size: 32px; margin: 0 0 2px; letter-spacing: .01em; line-height: 1.2; }
+.by { font: 13px var(--mono); color: var(--dim); margin: 0 0 6px; }
+.outer { container-type: inline-size; max-width: 1400px; margin: 0 auto; }
+.wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 440px); gap: 28px; padding: 0 16px; }
+#text { grid-column: 1; grid-row: 1; min-width: 0; max-width: 700px; padding-bottom: 160px; }
+#stagecol { grid-column: 2; grid-row: 1; min-width: 0; }
+#fig-brot { margin: 0; flex: none; }
+a { color: var(--link); }
+h2 { font-size: 22px; margin: 40px 0 8px; line-height: 1.3; }
+h2 .n { color: var(--dim); font: 600 14px var(--mono); margin-right: 8px; }
+p { margin: 10px 0; }
+.lede { font-size: 19px; }
+.mono, .n { font-family: var(--mono); font-size: .92em; }
+a.w, button.tw { color: inherit; font-weight: 700; text-decoration: underline dotted .08em; text-underline-offset: .16em; cursor: pointer; }
+button.tw { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; }
+.k, a.w.k { color: var(--keep); } .m, a.w.m { color: var(--mirror); } .x, a.w.x { color: var(--cross); } .wf, a.w.wf { color: var(--weft); }   /* a.w's inherit outranked these (brotbot gate S7a) */
+.take { margin: 16px 0; padding: 10px 14px; border-left: 4px solid var(--lite); background: color-mix(in srgb, var(--lite) 7%, transparent); font-size: 18px; }
+.acro { font: 20px/1.5 var(--mono); letter-spacing: .04em; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 16px; margin: 8px 0 14px; overflow-wrap: anywhere; }
+.acro b { color: var(--mirror); font-weight: 600; } .acro small { display: block; font-size: 13px; color: var(--dim); letter-spacing: .02em; }
+.parts { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; padding: 0; list-style: none; }
+.parts button, .ctl button, .marks button { font: 13px var(--mono); background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 5px; padding: 3px 9px; cursor: pointer; }
+.parts button:hover, .ctl button:hover, .marks button:hover { border-color: var(--lite); }
+.ctl button[aria-pressed="true"] { border-color: var(--lite); color: var(--lite); }
+ul.facts { padding-left: 20px; } ul.facts li { margin: 8px 0; }
+/* the flow brotoid (Doug 10-20, recut): insights' brotoid_flow, live, in the sticky column under the BROT panel, at the panel's q and the page's r:
+   settings (q), readings (B R O T), model (the brotoid), top to bottom. It takes the height the panel leaves, so all three fit in the window. */
+#stagecol .stick { position: sticky; top: 8px; height: calc(100vh - 16px - var(--pfroom)); display: flex; flex-direction: column; gap: 8px; }
+:root { --pfroom: 100px; }   /* the track's bar and sign sit in the window's bottom band: the column stops above it */
+#fig-flow { margin: 0; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.flowstage { position: relative; flex: 1 1 auto; min-height: 180px; border-radius: 8px; overflow: hidden; background: #05070c; }
+.flowstage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+.flowctl { position: absolute; left: 8px; right: 8px; bottom: 6px; z-index: 2; display: flex; gap: 8px; align-items: center; font: 12px var(--mono); color: var(--dim); }
+.flowctl input { flex: 1; min-width: 60px; } .flowctl a { color: var(--link); white-space: nowrap; }
+/* the q setter (Doug 10-20, S16; its own frame 10-21: "the setter needs its own frame rather than be PIP frame"): insights' cone-ball view
+   beside the model while Fig 2 is wide, above it once Fig 2 is tall, never over it; the panel's q sphere moves onto its corner */
+#fig-flow { container-type: size; }
+.flowpair { flex: 1 1 auto; min-height: 0; display: flex; gap: 6px; }
+.qpip { position: relative; container-type: size; flex: 0 0 44%; min-width: 0; min-height: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #05070c; }
+.flowpair .flowstage { min-width: 0; min-height: 120px; }
+@container (max-aspect-ratio: 1/1) { .flowpair { flex-direction: column; } .qpip { flex: 0 0 38%; } }
+.qrow:not(:has(#qset)) { grid-template-columns: minmax(0, 1fr); }   /* the q sphere is in the PIP: the q line takes the row */
+.qpip #conecv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+.qpip #qset { position: absolute; right: 2px; top: 2px; width: min(40cqw, 53cqh); height: auto; aspect-ratio: 1.15; background: rgba(15,19,32,.72); border-radius: 5px; }
+@container (min-width: 1041px) {   /* the readings in one row: room for the model under them */
+  .wrap { grid-template-columns: minmax(0, 1fr) minmax(360px, 500px); }
+  #stagecol { margin-top: calc(-1 * var(--hdr, 0px)); padding-top: 8px; }   /* the column starts at the window's top, beside the title, so it fits under the window at scroll 0 too */
+  #stagecol .cells { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  #stagecol .cell { padding: 4px 5px 5px; } #stagecol .cell .hd { display: block; font-size: 11px; line-height: 1.25; white-space: normal; } #stagecol .cell .hd span { display: block; }   /* letter, then its words: the four line up */ #stagecol .cell .hd b { font-size: 16px; }
+  #stagecol .cell canvas { aspect-ratio: 1.1; } #stagecol .cell .v { font-size: 12px; } #stagecol .cell .c, #stagecol .cell .sees { font-size: 10px; line-height: 1.25; } }
+@media print { .flowctl { display: none; } .flowstage { flex: none; height: 240px; background: #fff; border: 1px solid #ccc; display: grid; place-items: center; }
+  .flowstage iframe { display: none; } .flowstage::after { content: 'live figure: on the page the brotoid flows, at the panel\'s q and r'; font: 12px var(--mono); color: #555; } }
+/* the gallery (Doug 10-20): the finale. Closed, the stills it cast stay in the figure; open, it takes the whole window, with the live seed in
+   the middle (its own frame) and the stills on a canvas over it. The track's bar and captions stay on top (z 49-50). */
+.sumh { font-size: 19px; margin: 30px 0 6px; }
+.galbox { position: relative; aspect-ratio: 16 / 9; width: 100%; background: #05070c; border-radius: 8px; overflow: hidden; }
+.galbox canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 2; pointer-events: none; }
+.galbox iframe { position: absolute; border: 0; z-index: 1; background: transparent;   /* its frame's edge fades out: the seed's glow is not cut square */
+  -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); mask-image: radial-gradient(closest-side, #000 70%, transparent 100%); }
+.galbox #galopen { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; }
+.galbox.has #galopen { top: auto; bottom: 10px; transform: translateX(-50%); }
+.galbox #galx { display: none; }
+.galbox.open { position: fixed; inset: 0; aspect-ratio: auto; border-radius: 0; z-index: 45; }
+.galbox.open #galopen { display: none; }
+.galbox.open #galx { display: block; position: absolute; top: 12px; right: 14px; z-index: 4; font: 18px var(--mono); background: #0d0e12f0; color: var(--fg); border: 1px solid var(--line); border-radius: 50%; width: 38px; height: 38px; cursor: pointer; }
+html.galopen body { overflow: hidden; }
+@media print { #galopen, #galx { display: none !important; } .galbox { background: #fff !important; border: 1px solid #ccc; } }
+.rev { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 16px 0; background: var(--panel); }
+.rev h3 { margin: 0 0 6px; font-size: 16px; }
+.rvin { display: flex; flex-wrap: wrap; gap: 8px 14px; font: 13px var(--mono); margin: 8px 0; }
+.rvin input { width: 6.5em; font: inherit; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 2px 5px; }
+.rvin select { font: inherit; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; }
+.rvbt { font: 13px var(--mono); margin: 6px 0; } .rvbt label { margin-left: 10px; color: var(--dim); white-space: nowrap; }
+#rvOut { font: 13px var(--mono); min-height: 1.4em; } #rvOut button.rvb { margin: 3px 6px 3px 0; }
+button.show, button.rvb, button.fsb { font: 12px var(--mono); background: none; color: var(--link); border: 1px solid var(--line); border-radius: 4px; padding: 0 7px; cursor: pointer; margin-left: 4px; }
+.note { font-size: 14px; color: var(--dim); }
+
+/* ---- Fig 1: the BROT panel */
+.panel { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 10px; }
+.qrow { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px; align-items: center; }
+#qset { width: 150px; height: 120px; display: block; cursor: grab; touch-action: none; }
+#qline { font: 13px var(--mono); line-height: 1.5; }
+#qline .hd { font-weight: 700; }
+.marks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.marks button { font-size: 11px; padding: 1px 6px; }
+.cells { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.qonly { color: var(--dim); }
+.cell { position: relative; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px 7px; transition: opacity .35s ease, border-color .35s ease, box-shadow .35s ease; min-width: 0; }
+.cell .hd { display: flex; align-items: baseline; gap: 6px; font: 12px var(--mono); color: var(--dim); white-space: nowrap; overflow: hidden; }
+.cell .hd b { font: 700 20px Georgia, serif; color: var(--fg); }
+.cell canvas { display: block; width: 100%; aspect-ratio: 1.35; }
+.cell .v { font: 600 15px var(--mono); }
+.cell .c { font: 11px var(--mono); color: var(--dim); }
+#vTx { display: block; font-size: 11px; color: var(--dim); } #vTx:empty { display: none; }
+.cell .sees { display: none; font: 11px var(--mono); }
+.panel.fractal .cell .sees { display: block; }
+.cell .sees .no, .cell .sees .rm { color: var(--mirror); } .cell .sees .yes { color: var(--self); }
+.cells.anylit .cell { opacity: .32; } .cells.anylit .cell.lit { opacity: 1; border-color: var(--lite); box-shadow: 0 0 0 1px var(--lite); }
+.cell.unseen { opacity: .5 !important; border-color: var(--mirror) !important; box-shadow: none !important; }
+.cell.unseen canvas { filter: grayscale(1); }
+.cell.unseen::after { content: 'the fractal cannot see this'; position: absolute; left: 8px; right: 8px; top: 46%; text-align: center; font: 600 11px var(--mono);
+  color: var(--mirror); background: color-mix(in srgb, var(--bg) 80%, transparent); border: 1px solid var(--mirror); border-radius: 4px; padding: 2px; z-index: 3; }
+.panel.fractal #vRm { text-decoration: line-through; color: var(--mirror); }
+.cell a.go { position: absolute; inset: 0; z-index: 1; }
+.cell canvas { position: relative; z-index: 2; }
+
+/* ---- other figures */
+.fig canvas.big { display: block; width: 100%; aspect-ratio: 1.6; border: 1px solid var(--line); border-radius: 6px; touch-action: none; cursor: grab; }
+#handcv { aspect-ratio: 2; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 12px var(--mono); color: var(--dim); margin: 6px 0; }
+.key i.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font: 12px var(--mono); color: var(--dim); margin: 8px 0; }
+.ctl input[type=range] { flex: 1 1 160px; accent-color: #ffdb6b; }
+#momcap { font: 13px var(--mono); color: var(--dim); }
+#cfig svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 6px; }
+
+/* ---- words, checks, figures */
+.catch { margin: 12px 0; padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--mirror) 55%, transparent); border-radius: 6px; }
+.catch h3 { margin: 0 0 6px; font-size: 16px; color: var(--mirror); }
+.catch ul { margin: 0; padding-left: 18px; font-size: 15px; } .catch li { margin: 4px 0; }
+dl.words { margin: 10px 0; } .wd { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.wd dt { font-size: 17px; } .wd dd { margin: 2px 0 0; font-size: 15px; }
+.wd .wh { color: var(--dim); } .wd .nt { color: var(--dim); font-style: italic; }
+.st { font: 600 11px var(--mono); border-radius: 3px; padding: 0 6px; margin-left: 6px; vertical-align: 2px; border: 1px solid; }
+.st.canon { color: #3fd16b; } .st.standard, .st.notation { color: var(--dim); } .st.posed { color: #7fb8ff; } .st.project { color: #c9a0ff; } .st.clash { color: var(--mirror); } .st.two { color: var(--lite); }
+ol.figlist, ul.checks { font: 13px/1.5 var(--mono); color: var(--dim); padding-left: 22px; }
+ol.figlist b, ul.checks b { color: var(--fg); } ul.checks li { margin: 6px 0; } ul.checks li.fail b { color: var(--mirror); }
+.foot { font: 13px var(--mono); color: var(--dim); }
+.printnote { display: none; }
+
+/* narrow: Fig 1 becomes a sticky band on top */
+@container (max-width: 1040px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  #stagecol { grid-column: 1; grid-row: 1; position: sticky; top: 0; z-index: 5; background: var(--bg); padding-top: 4px; }
+  #text { grid-row: 2; max-width: none; }
+  #fig-brot { position: static; }
+  #fig-brot figcaption { display: none; }
+  #stagecol .stick { position: static; height: auto; display: block; } #fig-flow { display: none; }   /* the band holds the panel only; §6 has the brotoid */
+  .panel { padding: 6px; }
+  .qrow { grid-template-columns: 96px minmax(0, 1fr); gap: 6px; }
+  #qset { width: 96px; height: 74px; }
+  #qline { font-size: 11px; line-height: 1.35; } .marks { margin-top: 3px; } .marks button { font-size: 10px; padding: 0 4px; }
+  .cells { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 6px; }
+  .cell { padding: 3px 4px; } .cell .hd { font-size: 10px; } .cell .hd b { font-size: 15px; } .cell .hd span { display: none; }
+  .cell canvas { aspect-ratio: 1.2; } .cell .v { font-size: 11px; } .cell .c, .cell .sees { font-size: 9px; line-height: 1.25; }
+  .cell.unseen::after { font-size: 9px; content: 'not seen'; }
+  .fig canvas.big { max-height: max(220px, calc(100vh - var(--band, 0px) - 60px)); }   /* a tall figure fits under the band (brotbot gate) */
+}
+@media print {
+  #qset, .qpip, .marks, .parts, .ctl, button.show, button.tw, .rvin, .rvbt, #rvOut { display: none !important; }
+  .wrap { grid-template-columns: minmax(0, 1fr); } #stagecol { position: static; grid-row: 1; } #text { grid-row: 2; max-width: none; }
+  #fig-brot { position: static; } .panel, .cell { background: #fff; }
+  #stagecol .stick { position: static; height: auto; display: block; }
+  .cells.anylit .cell { opacity: 1; }
+  .printnote { display: block; font: 12px var(--mono); color: #222; margin: 4px 0; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>BROT: one number, four readings</h1>
+  <p class="by">Doug Bristor · October 2026 · <a href="https://bristorbrot.org/">bristorbrot.org</a> · ▶ at the bottom plays it</p>
+</header>
+<div class="outer"><div class="wrap">
+
+<aside id="stagecol"><div class="stick">
+  <figure class="fig" id="fig-brot" data-title="BROT for one q, live">
+    <div class="panel" id="panel">
+      <div class="qrow">
+        <canvas id="qset" aria-label="the q setter: drag to roll the sphere; the point under the pin is q"></canvas>
+        <div>
+          <div id="qline"></div>
+          <div class="marks" id="marks">
+            <button data-p="0,90">1</button><button data-p="0,0">i (the conch)</button><button data-p="90,0">j</button>
+            <button data-p="45,0">i + j</button><button data-p="-45,0">i − j</button><button data-p="90,27">thin</button><button data-p="83,5">mirrors</button>
+          </div>
+        </div>
+      </div>
+      <div class="cells" id="cells">
+        <div class="cell" id="cell-B" data-l="B"><a class="go" href="#s1" aria-label="B: Bristor"></a><div class="hd"><b>B</b><span>stretch · tension</span></div><canvas id="cvB"></canvas>
+          <div class="v" id="vB"></div><div class="c">ℂ: 1, always</div><div class="sees"><span class="yes">the fractal sees this</span></div></div>
+        <div class="cell" id="cell-R" data-l="R"><a class="go" href="#s2" aria-label="R: Rotation"></a><div class="hd"><b>R</b><span>turn · hand</span></div><canvas id="cvR"></canvas>
+          <div class="v"><span id="vR"></span> · <span id="vRm"></span></div><div class="c">ℂ: q's angle, never mirrors</div><div class="sees"><span class="yes">turn: seen</span> · <span class="rm">mirror: not seen</span></div></div>
+        <div class="cell" id="cell-O" data-l="O"><a class="go" href="#s3" aria-label="O: Order"></a><div class="hd"><b>O</b><span>q·v vs v·q</span></div><canvas id="cvO"></canvas>
+          <div class="v" id="vO"></div><div class="c">ℂ: 0, always</div><div class="sees"><span class="no">not seen</span></div></div>
+        <div class="cell" id="cell-T" data-l="T"><a class="go" href="#s4" aria-label="T: brackets"></a><div class="hd"><b>T</b><span>brackets</span></div><canvas id="cvT"></canvas>
+          <div class="v"><span id="vT"></span><span id="vTx"></span></div><div class="c">ℂ: 0, always</div><div class="sees"><span class="no">not seen</span></div></div>
+      </div>
+      <div class="printnote" id="printnote1"></div>
+    </div>
+  </figure>
+  <figure class="fig" id="fig-flow" data-title="the setter and the model: the brotoid at this q and r, live">
+    <div class="flowpair">
+    <div class="qpip" id="qpip"><canvas id="conecv" aria-label="the q setter: the ball before squaring on the crossing cone, its rim in pink, and its weft in gold; drag to turn, wheel for r, roll the small sphere for q"></canvas></div>
+    <div class="flowstage"><iframe id="flowfr" title="the brotoid at the panel's q and the page's r, live (insights' brotoid_flow): drag to turn it"></iframe>
+      <div class="flowctl"><label for="rr2">r</label><input type="range" id="rr2" min="0.056" max="1.778" step="0.001" value="0.667"><span id="rval2"></span><!-- held unrendered (Doug 10-20, via sites; S12): <a id="exlink2" href="/insights/crease_what/explorer.html" target="_blank" title="the brotoid explorer at this q and r">explorer ↗</a> --></div></div>
+    </div>
+  </figure>
+</div></aside>
+
+<article id="text">
+<section id="s0" data-lit="B,R,O,T">
+  <h2><span class="n">0</span>Four words for one number</h2>
+  <p class="lede"><a class="w" data-t="BROT" href="#w-brot">BROT</a> reads as four words: <a class="w" data-t="Bristor" href="#w-bristor">Bristor</a>, <a class="w" data-t="Rotation" href="#w-rotation">Rotation</a>, <a class="w" data-t="Order" href="#w-order">Order</a>, <a class="w" data-t="Torsion" href="#w-torsion">Torsion</a>. <a class="fref" href="#fig-brot"></a> takes one <a class="w" data-t="Bristorian" href="#w-bristorian">Bristorian</a> number, <a class="w" data-t="q" href="#w-q">q</a> (in <a class="w" data-t="B2" href="#w-b2">B2</a>, its three parts 1, i and j), and answers four questions about it, one for each letter. Each answer is a measured property of q: B its <a class="w" data-t="Tension" href="#w-tension">Tension</a>, R its rotation, or its <a class="w" data-t="Reflection" href="#w-reflection">Reflection</a> when it <a class="w m" data-t="mirror" href="#w-mirror">mirrors</a>, O its order, T its brackets.</p>
+  <div class="acro"><b>B</b>RISTOR · <b>R</b>OTATION · <b>O</b>RDER · <b>T</b>ORSION<small>tension: how squaring <a class="w" data-t="stretch" href="#w-stretch">stretches</a> a small <a class="w" data-t="ball" href="#w-ball">ball</a> · rotation or reflection: how it turns it · order: whether order matters · T, the <a class="w" data-t="associator" href="#w-associator">associator</a>: whether brackets matter</small></div>
+  <p>The project's short name was read this way in June 2026. It is a reading, not a derivation: the meanings came afterwards, and the name had room for them.</p>
+  <p id="s0def"><b>The numbers.</b> A number here is x + yi + zj. Two of them multiply by the <a class="w" data-t="i-roll" href="#w-i-roll">i-roll</a>: i² = j² = −1, i·j = j and j·i = −i, with 1 the identity, extended to sums as usual. The product is neither commutative nor associative, so these are not the complex numbers or the quaternions. Squaring is (x + yi + zj)² = (x² − y² − z²) + y(2x − z)i + z(2x + y)j.</p>
+  <p id="s0b">Roll the q sphere (in the corner of the setter, <a class="fref" href="#fig-flow"></a>'s left or top frame, or at the top of <a class="fref" href="#fig-brot"></a> on a narrow screen) like a trackball: the point under the pin is q. Its lines are cyan or orange by what squaring does at each direction (section 2 says what that is). All four cells read the same q, so all four change together. The numbers here are <a class="w" data-t="B2" href="#w-b2">B2</a>: three parts, 1, i and j. Press a letter to light it:</p>
+  <ul class="parts">
+    <li><button data-lit="B">B</button></li><li><button data-lit="R">R</button></li><li><button data-lit="O">O</button></li><li><button data-lit="T">T</button></li><li><button data-lit="B,R,O,T">all four</button></li>
+  </ul>
+  <p class="take">One number, four questions. The fractal can answer only some of them (section 5 says which).</p>
+</section>
+
+<section id="s1" data-lit="B">
+  <h2><span class="n">1</span>B: what squaring does to a small ball</h2>
+  <p>Put a tiny <a class="w" data-t="ball" href="#w-ball">ball</a> round q and square every point. It comes out as an ellipsoid, drawn in the B cell: squaring <a class="w" data-t="stretch" href="#w-stretch">stretches</a> it more in some directions than in others. B is the longest stretch divided by the shortest, the ellipsoid's length l over its width w, both marked in the B cell: the tension squaring puts on the ball. 1 would mean the ball stays round.</p>
+  <p id="s1b">In ℂ, B is always 1: complex squaring leaves small circles round. In B2 it depends on which way q points. At the <a class="w" data-t="conch" href="#w-conch">conch</a>, q = i, B is <span class="n" data-n="conch.B"></span>. At the <a class="w" data-t="thin one" href="#w-thin-one">thin one</a>, q at (90°, 27°), it is <span class="n" data-n="thin.B"></span>, and the ball comes out nearly flat. Squaring changes sizes unevenly too: a number of size 1 squares to a size anywhere from <span class="n" data-n="size.lo"></span> to <span class="n" data-n="size.hi"></span>, by direction. In ℂ it is always 1.</p>
+  <p class="take">B: how unevenly squaring stretches a small ball round q.</p>
+</section>
+
+<section id="s2" data-lit="R">
+  <h2><span class="n">2</span>R: how far it turns, and whether it turns to its <a class="w m" data-t="mirror" href="#w-mirror">mirror</a></h2>
+  <p>Take the stretch away and what is left is a turn. The R cell draws the axes 1, i and j before (grey) and after (coloured). R is the angle of that turn. In ℂ it is the angle of q.</p>
+  <p id="s2b">In B2 the turn can also flip the ball over: a left-handed shape goes in, a right-handed one comes out. Which one happens is the <a class="w" data-t="hand" href="#w-hand">hand</a> of q. Squaring either <a class="w k" data-t="keep" href="#w-keep">keeps</a> the hand (cyan) or <a class="w m" data-t="mirror" href="#w-mirror">mirrors</a> it (orange); in ℂ it always keeps. A turn that keeps is a rotation. A turn that mirrors is a reflection: a rotation and a flip together. When it mirrors, the R cell also draws a dashed cyan frame: where the turn alone would take 1, i and j. The orange frame is that one flipped through the plane at right angles to the dashed axis; dotted lines link each pair, and they run along the axis. One number decides: <a class="w" data-t="det J" href="#w-det-j">det J</a>, how squaring scales a tiny box. Above 0 it keeps; below 0 it mirrors. In standard terms, squaring preserves orientation at q where det J > 0 and reverses it where det J < 0. At the conch R is <span class="n" data-n="conch.R"></span> and it keeps; at (83°, 5°) R is <span class="n" data-n="mirrorq.R"></span> and it mirrors.</p>
+  <figure class="fig" id="fig-hand" data-title="the hand over every direction q can point">
+    <canvas class="big" id="handcv" aria-label="the hand of every direction: cyan keeps, orange mirrors"></canvas>
+    <div class="ctl"><button id="conebtn" aria-pressed="false">map ⇄ cone</button><span id="handnote"></span></div>
+    <div class="key"><span><i class="sw" style="background:var(--keep)"></i>keeps</span><span><i class="sw" style="background:var(--mirror)"></i>mirrors</span><span><i class="sw" style="background:var(--cross)"></i>det J = 0</span><span><i class="sw" style="background:#b48cff"></i><a class="w" data-t="seam" href="#w-seam">seam</a></span><span><i class="sw" style="background:var(--self)"></i><a class="w" data-t="fold" href="#w-fold">fold</a></span><span><i class="sw" style="background:#fff;border:1px solid #888"></i>q</span></div>
+  </figure>
+  <p id="s2c"><a class="fref" href="#fig-hand"></a> maps the hand over every direction q can point. Across: the angle around from i toward j, −180° to 180°, i in the middle. Up and down: toward 1 and −1. Exactly half the directions mirror, because det J is odd: det J(−q) = −det J(q). Every line from 0 through the border makes the <a class="w x" data-t="crossing cone" href="#w-crossing-cone">crossing cone</a> (map ⇄ cone draws it). Two of its lines are named: the <a class="w" data-t="seam" href="#w-seam">seam</a>, along i + j, and the <a class="w" data-t="fold" href="#w-fold">fold</a>, along i − j. In the plane of i and j, det J = 4(y − z)(y + z)²: it changes sign across the seam and only touches zero at the fold.</p>
+  <p class="take">R: the turn that is left after the stretch, and its hand: keep or mirror.</p>
+</section>
+
+<section id="s3" data-lit="O">
+  <h2><span class="n">3</span>O: does q·v equal v·q?</h2>
+  <p>Multiply q by another number v, both ways round. In ℂ, q·v = v·q always. In B2 they can differ: i·j = j, but j·i = −i. The difference q·v − v·q is the <a class="w" data-t="commutator" href="#w-commutator">commutator</a>.</p>
+  <p id="s3b">The O cell maps its size over every direction v, with the same axes as <a class="fref" href="#fig-hand"></a>: brighter means order matters more, and the white rings mark the biggest. O is that biggest size, over |q|. At q = 1 it is <span class="n" data-n="one.O"></span>: real numbers commute with everything. At the conch it is <span class="n" data-n="conch.O"></span>.</p>
+  <p class="take">O: how much the order of a product with q can matter.</p>
+</section>
+
+<section id="s4" data-lit="T">
+  <h2><span class="n">4</span>T: does it matter where the brackets go?</h2>
+  <p>Multiply three numbers: (q·i)·j, or q·(i·j). In ℂ and in the quaternions the two are always equal. In B2 they need not be. Their difference is the <a class="w" data-t="associator" href="#w-associator">associator</a>.</p>
+  <p id="s4b">The T cell draws both products (green and violet) and the <a class="w" data-t="gap" href="#w-gap">gap</a> between them. T is that gap over |q|, for this one <a class="w" data-t="witness triple" href="#w-witness-triple">witness triple</a>, q, i, j. At the conch it is <span class="n" data-n="conch.T"></span>; at q = 1 it is <span class="n" data-n="one.T"></span>.</p>
+  <p id="s4c">The T cell also compares the two answers the way you would compare two complex numbers: by the angle between them, then × the ratio of their sizes. At the conch they come out the same size (ratio <span class="n" data-n="conch.Tsize"></span>) but turned <span class="n" data-n="conch.Tturn"></span>. At (0°, 60°), toward 1, they point the same way (<span class="n" data-n="t60.Tturn"></span>) and the brackets change only the size: one is <span class="n" data-n="t60.Tsize"></span> the size of the other. On the fold, (q·i)·j is 0. In ℂ the two are always equal: 0° and × 1.</p>
+  <p id="s4d">In the name, Torsion stands for a defect: a familiar rule that fails here. T measures one defect, the brackets', and that measure is the associator. The torsion of differential geometry is the other defect, order: once a connection is built from this product, its torsion is the commutator, section 3's O.</p>
+  <p class="take">T: how much the brackets of a product with q can matter.</p>
+</section>
+
+<section id="s5" data-lit="fractal">
+  <h2><span class="n">5</span>What the fractal cannot see</h2>
+  <p>The <a class="w" data-t="Bristorbrot" href="#w-bristorbrot">Bristorbrot</a>, the brot for short, is drawn by repeating one step, z ← z² + c. Adding c only moves things; the square does all of the shaping. And a square multiplies a number by itself:</p>
+  <ul class="facts">
+    <li><b>It has nothing to put in order.</b> z·z uses only the half of the product that does not care about order. O is invisible to it.</li>
+    <li><b>It has no brackets to move.</b> One product of two numbers has nothing to regroup. T is invisible to it.</li>
+    <li><b>It does not mark a mirror.</b> The fractal colours each point by one number: how many steps it takes to escape. That number records nothing about which way round a small shape came out at each step. So the fractal does not mark the mirror. Whether the mirror leaves any trace in the fractal's shape is open.</li>
+  </ul>
+  <p id="s5c">There is an exact test. Read every product the other way round, a·b as b·a. That gives a second algebra, the <a class="w" data-t="opposite algebra" href="#w-opposite-algebra">opposite algebra</a> of B2. Its squares are the same, since q·q reads the same either way, so its fractal is the same at every point; section 9 checks this point by point. Yet its commutator is minus B2's, and its associator differs. Two different algebras draw one fractal, so the fractal cannot be what tells them apart. In standard terms: squaring's derivative is J(q)v = q·v + v·q, the half of the product that does not care about order. The commutator q·v − v·q is the other half, and the fractal never uses it.</p>
+  <p id="s5b">So the fractal is a picture of B and of R's turn. <a class="fref" href="#fig-brot"></a> now marks what it cannot see: O, T, and the mirror half of R. This instrument shows the other half of the name beside the fractal, one number at a time.</p>
+  <p class="take">The fractal sees B and the turn. Only this instrument shows O, T and the mirror.</p>
+</section>
+
+<section id="s6" data-lit="B">
+  <h2><span class="n">6</span>B up close: the <a class="w" data-t="brotoid" href="#w-brotoid">brotoid</a></h2>
+  <p>The B cell squares a tiny ball. Grow the ball, and squaring bends it as well as stretching it. Start in ℂ: square every point of a circle and you get a limaçon. If the circle passes through 0, the curve gets a sharp point and becomes a cardioid (<a class="fref" href="#fig-c"></a>). The main body of the Mandelbrot set has this shape, turned and shifted (section 9 says how).</p>
+  <figure class="fig" id="fig-c" data-title="ℂ: a circle through 0, squared" data-fixed>
+    <div id="cfig"></div>
+  </figure>
+  <p id="s6b">Now square a ball of radius <a class="w" data-t="r" href="#w-r">r</a> round q in B2. Its surface, the <a class="w" data-t="skin" href="#w-skin">skin</a>, lands on the <a class="w" data-t="brotoid" href="#w-brotoid">brotoid</a> (<a class="fref" href="#fig-brotoid"></a>; q is the panel's q). Its lines are coloured by the hand where each point started. It does three things a squared circle never does:</p>
+  <ul class="facts">
+    <li id="f1"><b>Which way q points matters.</b> Squared balls at different q are different shapes, not one shape turned, because B and R change with q. <button class="show" data-show="0">show me ▸</button></li>
+    <li id="f2"><b>It changes hand along a cone, not at a point.</b> In ℂ squaring crushes the plane only at 0. In B2 it does so on the whole crossing cone, which this page also calls the <a class="w x" data-t="brim" href="#w-brim">brim</a>: the ball is a hat's crown and the cone its brim. Where the ball, before squaring, meets that cone, it carries a <a class="w x" data-t="rim" href="#w-rim">rim</a>; on the brotoid that rim is the <a class="w x" data-t="crossing" href="#w-crossing">crossing</a>, where one hand gives way to the other. The brim inside the rim is the <a class="w x" data-t="plate" href="#w-plate">plate</a>, and the hole it fills is the <a class="w x" data-t="eye" href="#w-eye">eye of the brim</a>; squared, the plate is the pink and violet sheet on <a class="fref" href="#fig-brotoid"></a>, pink where the brim's top faces you and violet where its underside does. The brotoid's crossing is also called the <a class="w" data-t="caustic" href="#w-caustic">caustic</a>. <button class="show" data-show="1">show me ▸</button></li>
+    <li id="f3"><b>It has a hand.</b> Cyan where squaring keeps, orange where it mirrors, on the brotoid exactly as in <a class="fref" href="#fig-hand"></a>. <button class="show" data-show="2">show me ▸</button></li>
+  </ul>
+  <p id="s6c">Grow r and the brotoid passes through its <a class="w" data-t="moment" href="#w-moment">moments</a> (a moment is an r where the brotoid changes kind). ① The ball reaches the crossing cone, and the crossing is born on the brotoid. ② The skin starts to pass through itself, without cutting: a <a class="w wf" data-t="weft" href="#w-weft">weft</a>, with an <a class="w" data-t="umbrella" href="#w-umbrella">umbrella</a> at each end. Just before, the skin folds sharply where the weft will be born: a <a class="w" data-t="crease" href="#w-crease">crease</a>, ringed in cyan on <a class="fref" href="#fig-flow"></a> with its gap, how far r still has to grow. ④ Part of a weft turns from cross to self. ③ At r = |q| the skin passes through 0. The buttons under <a class="fref" href="#fig-brotoid"></a> set r just past each one, for the panel's q.</p>
+  <figure class="fig" id="fig-brotoid" data-title="the brotoid at the panel's q">
+    <canvas class="big" id="brcv" aria-label="the brotoid: drag to turn"></canvas>
+    <div class="ctl"><label for="rr">r</label><input type="range" id="rr" min="0.056" max="1.778" step="0.001" value="0.667"><span id="rval" class="mono"></span></div>
+    <div class="ctl" id="moms"></div>
+    <div id="momcap"></div>
+    <div class="key"><span><i class="sw" style="background:var(--keep)"></i>keeps</span><span><i class="sw" style="background:var(--mirror)"></i>mirrors</span><span><i class="sw" style="background:var(--cross)"></i>the crossing</span><span><i class="sw" style="background:var(--weft)"></i>cross weft</span><span><i class="sw" style="background:var(--self)"></i>self weft</span><span><i class="sw" style="background:#fff;border:1px solid #888"></i>umbrella</span><span><i class="sw" style="background:rgba(255,79,163,.45)"></i><i class="sw" style="background:rgba(170,110,255,.45)"></i>the plate, squared: top, underside</span></div>
+  </figure>
+  <p><a class="fref" href="#fig-flow"></a>, under the panel, is the same brotoid at the same q and r, drawn as dust flowing on its skin. Its r slider and the one under <a class="fref" href="#fig-brotoid"></a> are one r.</p>
+  <!-- held unrendered (Doug 10-20, via sites; S12): <p>The full walk through these moments, on the brotoid explorer: <a href="/fable/proto_explorer_tour/">the explorer, opened up</a>.</p> -->
+  <h3 class="sumh" id="s6sum">So what makes a brotoid?</h3>
+  <p class="take" id="sumtake">BROT reads one number four ways: B, how squaring stretches a small ball; R, how it turns it or mirrors it; O, whether order matters; T, whether brackets do. Up close, B is a shape, the brotoid, and three things make it worth looking at. Its shape depends on which way q points: a different q gives a different shape, not the same shape turned. It has a hand, cyan where squaring keeps and orange where it mirrors. And it changes hand along a whole cone, so the crossing on the brotoid is a curve, not a point. As the ball grows, it passes through its moments, each a change of kind.</p>
+  <p id="galp"><a class="fref" href="#fig-gallery"></a> shows it at many q. A large live brotoid, the seed, visits the named q's of <a class="fref" href="#fig-brot"></a> and then the rest of the sphere. At each one it casts off a still, which flies out to its place, its q, and shrinks as it goes. Turn the seed and the gallery turns with it. The track ends here.</p>
+  <figure class="fig" id="fig-gallery" data-title="the gallery: the brotoid at many q, each still placed at its q">
+    <div class="galbox" id="galbox"><canvas id="galcv" aria-label="the gallery: stills of the brotoid, each placed at its q"></canvas>
+      <button type="button" class="show" id="galopen">open the gallery, full window ▸</button><button type="button" id="galx" aria-label="close the gallery (Esc)" title="close (Esc)">✕</button></div>
+  </figure>
+</section>
+
+<section id="s7">
+  <h2><span class="n">7</span>Explore</h2>
+  <!-- held unrendered (Doug 10-20, via sites; S12): they will link to descriptions of the brotoscope's function mode
+  <ul class="facts">
+    <li><a href="/fable/proto_explorer_tour/">The explorer, opened up</a>: a narrated tour of the brotoid's moments, on the brotoid explorer.</li>
+    <li><a id="exlink" href="/insights/crease_what/explorer.html">The brotoid explorer at this q</a>: the ball before squaring, the crossing cone, and every moment on one ruler.</li>
+    <li><a href="/caro/direction_field/">The direction-field instrument</a>: choose q on a sphere, turn the squared ball in 3-D, cut into it, and follow a labelled test chart through the square.</li>
+  </ul> -->
+  <div class="rev" id="rev">
+    <h3>Reverse: from four readings back to q</h3>
+    <p>Type four readings and a hand, and the page searches every direction for a q that has them. The boxes start with the panel's own readings: change one, then find where q goes.</p>
+    <div class="rvin">
+      <label><b>B</b> <input id="rvB" inputmode="decimal" aria-label="B"></label>
+      <label><b>R</b> <input id="rvR" inputmode="decimal" aria-label="R in degrees">°</label>
+      <label><b>O</b> <input id="rvO" inputmode="decimal" aria-label="O"></label>
+      <label><b>T</b> <input id="rvT" inputmode="decimal" aria-label="T"></label>
+      <label>hand <select id="rvH" aria-label="hand"><option value="1">keep</option><option value="-1">mirror</option></select></label>
+    </div>
+    <div class="rvbt"><button class="rvb" id="rvGo" type="button">find q</button> <button class="rvb" id="rvFill" type="button">from the panel</button> <label><input type="checkbox" id="rvNoT"> leave T out</label></div>
+    <p id="rvOut" aria-live="polite"></p>
+    <p id="rvNote">Only the direction of q comes back: q and three times q have the same four readings. And B, R, O and the hand cannot tell q from its fold mirror, its mirror image through the fold plane, because that mirror is the <a class="w" data-t="reversal automorphism" href="#w-reversal-automorphism">reversal automorphism</a>: it keeps every product. T tells the two apart only because its test numbers, i and j, stay where they are while the mirror moves them. Tick <i>leave T out</i> to see the fold mirror come back as well.</p>
+  </div>
+</section>
+
+<section id="s8">
+  <h2><span class="n">8</span>Words caught</h2>
+  <p>The words this page uses. Each one has its rule, where it shows, and its standing. A word the project's vocabulary map files takes its standing from the map, read as this page loads wherever the map is served (where it isn't, the standing filed with this page): <b>filed</b> or <b>posed</b> there, then the map's label (coined, standard, false friend …).<span id="mapsrc"></span> For the rest, the page sets it. <b>Glossary</b>: filed there. <b>Standard</b> or <b>notation</b>: ordinary maths. <b>Posed</b>: new here, page-local. <b>Project</b>: the project's own word, used across its pages but not filed in the vocabulary. <b>Two names</b>, <b>two senses</b> or <b>three senses</b>: still being settled. Press a word to see it.</p>
+  <div class="catch" id="catches"></div>
+  <dl class="words" id="words"></dl>
+</section>
+
+<section id="s9">
+  <h2><span class="n">9</span>What it is not, and how we checked</h2>
+  <ul class="facts">
+    <li><b>It is not the Bristorbrot.</b> It is one square, with no repeating and no c. The fractal comes from repeating the step thousands of times.</li>
+    <li><b>The cardioid link is ℂ's.</b> In ℂ, a squared circle through 0 is the main body's edge turned half a turn and shifted: c = ¼ − z² carries one exactly onto the other. Whether anything like that holds in B2 is not known.</li>
+    <li><b>The pictures are samples.</b> <a class="fref" href="#fig-brotoid"></a> draws the skin from <span class="n" data-n="sph.lines"></span> lines (<span class="n" data-n="sph.lat"></span> circles of latitude and <span class="n" data-n="sph.lon"></span> meridians, <span class="n" data-n="sph.pts"></span> points each); the weft and the umbrellas come from the closed form, not from the lines.</li>
+  </ul>
+  <p>The square is (x + yi + zj)² = (x² − y² − z², y(2x − z), z(2x + y)) in (1, i, j), from the product on the Algebra page (<a class="w" data-t="i-roll" href="#w-i-roll">i-roll</a>: e<sub>a</sub>·e<sub>a</sub> = −1, e<sub>a</sub>·e<sub>b</sub> = sgn(b − a)·e<sub>b</sub>). Its derivative J and det J = 4(2x³ + x²y − x²z + 2xy² + 2xz² + y³ + y²z − yz² − z³) were found and factored symbolically. Each claim below is recomputed live by a second path, and each check runs a deliberately wrong version, a plant, which must fail.</p>
+  <ul class="checks" id="checks"><li>running…</li></ul>
+  <p class="foot" id="srcline"></p>
+  <p class="foot">Made in the Bristorbrot project by Doug Bristor with three of its AI agents, caro, insights and fable. The brotoid and its first instrument are caro's (October 2026). The BROT reading and the conch are Doug's. The moments, the weft's closed form and the explorer are insights' and fable's. Words and figures by fable; every number on this page is computed in your browser.</p>
+</section>
+
+<section id="s10">
+  <h2><span class="n">10</span>Figures</h2>
+  <ol class="figlist" id="figlist"></ol>
+</section>
+</article>
+</div></div>
+<!-- sites footer: version and date come from brotoid/changes.md -->
+<footer id="pageversion" class="foot" style="text-align:center;font-size:11px;padding:6px 0 14px">Version 1.0 · updated 2026-10-27 · <a href="/brotoid/changes.md" rel="alternate" type="text/markdown">update log</a></footer>
+<!-- /sites footer -->
+
+<script src="../lib/rest.js"></script>
+<script src="../lib/sphere_setter.js"></script>
+<script src="../lib/pageflow.js"></script>
+<script type="module">
+'use strict';
+import { square } from '/codetree/blocks/bristor_product/v1.js';
+import { detJ, dirOf, crossing, CONE } from '/codetree/blocks/brotoid_weft/v1.js';
+import { moments } from '/codetree/blocks/brotoid_moments/v1.js';
+// the readings atom, planted by insights 10-19 (S5 reports which source the page reads).
+import * as RD from '/codetree/blocks/brot_readings/v1.js';
+import { eyeQuads, topNormal, span, LN } from './brim_eye/v1.js';   // candidate block (fable 10-22), for /codetree/blocks/brim_eye/v1.js
+const RSRC = new URL('/codetree/blocks/brot_readings/v1.js', import.meta.url).pathname;
+const { readings, orderGap } = RD;
+
+const $ = id => document.getElementById(id), f2 = v => (+v).toFixed(2), f3 = v => (+v).toFixed(3);
+const ease = x => x * x * (3 - 2 * x), lerp = (a, b, k) => a + (b - a) * k;
+const sub = (a, b) => a.map((v, k) => v - b[k]), sc = (a, s) => a.map(v => v * s), nrm = a => Math.hypot(...a);
+const MAG = 1, qAt = (lo, la) => sc(dirOf(lo, la), MAG);   // |q| = 1 (Doug 10-23: "lets move to |q| = 1.0"); r values below are the 0.9-era ones / 0.9, so every picture keeps its shape
+const QN = { conch: [0, 0], thin: [90, 27], mirrorq: [83, 5], one: [0, 90], tq: [60, 30], t60: [0, 60] };
+// T, compared by the atom's own two bracketings (Tpair): the angle between them and their size ratio
+const tSplit = P => { const L = P.left, b = P.right, nl = nrm(L), nb = nrm(b);
+  return { turn: nl < 1e-12 ? NaN : Math.acos(Math.max(-1, Math.min(1, (L[0] * b[0] + L[1] * b[1] + L[2] * b[2]) / (nl * nb)))) * 180 / Math.PI, size: nl / nb }; };
+const PRINT = matchMedia('print');
+const PAL = () => PRINT.matches || document.documentElement.classList.contains('printing')
+  ? { keep: '#0b7f93', mirror: '#c2470f', cross: '#c2185b', weft: '#8a6d00', self: '#1f7a3a', ink: '#222', dim: 'rgba(0,0,0,.35)', lite: '#8a6d00', hKeep: [196, 230, 236], hMirror: [246, 210, 192], heat0: [255, 255, 255], heat1: [214, 160, 20], ring: '#000', A: '#3d7a00', Bv: '#6a3fbf' }
+  : { keep: '#19e0ff', mirror: '#ff5a1f', cross: '#ff4fa3', weft: '#ffdb6b', self: '#3fd16b', ink: '#eee9e0', dim: 'rgba(238,233,224,.3)', lite: '#ffe14d', hKeep: [12, 70, 84], hMirror: [92, 34, 14], heat0: [16, 17, 24], heat1: [255, 214, 80], ring: '#fff', A: '#9dff3f', Bv: '#b48cff' };
+
+// ---- state: one q (a direction at |q| = 1) for every figure, one r for the brotoid (absolute, as insights' explorer)
+const S = { lon: 0, lat: 0, r: 0.667, yaw: -0.6, pitch: 0.35, byaw: -0.7, bpitch: 0.3, cone: false, cyaw: 0.6, cpitch: 0.35 };
+const q = () => qAt(S.lon, S.lat);
+let RQ = readings(q());
+const fmtQ = v => { const t = [['', v[0]], ['i', v[1]], ['j', v[2]]].filter(([, x]) => Math.abs(x) > 5e-4);
+  return t.length ? t.map(([u, x], k) => (x < 0 ? (k ? ' − ' : '−') : (k ? ' + ' : '')) + Math.abs(x).toFixed(2) + u).join('') : '0'; };
+const onCone = r => !r.Q;   // the atom's own word: J singular, no turn (B ∞). Its χ still says +1 there; asked of insights (brotbot gate S4, 10-19)
+const handWord = r => onCone(r) ? 'on the crossing cone' : r.chi > 0 ? 'keeps' : 'mirrors';
+const handVar = r => onCone(r) ? 'var(--cross)' : r.chi > 0 ? 'var(--keep)' : 'var(--mirror)';
+
+// ---- the unit sphere's drawn lines (Fig 1's B cell, Fig 2's cone view, Fig 4's skin): circles of latitude, then meridians
+const SPH = (() => { const L = []; for (let a = -60; a <= 60; a += 30) L.push(Array.from({ length: 33 }, (_, n) => dirOf(n * 11.25, a)));
+  L.nLat = L.length; for (let o = 0; o < 180; o += 30) L.push(Array.from({ length: 33 }, (_, n) => dirOf(o, n * 5.625 - 90))); L.nLon = L.length - L.nLat; return L; })();
+
+// ---- the numbers the text says: from the atoms at load (S5), never typed
+const RN = Object.fromEntries(Object.entries(QN).map(([k, [lo, la]]) => [k, readings(qAt(lo, la))]));
+const SIZE = (() => { let lo = Infinity, hi = 0; for (let a = -180; a < 180; a += 1) for (let b = -90; b <= 90; b += 1) { const s = nrm(square(dirOf(a, b))); lo = Math.min(lo, s); hi = Math.max(hi, s); } return { lo, hi }; })();
+const NUM = { 'conch.B': f2(RN.conch.B), 'thin.B': f2(RN.thin.B), 'size.lo': f2(SIZE.lo), 'size.hi': f2(SIZE.hi), 'conch.R': RN.conch.R.toFixed(0) + '°', 'mirrorq.R': RN.mirrorq.R.toFixed(0) + '°',
+  'one.O': f3(RN.one.O), 'conch.O': f3(RN.conch.O), 'conch.T': f3(RN.conch.T), 'one.T': f3(RN.one.T), 'tq.T': f3(RN.tq.T),
+  'conch.Tturn': tSplit(RN.conch.Tpair).turn.toFixed(0) + '°', 'conch.Tsize': f2(tSplit(RN.conch.Tpair).size), 't60.Tturn': tSplit(RN.t60.Tpair).turn.toFixed(0) + '°', 't60.Tsize': f2(tSplit(RN.t60.Tpair).size),
+  'sph.lines': String(SPH.length), 'sph.lat': String(SPH.nLat), 'sph.lon': String(SPH.nLon), 'sph.pts': String(SPH[0].length) };
+document.querySelectorAll('[data-n]').forEach(s => { s.textContent = NUM[s.dataset.n]; });
+
+// ---- the projection every 3-D figure uses: i to the right, 1 up, j toward you; yaw about 1, then pitch
+const proj = (v, yaw, pitch) => { const X = v[1], Y = v[0], Z = v[2], cy = Math.cos(yaw), sy = Math.sin(yaw), x1 = cy * X + sy * Z, z1 = -sy * X + cy * Z, cp = Math.cos(pitch), sp = Math.sin(pitch);
+  return [x1, cp * Y - sp * z1, sp * Y + cp * z1]; };
+function fit(cv) { const d = devicePixelRatio || 1, W = Math.round(cv.clientWidth * d), H = Math.round(cv.clientHeight * d); if (!W || !H) return null;
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; } const x = cv.getContext('2d'); x.clearRect(0, 0, W, H); return { x, W, H, d }; }
+const mv = (M, v) => M.map(r => r[0] * v[0] + r[1] * v[1] + r[2] * v[2]);
+
+// ---- Fig 1, the four cells
+function drawB() { const c = fit($('cvB')); if (!c) return; const { x, W, H, d } = c, P = PAL(), R = RQ, s1 = R.s[0] || 1, k = 0.4 * Math.min(W, H), col = R.chi > 0 ? P.keep : P.mirror;
+  x.lineWidth = 1.2 * d;
+  for (const L of SPH) { for (let n = 0; n + 1 < L.length; n++) { const a = proj(sc(mv(R.J, L[n]), 1 / (s1 * MAG)), S.yaw, S.pitch), b = proj(sc(mv(R.J, L[n + 1]), 1 / (s1 * MAG)), S.yaw, S.pitch);
+    x.strokeStyle = (a[2] + b[2]) > 0 ? col : P.dim; x.beginPath(); x.moveTo(W / 2 + k * a[0], H / 2 - k * a[1]); x.lineTo(W / 2 + k * b[0], H / 2 - k * b[1]); x.stroke(); } }
+  // l and w (Doug 10-22): the ellipsoid's longest and shortest axes, J's first and last singular directions, so B = l/w is drawn, not only said
+  const lw = { l: mv(R.J, R.Vs[0]), w: mv(R.J, R.Vs[2]) }; $('cvB').__lw = lw; x.font = `${11 * d}px ui-monospace, monospace`; x.textBaseline = 'middle'; x.fillStyle = P.ink;
+  for (const [key, dash] of [['l', false], ['w', true]]) { const p = proj(sc(lw[key], 1 / (s1 * MAG)), S.yaw, S.pitch), ex = k * p[0], ey = -k * p[1], n = Math.hypot(ex, ey) || 1;
+    x.strokeStyle = P.ink; x.lineWidth = 1.6 * d; x.setLineDash(dash ? [3 * d, 2 * d] : []); x.beginPath(); x.moveTo(W / 2 - ex, H / 2 - ey); x.lineTo(W / 2 + ex, H / 2 + ey); x.stroke(); x.setLineDash([]);
+    x.textAlign = 'center'; x.fillText(key, W / 2 + ex + 9 * d * ex / n, H / 2 + ey + 9 * d * ey / n); }
+  x.textAlign = 'left'; x.fillText('B = l / w', 4 * d, 9 * d); }
+function drawR() { const c = fit($('cvR')); if (!c) return; const { x, W, H, d } = c, P = PAL(), R = RQ, k = 0.36 * Math.min(W, H), cx = W / 2, cy = H / 2 + 4 * d, col = R.chi > 0 ? P.keep : P.mirror;
+  const arrow = (v, st, w, lab, dash) => { const p = proj(v, S.yaw, S.pitch); x.strokeStyle = st; x.fillStyle = st; x.lineWidth = w * d; x.setLineDash(dash ? [4 * d, 3 * d] : []); x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + k * p[0], cy - k * p[1]); x.stroke(); x.setLineDash([]);
+    if (lab) { x.font = `${11 * d}px ui-monospace, monospace`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(lab, cx + 1.18 * k * p[0], cy - 1.18 * k * p[1]); } };
+  [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(e => arrow(e, P.dim, 1, ''));
+  if (R.Q) { if (R.axis) { const a = proj(R.axis, S.yaw, S.pitch); x.setLineDash([3 * d, 3 * d]); x.strokeStyle = P.dim; x.lineWidth = d; x.beginPath(); x.moveTo(cx - 1.1 * k * a[0], cy + 1.1 * k * a[1]); x.lineTo(cx + 1.1 * k * a[0], cy - 1.1 * k * a[1]); x.stroke(); x.setLineDash([]); }
+    if (R.chi < 0 && R.axis) { const a = R.axis, flip = e => sub(e, sc(a, 2 * (a[0] * e[0] + a[1] * e[1] + a[2] * e[2])));   // Q = turn · flip across the plane at right angles to the axis
+      [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(e => { const u = proj(mv(R.Q, flip(e)), S.yaw, S.pitch), w = proj(mv(R.Q, e), S.yaw, S.pitch); arrow(mv(R.Q, flip(e)), P.keep, 1.5, '', true);
+        x.strokeStyle = P.dim; x.lineWidth = d; x.setLineDash([1 * d, 2 * d]); x.beginPath(); x.moveTo(cx + k * u[0], cy - k * u[1]); x.lineTo(cx + k * w[0], cy - k * w[1]); x.stroke(); x.setLineDash([]); }); }
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach((e, n) => arrow(mv(R.Q, e), col, 2, ['1', 'i', 'j'][n])); } }
+let OMAP = null;
+function bakeO() { const N = 72, M = 36, v = new Float32Array(N * M); let mx = 0; const Q = q();
+  for (let j = 0; j < M; j++) for (let i = 0; i < N; i++) { const g = orderGap(Q, dirOf(-180 + (i + 0.5) * 360 / N, 90 - (j + 0.5) * 180 / M)); v[j * N + i] = g; mx = Math.max(mx, g); }
+  OMAP = { N, M, v, mx }; }
+const lonlatOf = u => [Math.atan2(u[2], u[1]) * 180 / Math.PI, Math.asin(Math.max(-1, Math.min(1, u[0] / nrm(u)))) * 180 / Math.PI];
+function drawO() { const c = fit($('cvO')); if (!c) return; const { x, W, H, d } = c, P = PAL(); if (!OMAP) bakeO(); const { N, M, v, mx } = OMAP, top = 0.08 * H, h = H - 2 * top, w = Math.min(W, 2 * h), l = (W - w) / 2;
+  for (let j = 0; j < M; j++) for (let i = 0; i < N; i++) { const t = mx > 1e-12 ? v[j * N + i] / mx : 0, cc = P.heat0.map((a, k) => Math.round(lerp(a, P.heat1[k], t)));
+    x.fillStyle = `rgb(${cc})`; x.fillRect(l + i * w / N, top + j * h / M, w / N + 0.6, h / M + 0.6); }
+  x.strokeStyle = P.dim; x.lineWidth = d; x.strokeRect(l, top, w, h);
+  if (RQ.O > 1e-9) for (const u of [RQ.Ov, sc(RQ.Ov, -1)]) { const [lo, la] = lonlatOf(u); x.strokeStyle = P.ring; x.lineWidth = 1.5 * d; x.beginPath(); x.arc(l + (lo + 180) / 360 * w, top + (90 - la) / 180 * h, 4 * d, 0, 7); x.stroke(); } }
+function drawT() { const c = fit($('cvT')); if (!c) return; const { x, W, H, d } = c, P = PAL(), { left, right } = RQ.Tpair, m = Math.max(nrm(left), nrm(right), 1e-9), k = 0.38 * Math.min(W, H), cx = W / 2, cy = H / 2;
+  const at = v => { const p = proj(sc(v, 1 / m), S.yaw, S.pitch); return [cx + k * p[0], cy - k * p[1]]; };
+  [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(e => { const p = at(sc(e, m)); x.strokeStyle = P.dim; x.lineWidth = d; x.beginPath(); x.moveTo(cx, cy); x.lineTo(...p); x.stroke(); });
+  const a = at(left), b = at(right);
+  [[a, P.A], [b, P.Bv]].forEach(([p, col]) => { x.strokeStyle = col; x.fillStyle = col; x.lineWidth = 2.2 * d; x.beginPath(); x.moveTo(cx, cy); x.lineTo(...p); x.stroke(); x.beginPath(); x.arc(...p, 2.6 * d, 0, 7); x.fill(); });
+  x.setLineDash([3 * d, 2 * d]); x.strokeStyle = P.ink; x.lineWidth = 1.2 * d; x.beginPath(); x.moveTo(...a); x.lineTo(...b); x.stroke(); x.setLineDash([]); }
+function drawCells() { drawB(); drawR(); drawO(); drawT(); }
+function cellText() { const R = RQ, P = PAL();
+  $('vB').textContent = 'B ' + (isFinite(R.B) ? f2(R.B) : '∞'); $('vR').textContent = isFinite(R.R) ? R.R.toFixed(0) + '°' : '—';
+  $('vRm').textContent = handWord(R); $('vRm').style.color = handVar(R);
+  $('vO').textContent = 'O ' + f3(R.O); $('vT').textContent = 'T ' + f3(R.T);
+  { const t = tSplit(R.Tpair); $('vTx').textContent = R.T < 1e-12 ? '' : `${isFinite(t.turn) ? t.turn.toFixed(0) + '°' : '—'} · ×${f2(t.size)}`; }
+  $('qline').innerHTML = `<span class="hd">q = ${fmtQ(q())}</span><br>(${Math.round(S.lon)}°, ${Math.round(S.lat)}°) · rank B2 (1, i, j)<br>hand at q: <span style="color:${handVar(R)}">${handWord(R)}</span> <span class="qonly" id="qonly" title="B, R, O and T are what squaring does to a vanishingly small ball round q; r sizes only the brotoid">· BROT reads q alone, not r</span>`;
+  document.querySelectorAll('.cell').forEach(c => c.dataset.q = `${Math.round(S.lon)},${Math.round(S.lat)}`); }
+
+// ---- the q setter (lib/sphere_setter.js): the same one the brotoid page uses
+const QS = SphereSetter.mount($('qset'), { r: 1, length: 'fixed', hand: u => detJ(u) >= 0, onInput: v => { const [lo, la] = lonlatOf(v); S.lon = lo; S.lat = la; changed(); } });
+function setDir(lo, la) { S.lon = ((lo + 540) % 360) - 180; S.lat = Math.max(-90, Math.min(90, la)); QS.set(dirOf(S.lon, S.lat)); QS.draw(); changed(); }
+document.querySelectorAll('#marks [data-p]').forEach(b => b.addEventListener('click', () => { const [lo, la] = b.dataset.p.split(',').map(Number); setDir(lo, la); }));
+
+// ---- Fig 2, the hand over every direction (map), and the crossing cone (cone)
+let HANDIMG = null;
+function bakeHand() { const W = 360, H = 180, P = PAL(), img = new ImageData(W, H);
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const c = detJ(dirOf(-180 + (i + 0.5), 90 - (j + 0.5))) >= 0 ? P.hKeep : P.hMirror, o = 4 * (j * W + i); img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2]; img.data[o + 3] = 255; }
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; cv.getContext('2d').putImageData(img, 0, 0); HANDIMG = cv; }
+const NAMED = [['i + j', 45, 0], ['−(i + j)', -135, 0], ['i − j', -45, 0], ['−(i − j)', 135, 0], ['1', 0, 90], ['i', 0, 0], ['j', 90, 0]];
+function drawHand() { const c = fit($('handcv')); if (!c) return; const { x, W, H, d } = c, P = PAL(); x.font = `${11 * d}px ui-monospace, monospace`; x.textBaseline = 'middle';
+  if (HM.m === 0 && HM.g === 0) { if (!HANDIMG) bakeHand(); x.imageSmoothingEnabled = false; x.drawImage(HANDIMG, 0, 0, W, H);
+    const px = (lo, la) => [W * (lo + 180) / 360, H * (90 - la) / 180];
+    x.strokeStyle = P.cross; x.lineWidth = 1.6 * d; x.beginPath(); let first = true;   // det J = 0: one latitude per longitude (brotoid_weft's CONE), both halves
+    for (let s = 0; s < 2; s++) { first = true; for (const L of CONE) { const u = s ? sc(L.d, -1) : L.d, [lo, la] = lonlatOf(u); const [X, Y] = px(lo, la); if (first) x.moveTo(X, Y); else x.lineTo(X, Y); first = false; } }
+    x.stroke();
+    for (const [lab, lo, la] of NAMED) { const [X, Y] = px(lo, Math.min(86, la)); x.fillStyle = P.ink; x.beginPath(); x.arc(X, Y, 2.5 * d, 0, 7); x.fill(); x.textAlign = 'left'; x.fillText(lab, X + 5 * d, Y - 7 * d); }
+    const [X, Y] = px(S.lon, S.lat); x.strokeStyle = P.ring; x.lineWidth = 2 * d; x.beginPath(); x.arc(X, Y, 7 * d, 0, 7); x.stroke(); x.textAlign = 'left'; x.fillStyle = P.ring; x.fillText('q', X + 9 * d, Y + 9 * d);
+    $('handnote').textContent = `q at (${Math.round(S.lon)}°, ${Math.round(S.lat)}°): ${handWord(RQ)}`; }
+  else drawGlobe(x, W, H, d, P); }
+// plot ⇄ cone, the globe (carried from the old page, 10-15..10-18): HM.m wraps the map onto the sphere of directions (0 = the flat map, 1 = the globe),
+// HM.g grows the crossing cone out of 0. Globe view: right = j, up = 1, toward you = i at yaw 0, so the map's centre (i) faces you: a proper rotation.
+// The globe is every q at |q| = 1; the ball sits on the ring at radius r / |q|, so it grows with r while the cone and 1, i, j stay put.
+const HM = { m: 0, g: 0 }; let HMT = 0;
+const gview = (p, yaw, pitch) => { const X = p[2], Y = p[0], Z = p[1], cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const x1 = cy * X + sy * Z, z1 = -sy * X + cy * Z; return [x1, cp * Y - sp * z1, sp * Y + cp * z1]; };
+const GSIGN = (() => { const st = 3, o = []; for (let lo = -180; lo < 180; lo += st) for (let la = -90; la < 90; la += st) o.push([lo, la, detJ(dirOf(lo + st / 2, la + st / 2)) >= 0]); return o; })();
+let GSEAM = { key: '', segs: [] };
+// the rim: where the ball's sphere meets the brim, from each cone line's span [A, B] (brim_eye). Neighbouring lines' A's join, and their B's;
+// after line 179.75° comes line 0° pointing back, so A meets B there; where the ball stops reaching a line, its A and B close the loop.
+// Until 10-22 this drew crossing().runs, the weft's ball points, a pink line off the keep/mirror border (Doug: "pink band on sphere looks wrong").
+const ballSeam = () => { const key = `${S.lon},${S.lat},${S.r}`; if (GSEAM.key === key) return GSEAM.segs;
+  const Q = q(), n = LN.length, SP = LN.map(L => span(L.d, Q, S.r)), segs = [];
+  for (let k = 0; k < n; k++) { const a = SP[k], b = SP[(k + 1) % n]; if (!a) continue;
+    if (b) segs.push(...(k === n - 1 ? [[a[0], b[1]], [a[1], b[0]]] : [[a[0], b[0]], [a[1], b[1]]])); else segs.push([a[0], a[1]]);
+    if (!SP[(k - 1 + n) % n]) segs.push([a[0], a[1]]); }
+  GSEAM = { key, segs }; return segs; };
+// the ball's reach on the sphere of directions: the ball |x − q| ≤ r covers the directions within angle a of q, sin a = r/|q|; past r = |q| it holds 0
+function reachPts() { const s = S.r / MAG; if (s >= 1) return null; const a = Math.asin(s), u = dirOf(S.lon, S.lat), t = Math.abs(u[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+  let e1 = sub(t, sc(u, t[0] * u[0] + t[1] * u[1] + t[2] * u[2])); e1 = sc(e1, 1 / nrm(e1)); const e2 = [u[1] * e1[2] - u[2] * e1[1], u[2] * e1[0] - u[0] * e1[2], u[0] * e1[1] - u[1] * e1[0]];
+  return Array.from({ length: 121 }, (_, k) => { const b = 2 * Math.PI * k / 120; return lonlatOf([0, 1, 2].map(i => Math.cos(a) * u[i] + Math.sin(a) * (Math.cos(b) * e1[i] + Math.sin(b) * e2[i]))); }); }
+function drawGlobe(x, W, H, d, P) { const Rs = 0.3 * H, m = HM.m, g = HM.g, yaw = S.cyaw, pitch = S.cpitch, dark = !(PRINT.matches || document.documentElement.classList.contains('printing'));
+  const flat = (lo, la) => [W * (lo + 180) / 360, H * (90 - la) / 180, 0];
+  const glob = p => { const v = gview(p, yaw, pitch); return [W / 2 + Rs * v[0], H / 2 - Rs * v[1], v[2]]; };
+  const at = (lo, la, k = 1) => { const a = flat(lo, la), b = glob(sc(dirOf(lo, la), k)); return [a[0] + (b[0] - a[0]) * m, a[1] + (b[1] - a[1]) * m, b[2] * m]; };
+  const items = [], rgb = (c, al) => `rgba(${c[0]},${c[1]},${c[2]},${al})`, hex = h => h.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
+  // depth shading: near = full and lit, far = faded toward the page, so the front and back of the sphere read apart
+  const LT = [-0.42, 0.52, 0.74], near = z => (1 + z) / 2, kOf = (z, lam = 0.5) => 1 + m * (0.3 + 1.15 * (0.55 * near(z) + 0.45 * lam) - 1);
+  const tone = (c, k) => c.map(v => Math.round(Math.max(0, Math.min(255, dark ? v * k : 255 - (255 - v) * k))));
+  const st = 3; for (const [lo, la, keep] of GSIGN) {   // each cell coloured by det J at its centre, like the map
+    const qd = [at(lo, la), at(lo + st, la), at(lo + st, la + st), at(lo, la + st)], v = gview(dirOf(lo + st / 2, la + st / 2), yaw, pitch), z = v[2] * m;
+    const lam = Math.max(0, v[0] * LT[0] + v[1] * LT[1] + v[2] * LT[2]);
+    items.push({ z: (qd[0][2] + qd[2][2]) / 2, poly: qd, fill: rgb(tone(keep ? P.hKeep : P.hMirror, kOf(z, lam)), 1 - m * (0.55 - 0.25 * near(z))) }); }
+  const CR = hex(P.cross);
+  if (g > 0) { const L = 2.4 * g, NB = 4;   // the cone: lines 0 → L·u over the whole det J = 0 curve (both halves), cut in 4 bands along their length so the ball sorts in among them
+    const CS = CONE.filter((c, n) => n % 8 === 0), U = [...CS.map(c => c.d), CS[0].d, ...CS.map(c => sc(c.d, -1)), sc(CS[0].d, -1)];   // every 2°, each half closed
+    for (let k = 0; k + 1 < U.length; k++) { if (k === CS.length) continue; const u1 = U[k], u2 = U[k + 1];
+      for (let b = 0; b < NB; b++) { const t0 = L * b / NB, t1 = L * (b + 1) / NB, A0 = glob(sc(u1, t0)), A1 = glob(sc(u1, t1)), B1 = glob(sc(u2, t1)), B0 = glob(sc(u2, t0));
+        const z = (A0[2] + A1[2] + B1[2] + B0[2]) / 4, n = near(Math.max(-1, Math.min(1, z / t1)));
+        items.push({ z, poly: b ? [A0, A1, B1, B0] : [A0, A1, B1], fill: rgb(CR, (0.08 + 0.2 * n).toFixed(3)), line: k % 3 ? null : [A0, A1], lineA: 0.3 + 0.6 * n }); } } }
+  if (m > 0.7) { const fa = (m - 0.7) / 0.3, c = dirOf(S.lon, S.lat), rho = S.r / MAG, bs = 6, BK = hex(P.keep), BM = hex(P.mirror);
+    // the ball on the ring: radius r round q, in units of |q| like the globe. Its skin is coloured by det J where it sits (keep or mirror, Fig 4's
+    // colours); its seam is where it meets the crossing cone: the rim
+    const bp = (lo, la) => glob(add3(c, sc(dirOf(lo, la), rho)));
+    for (let lo = -180; lo < 180; lo += bs) for (let la = -90; la < 90; la += bs) {
+      const Pp = [bp(lo, la), bp(lo + bs, la), bp(lo + bs, la + bs), bp(lo, la + bs)], nd = dirOf(lo + bs / 2, la + bs / 2), v = gview(nd, yaw, pitch);
+      const lam = Math.max(0, v[0] * LT[0] + v[1] * LT[1] + v[2] * LT[2]);
+      items.push({ z: (Pp[0][2] + Pp[2][2]) / 2, poly: Pp, fill: rgb(tone(detJ(add3(c, sc(nd, rho))) >= 0 ? BK : BM, 0.45 + 0.75 * lam), (0.9 * fa).toFixed(3)) }); }
+    const zc = glob(c)[2];   // the seam is never hidden: on top of everything, faint and dashed where it runs behind the ball's centre
+    for (const [A, B] of ballSeam()) { const a = glob(sc(A, 1 / MAG)), b = glob(sc(B, 1 / MAG)), far = (a[2] + b[2]) / 2 < zc; items.push({ z: 99, seg: [a, b], stroke: P.cross, w: (far ? 1.6 : 2.6) * d, al: fa * (far ? 0.55 : 1), dash: far }); } }
+  { let pv = null;   // det J = 0 on the sphere, where the cone meets it: sorted in with the cells (lifted a little), so the near half of the sphere covers its far half
+    for (let s2 = 0; s2 < 2; s2++) { pv = null; for (const c of CONE) { const [lo, la] = lonlatOf(s2 ? sc(c.d, -1) : c.d), p = at(lo, la);
+      if (pv && Math.abs(p[0] - pv[0]) <= W / 3) { const z = (p[2] + pv[2]) / 2; items.push({ z: z + 0.08 * m, seg: [pv, p], stroke: rgb(tone(hex(P.ink), kOf(z, 0.6)), 1), w: (1.2 + 1.3 * (1 - m + m * near(z))) * d }); } pv = p; } } }
+  items.sort((a, b) => a.z - b.z);
+  for (const it of items) {
+    if (it.seg) { x.globalAlpha = it.al ?? 1; x.strokeStyle = it.stroke; x.lineWidth = it.w; x.lineCap = it.dash ? 'butt' : 'round'; x.setLineDash(it.dash ? [3 * d, 3 * d] : []); x.beginPath(); x.moveTo(it.seg[0][0], it.seg[0][1]); x.lineTo(it.seg[1][0], it.seg[1][1]); x.stroke(); x.setLineDash([]); x.globalAlpha = 1; continue; }
+    x.fillStyle = it.fill; x.beginPath(); it.poly.forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])); x.closePath(); x.fill();
+    if (it.line) { x.strokeStyle = rgb(CR, it.lineA.toFixed(3)); x.lineWidth = 1.2 * d; x.beginPath(); x.moveTo(it.line[0][0], it.line[0][1]); x.lineTo(it.line[1][0], it.line[1][1]); x.stroke(); } }
+  x.lineCap = 'butt';
+  if (m > 0.7) { x.strokeStyle = rgb(tone(hex(P.ink), 0.5), 0.5 * (m - 0.7) / 0.3); x.lineWidth = d; x.beginPath(); x.arc(W / 2, H / 2, Rs, 0, 7); x.stroke(); }   // the limb
+  x.textAlign = 'center';
+  // seam and fold are each a pair, u and −u, both on det J = 0: the far one of each pair is drawn hollow and faint, never hidden
+  const mark = (lo, la, col, lab, rad = 4, k = 1) => { const [X, Y, z] = at(lo, la, k), far = z < -0.05; x.globalAlpha = far ? 0.45 : 1;
+    x.beginPath(); x.arc(X, Y, rad * d, 0, 7); if (far) { x.strokeStyle = col; x.lineWidth = 1.5 * d; x.stroke(); } else { x.fillStyle = col; x.fill(); }
+    x.fillStyle = P.ink; x.fillText(lab, X, Y - 9 * d); x.globalAlpha = 1; };
+  [[0, 0, 'i'], [90, 0, 'j'], [-90, 0, '−j'], [180, 0, '−i'], [0, 90, '1'], [0, -90, '−1']].forEach(([lo, la, l]) => mark(lo, la, P.ink, l, 2.5, 1 / MAG));   // ±1, ±i, ±j at distance 1
+  mark(45, 0, P.Bv, 'seam'); mark(-135, 0, P.Bv, 'seam'); mark(-45, 0, P.self, 'fold'); mark(135, 0, P.self, 'fold');
+  const R = reachPts(); x.strokeStyle = P.ring; x.lineWidth = 1.4 * d;   // the ball's reach, dashed; behind the sphere fainter
+  if (R) for (let k = 1; k < R.length; k++) { if (m < 1 && Math.abs(R[k][0] - R[k - 1][0]) > 180) continue; const A = at(...R[k - 1]), B = at(...R[k]), far = A[2] < -0.05 && B[2] < -0.05;
+    x.globalAlpha = far ? 0.35 : 0.9; x.setLineDash([4 * d, 3 * d]); x.beginPath(); x.moveTo(A[0], A[1]); x.lineTo(B[0], B[1]); x.stroke(); }
+  x.setLineDash([]); x.globalAlpha = 1;
+  { const [X, Y, z] = at(S.lon, S.lat), far = z < -0.05; x.globalAlpha = far ? 0.4 : 1; x.strokeStyle = P.ring; x.lineWidth = 2 * d; x.setLineDash(far ? [3 * d, 3 * d] : []);
+    x.beginPath(); x.arc(X, Y, 8 * d, 0, 7); x.stroke(); x.setLineDash([]); x.globalAlpha = 1; x.textAlign = 'left'; x.fillStyle = P.ring; x.fillText('q', X + 10 * d, Y + 10 * d); }
+  $('handnote').textContent = g > 0 ? 'the crossing cone: every line from 0 through det J = 0 · the ball: radius r round q · drag to turn' : m < 1 ? 'the map, wrapping back onto the sphere of directions' : 'every q at this |q|, with the ball round q · drag to turn'; }
+// the toggle morphs: to the cone, the map wraps (m) and then the cone grows (g); back, the cone shrinks and then the map unwraps
+function morphHand(on) { const t0 = performance.now(), m0 = HM.m, g0 = HM.g, my = HMT = t0;
+  if (on && m0 === 0) { S.cyaw = 0; S.cpitch = 0; }
+  const tick = now => { if (HMT !== my) return; const k = Math.min(1, (now - t0) / 1500), e = v => v * v * (3 - 2 * v);
+    if (on) { HM.m = m0 + (1 - m0) * e(Math.min(1, k / 0.55)); HM.g = k < 0.55 ? g0 : g0 + (1 - g0) * e((k - 0.55) / 0.45); if (on && m0 === 0 && k > 0.55) { const w = e((k - 0.55) / 0.45); S.cyaw = 0.5 * w; S.cpitch = 0.3 * w; } }
+    else { HM.g = g0 * (1 - e(Math.min(1, k / 0.45))); HM.m = k < 0.45 ? m0 : m0 * (1 - e((k - 0.45) / 0.55)); }
+    want('hand'); if (k < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick); }
+function coneMode(on) { const was = S.cone; S.cone = on; $('conebtn').setAttribute('aria-pressed', String(on)); if (was !== on) morphHand(on); else want('hand'); FIGS?.refresh(); }
+$('conebtn').addEventListener('click', () => coneMode(!S.cone));
+
+// ---- Fig 3, ℂ: a circle through 0 and its square (fixed)
+(function drawC() { const N = 240, circ = [], sqr = []; for (let n = 0; n <= N; n++) { const t = 2 * Math.PI * n / N, a = 0.5 + 0.5 * Math.cos(t), b = 0.5 * Math.sin(t); circ.push([a, b]); sqr.push([a * a - b * b, 2 * a * b]); }
+  const path = (pts, ox, oy, s) => pts.map(([a, b], i) => `${i ? 'L' : 'M'}${(ox + s * a).toFixed(1)},${(oy - s * b).toFixed(1)}`).join('');
+  $('cfig').innerHTML = `<svg viewBox="0 0 600 250" role="img" aria-label="a circle through 0 and its square, a cardioid">
+    <g fill="none" stroke="var(--dim)" stroke-width="1"><path d="M30,115H270M105,20V210M330,115H580M400,20V210"/></g>
+    <path d="${path(circ, 105, 115, 120)}" fill="none" stroke="var(--keep)" stroke-width="2"/>
+    <path d="${path(sqr, 400, 115, 120)}" fill="none" stroke="var(--keep)" stroke-width="2"/>
+    <circle cx="105" cy="115" r="4" fill="var(--cross)"/><circle cx="400" cy="115" r="4" fill="var(--cross)"/>
+    <g font-family="ui-monospace, monospace" font-size="13" fill="var(--fg)"><text x="40" y="240">a circle through 0</text><text x="345" y="240">its square: a cardioid</text>
+    <text x="88" y="132">0</text><text x="392" y="136" text-anchor="end">0, the sharp point</text></g></svg>`; })();
+
+// ---- Fig 4, the brotoid: the skin (q + r u)² − q², lines coloured by the hand at the input point; the crossing, the weft and umbrellas from the atoms
+let BR = null;
+function brotoidGeo() { const Q = q(), r = S.r, Q2 = square(Q), img = x => sub(square(x), Q2), segs = [], cross = []; let R = 1e-9;
+  for (const L of SPH) { let prev = null, ps = 0; for (const u of L) { const xx = [Q[0] + r * u[0], Q[1] + r * u[1], Q[2] + r * u[2]], w = img(xx), s = detJ(xx) >= 0 ? 1 : -1; R = Math.max(R, nrm(w));
+      if (prev) { if (s !== ps) { cross.push(sc(add3(prev, w), 0.5)); } segs.push([prev, w, s === ps ? s : 0]); } prev = w; ps = s; } }
+  const X = crossing(Q, r), wefts = X.wefts.map(t => ({ kind: t.kind, pts: t.pts.map(p => img(p.x)) })), umb = X.umbrellas.map(u => img(u.x));
+  const eye0 = eyeQuads(Q, r);   // the eye of the brim, before squaring; squared below
+  return { segs, cross, wefts, umb, R, n: X.umbrellas.length, eye0, eye: eye0.map(qd => qd.map(img)) }; }
+const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const EYE = ['rgba(170,110,255,.45)', 'rgba(255,79,163,.45)'];   // the brim's underside, its top (proto_brim's two faces)
+function drawBrotoid() { const c = fit($('brcv')); if (!c) return; const { x, W, H, d } = c, P = PAL(); BR = brotoidGeo(); const k = 0.44 * Math.min(W, H) / BR.R, cx = W / 2, cy = H / 2;
+  const pp = v => { const p = proj(v, S.byaw, S.bpitch); return [cx + k * p[0], cy - k * p[1], p[2]]; };
+  // the eye of the brim, squared (Doug 10-22: "show the pink plate"): pink where the brim's top faces you, violet where its underside does
+  for (const qd of BR.eye) { const m = qd.map(pp); x.fillStyle = proj(topNormal(qd), S.byaw, S.bpitch)[2] > 0 ? EYE[1] : EYE[0];
+    x.beginPath(); x.moveTo(m[0][0], m[0][1]); for (let i = 1; i < 4; i++) x.lineTo(m[i][0], m[i][1]); x.closePath(); x.fill(); }
+  x.lineWidth = 1.1 * d;
+  for (const [a0, b0, s] of BR.segs) { const a = pp(a0), b = pp(b0); x.strokeStyle = s > 0 ? P.keep : s < 0 ? P.mirror : P.cross; x.globalAlpha = (a[2] + b[2]) > 0 ? 0.85 : 0.3; x.beginPath(); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); x.stroke(); }
+  x.globalAlpha = 1; x.fillStyle = P.cross; for (const v of BR.cross) { const p = pp(v); x.beginPath(); x.arc(p[0], p[1], 2.4 * d, 0, 7); x.fill(); }
+  x.lineWidth = 3 * d; for (const t of BR.wefts) { x.strokeStyle = t.kind === 'self' ? P.self : P.weft; x.beginPath(); t.pts.forEach((v, i) => { const p = pp(v); i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]); }); x.stroke(); }
+  x.lineWidth = 2 * d; x.strokeStyle = P.ring; for (const v of BR.umb) { const p = pp(v); x.beginPath(); x.arc(p[0], p[1], 5 * d, 0, 7); x.stroke(); }
+  $('rval').textContent = `r ${f3(S.r)} = r/|q| (|q| = 1)`; momText(); }
+let MOM = null, MOMKEY = '', MOMT = 0;
+const qKey = () => `${S.lon.toFixed(4)},${S.lat.toFixed(4)}`;   // the exact q: a rounded key served a nearby q's moments (brotbot gate S5, 10-19)
+function momOf() { const key = qKey(); if (key !== MOMKEY) { MOMKEY = key; MOM = moments(q()); momButtons(); } return MOM; }
+function momList(M) { const L = [{ k: '①', r: M.touch?.r, what: 'the crossing is born' }]; if (M.birth) L.push({ k: '②', r: M.birth.r, what: 'a weft is born' }); if (M.selfBirth) L.push({ k: '④', r: M.selfBirth.r, what: 'a self weft is born' });
+  L.push({ k: '③', r: M.apex.r, what: 'the skin passes through 0' }); return L.filter(m => m.r != null && m.r <= 1.778).sort((a, b) => a.r - b.r); }
+function momButtons() { const L = momList(MOM); $('moms').innerHTML = 'moments: ' + L.map((m, i) => `<button data-mom="${i}" title="${m.what}: r just past ${f3(m.r)}">${m.k} ${f3(m.r)}</button>`).join('');
+  $('moms').querySelectorAll('[data-mom]').forEach(b => b.addEventListener('click', () => { const m = L[+b.dataset.mom]; setR(m.r + 0.011); })); }
+function momText() { if (MOMKEY !== qKey()) { $('moms').textContent = 'moments: when q stops'; $('momcap').textContent = `At r ${f3(S.r)}: q is moving.`;
+    clearTimeout(MOMT); MOMT = setTimeout(() => { momOf(); momText(); }, 150); return; }
+  const M = MOM, L = momList(M), past = L.filter(m => m.r <= S.r);
+  $('momcap').textContent = `At r ${f3(S.r)}: ${past.length ? 'past ' + past.map(m => m.k).join(' ') + '. ' : 'before ①: a small ball, one hand. '}${BR.n} umbrella${BR.n === 1 ? '' : 's'}${BR.n ? ', ' + BR.wefts.length + ' weft stretch' + (BR.wefts.length === 1 ? '' : 'es') : ''}.`; }
+function setR(r) { S.r = Math.max(0.056, Math.min(1.778, r)); $('rr').value = S.r; want('br'); if (S.cone) want('hand'); FIGS?.refresh(); }
+$('rr').addEventListener('input', () => { S.r = +$('rr').value; want('br'); if (S.cone) want('hand'); FIGS?.refresh(); });
+
+// ---- drag to turn (Fig 2 cone, Fig 4)
+function turnable(cv, keys) { let p = null; cv.addEventListener('pointerdown', e => { p = [e.clientX, e.clientY]; cv.setPointerCapture(e.pointerId); HOLD = true; });
+  cv.addEventListener('pointermove', e => { if (!p) return; S[keys[0]] += (e.clientX - p[0]) * 0.01; S[keys[1]] = Math.max(-1.4, Math.min(1.4, S[keys[1]] + (e.clientY - p[1]) * 0.01)); p = [e.clientX, e.clientY]; want(keys[2]); });
+  cv.addEventListener('pointerup', () => { p = null; }); }
+turnable($('brcv'), ['byaw', 'bpitch', 'br']); turnable($('handcv'), ['cyaw', 'cpitch', 'hand']);
+
+// ---- one draw per frame for whatever changed
+const DUE = new Set(); let RAF = 0;
+function want(k) { DUE.add(k); if (!RAF) RAF = requestAnimationFrame(flush); }
+function flush() { RAF = 0; const D = [...DUE]; DUE.clear(); if (D.includes('cells')) drawCells(); if (D.includes('hand')) drawHand(); if (D.includes('br')) drawBrotoid(); }
+let OT = 0;
+function changed() { RQ = readings(q()); OMAP = null; cellText(); want('cells'); want('hand'); want('br'); FIGS?.refresh(); exLink();
+  clearTimeout(OT); OT = setTimeout(() => FIGS?.refresh(), 200); }
+// insights' explorer still holds |q| at 0.9: the same shape there is r·0.9 (fable 10-23)
+function exLink() { const u = `/insights/crease_what/explorer.html?lon=${Math.round(S.lon)}&lat=${Math.round(S.lat)}&r=${f3(S.r * 0.9)}`; for (const id of ['exlink', 'exlink2']) { const a = $(id); if (a) a.href = u; } }
+
+// ---- lit: the letters a beat or section is about light up, the rest dim (S1). 'fractal' marks what the fractal cannot see (S4).
+let LIT = [];
+function lit(keys) { LIT = keys.slice(); const cells = $('cells'), fr = LIT.includes('fractal'), on = fr ? ['B', 'R'] : LIT.filter(k => 'BROT'.includes(k) && k.length === 1);
+  cells.classList.toggle('anylit', on.length > 0 && on.length < 4);
+  document.querySelectorAll('.cell').forEach(c => { c.classList.toggle('lit', on.includes(c.dataset.l)); c.classList.toggle('unseen', fr && (c.dataset.l === 'O' || c.dataset.l === 'T')); });
+  $('panel').classList.toggle('fractal', fr); FIGS?.refresh(); }
+const unseenNow = () => ({ cells: [...document.querySelectorAll('.cell.unseen')].map(c => c.dataset.l), mirrorStruck: getComputedStyle($('vRm')).textDecorationLine.includes('line-through') });
+// the section in view sets lit, unless the track is driving
+let SEC = null;
+const bandMode = () => getComputedStyle($('stagecol')).position === 'sticky';   // brotbot gate S1: test the layout itself
+function secTick() { if (FLOW?.state.playing) return; const band = bandMode() ? $('stagecol').getBoundingClientRect().bottom : 0, line = band + Math.min(0.35 * (innerHeight - band), 200);   // the section being read: near the top, so a short one (§3) still lights its own letter
+  let cur = null; for (const s of document.querySelectorAll('#text > section')) { if (s.getBoundingClientRect().top <= line) cur = s; }
+  if (cur && cur !== SEC) { SEC = cur; if (cur.dataset.lit != null) lit(cur.dataset.lit ? cur.dataset.lit.split(',') : []); else lit([]); } }
+addEventListener('scroll', () => requestAnimationFrame(secTick), { passive: true });
+document.querySelectorAll('[data-lit]').forEach(b => { if (b.tagName === 'BUTTON') b.addEventListener('click', () => lit(b.dataset.lit.split(','))); });
+
+// ---- the words (S7): one list makes the Words section and the show-me glossary
+let HOLD = false;   // brotbot 10-18: once the reader has touched the page, ambient motion holds still (it never moves q or r anyway)
+const toQ = async (c, lo, la, ms) => { const a = S.lon, b = S.lat, dl = ((lo - a + 540) % 360) - 180; await c.tween(ms, k => setDir(a + dl * ease(k), lerp(b, la, ease(k)))); };
+const toR = async (c, r, ms) => { const r0 = S.r; await c.tween(ms, k => setR(lerp(r0, r, ease(k)))); };
+const turnB = async (c, by, ms) => { const y0 = S.byaw; await c.tween(ms, k => { S.byaw = y0 + by * ease(k); want('br'); }); };
+const hereB = () => document.getElementById('fig-brotoid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+const W = [
+  { key: 'BROT', label: 'BROT', cs: true, color: '#eee9e0', standing: 'posed', note: "The project's reading of its short name (June 2026). Not filed as a term: the name is the project's, the reading is a reading.",
+    rule: 'Bristor, Rotation, Order, Torsion: four questions about one number.', where: '<a class="fref" href="#fig-brot"></a>, the four cells', run: async c => { lit(['B', 'R', 'O', 'T']); await c.wait(1600); } },
+  { key: 'Bristor', label: 'Bristor', cs: true, color: '#eee9e0', standing: 'posed', note: 'The B reading; the B cell. Standard match: in mechanics a deformation splits as F = R·U, a rotation times a stretch, and B = F·Fᵀ (the left Cauchy–Green tensor) holds the squared stretches. This page\'s B is one ratio from it: the longest stretch over the shortest.', rule: 'what squaring does to a small ball round q: B = the longest stretch over the shortest.', where: 'the B cell',
+    run: async c => { lit(['B']); await toQ(c, ...QN.thin, 2400); await c.wait(1200); } },
+  { key: 'Rotation', label: 'Rotation', cs: true, color: '#eee9e0', standing: 'posed', note: 'Standard rotations keep the hand; a turn that mirrors is a Reflection. Standard match: in mechanics F = R·U, and R is the rotation. Here J = Q·P, and R is the angle of Q.', rule: 'the turn left after the stretch: the orthogonal factor Q of J = Q·P. R is its angle.', where: 'the R cell',
+    run: async c => { lit(['R']); await toQ(c, ...QN.mirrorq, 2400); await c.wait(1200); } },
+  { key: 'Order', label: 'Order', cs: true, color: '#eee9e0', standing: 'posed', note: 'The O reading.', rule: 'whether q·v equals v·q: O = the biggest |q·v − v·q| over unit v, over |q|.', where: 'the O cell', run: async c => { lit(['O']); await c.wait(1800); } },
+  { key: 'Torsion', label: 'Torsion', cs: true, color: '#eee9e0', standing: 'two senses', note: 'In the name, Torsion is the defect: a familiar rule that fails. T measures the bracket defect, the associator, and is labelled brackets. In differential geometry torsion is the order defect, the commutator: this page\'s O, for the connection built from the product. Two senses. T is the name\'s letter, not standard notation: the associator has no fixed letter, and the standard T, torsion, is this page\'s O.', rule: 'whether the brackets matter: T = |(q·i)·j − q·(i·j)| over |q|. The T cell adds the angle between the two answers and the ratio of their sizes.', where: 'the T cell', run: async c => { lit(['T']); await toQ(c, ...QN.conch, 1800); } },
+  { key: 'Tension', label: 'Tension', cs: true, color: '#eee9e0', standing: 'posed', note: "B's property (19 October). In mechanics tension is a force (a stress); stretch is the change of shape it makes. B measures the stretch.", rule: 'the stretch squaring puts on a small ball at q: the symmetric factor P of J = Q·P. B is its longest stretch over its shortest.', where: 'the B cell', run: async c => { lit(['B']); await toQ(c, ...QN.thin, 1800); } },
+  { key: 'Reflection', label: 'Reflection', cs: true, color: '#ff5a1f', standing: 'standard', note: "R's property when q mirrors: det Q = −1.", rule: 'a turn that mirrors: a rotation and a flip through the plane at right angles to its axis.', where: 'the R cell, when q mirrors: the orange frame and its dashed turn-only twin', run: async c => { lit(['R']); await toQ(c, ...QN.mirrorq, 1800); } },
+  { key: 'Bristorian', label: 'Bristorian', cs: true, color: '#eee9e0', standing: 'project', note: 'Not the quaternions: they share the symbols i and j, and the algebra is different.',
+    rule: "the project's algebra. Its numbers have a real part and ranked imaginary parts, i, j, …; B2 has two.", where: 'every figure', run: async c => { lit(['B', 'R', 'O', 'T']); await c.wait(1400); } },
+  { key: 'conch', label: 'conch', color: '#eee9e0', standing: 'posed', note: "The project's name for this q.", rule: 'q = i, the direction (0°, 0°): the page starts there. It squares to −1.', where: "the mark 'i (the conch)' under the q setter",
+    run: async c => { lit(['B', 'R', 'O', 'T']); await toQ(c, ...QN.conch, 1600); } },
+  { key: 'thin one', label: 'thin one', color: '#eee9e0', standing: 'posed', note: 'Page-local.', rule: `q at (90°, 27°), where a tiny ball squares to a nearly flat ellipsoid (B ${NUM['thin.B']}).`, where: "the mark 'thin' under the q setter",
+    run: async c => { lit(['B']); await toQ(c, ...QN.thin, 2000); } },
+  { key: 'q', map: 'q', label: 'q', cs: true, color: '#ffffff', standing: 'notation', rule: 'the ball\'s centre, a point in 1, i, j. The cone stays fixed and squaring scales, so only r against |q| changes the brotoid\'s shape. This page holds |q| at 1 and moves q by turning it: around (i toward j) and toward 1.', where: 'the q sphere, the point under its pin: in the corner of <a class="fref" href="#fig-flow"></a>, or at the top of <a class="fref" href="#fig-brot"></a> on a narrow screen',
+    run: async c => { lit(['B', 'R', 'O', 'T']); const a = S.lon, b = S.lat; await toQ(c, a + 30, b, 1400); await toQ(c, a, b, 1400); } },
+  { key: 'B2', label: 'B2', aliases: ['rank'], color: '#eee9e0', standing: 'notation', note: 'Bn has n imaginary units; the same brot at every rank. This page is B2 throughout.', rule: 'Bristorian numbers with three parts, 1, i and j.', where: 'every figure\'s chip says B2', run: async c => { await c.wait(1200); } },
+  { key: 'ball', label: 'ball', aliases: ['balls'], color: '#eee9e0', standing: 'standard', rule: 'every number within r of q: with three parts it is an ordinary solid ball.', where: 'the B cell (a tiny one); <a class="fref" href="#fig-brotoid"></a> and the cone view in the corner of <a class="fref" href="#fig-flow"></a> (radius r)', run: async c => { lit(['B']); await c.wait(1600); } },
+  { key: 'stretch', label: 'stretch', aliases: ['stretches', 'stretching'], color: '#eee9e0', standing: 'standard', rule: 'how much squaring lengthens a tiny step from q, by direction. Its extremes are the singular values of J.', where: 'the B cell: the ellipsoid\'s axes, l the longest and w the shortest',
+    run: async c => { lit(['B']); await toQ(c, ...QN.conch, 1200); await toQ(c, ...QN.thin, 2400); } },
+  { key: 'hand', label: 'hand', color: '#ffe14d', standing: 'posed', note: 'Posed: the word has no map entry (brotdocs 10-21); its measure is filed, the BROT legend\'s det Q = χ (keep = rotation, mirror = reflection). Not chirality. In the project\'s glossary, chirality asks whether the whole fractal has a distinct mirror twin, and B2\'s does not. The hand asks which way round one squaring turns a small shape at one point: χ = sign det J (keep +1, mirror −1). Standard name: the orientation, preserved or reversed.', rule: 'which way round a small shape comes out: squaring keeps it or mirrors it.', where: 'cyan and orange, in every figure',
+    run: async c => { lit(['R']); await toQ(c, ...QN.conch, 1400); await c.say('At the conch squaring **keeps** the hand.'); await c.wait(1800); await c.say('Now to (83°, 5°)…'); await toQ(c, ...QN.mirrorq, 2000); await c.say('At (83°, 5°) it **mirrors**.'); await c.wait(1800); } },
+  { key: 'keep', label: 'keep', aliases: ['keeps', 'kept'], color: '#19e0ff', standing: 'posed', note: 'A working name.', rule: 'squaring leaves a small shape the same way round (det J > 0): cyan.', where: 'cyan, in every figure', run: async c => { lit(['R']); await toQ(c, ...QN.conch, 1600); } },
+  { key: 'mirror', label: 'mirror', aliases: ['mirrors', 'mirrored'], color: '#ff5a1f', standing: 'posed', note: 'A working name.', rule: 'squaring turns a small shape the other way round (det J < 0): orange.', where: 'orange, in every figure', run: async c => { lit(['R']); await toQ(c, ...QN.mirrorq, 1600); } },
+  { key: 'det J', label: 'det J', color: '#ffe14d', standing: 'standard', note: 'The Jacobian determinant of the square.', rule: 'how squaring scales a tiny box at a point. Its sign is the hand: above 0 keep, below 0 mirror; 0 on the crossing cone.', where: 'not drawn; the colours read its sign', run: async c => { lit(['R']); await c.wait(1600); } },
+  { key: 'crossing cone', label: 'crossing cone', color: '#ff4fa3', standing: 'canon', note: 'Filed with crossing (19 October). The standard name is the critical set of the square. Its picture word is the brim.', rule: 'every point where det J = 0: straight lines through 0, one on each meridian. It is the same for every q.', where: '<a class="fref" href="#fig-hand"></a>, map ⇄ cone; the pink border in the map; the pink cone in the corner of <a class="fref" href="#fig-flow"></a>',
+    run: async c => { document.getElementById('fig-hand').scrollIntoView({ behavior: 'smooth', block: 'center' }); coneMode(true); const y0 = S.cyaw; await c.tween(5000, k => { S.cyaw = y0 + 2 * Math.PI * ease(k); want('hand'); }); } },
+  { key: 'seam', label: 'seam', color: '#c9d3e6', standing: 'three senses', note: 'The project\'s glossary gives it three senses (algebraic, methodological, engineering), kept apart on purpose. This page uses only the algebraic one, the i + j diagonal (+45°).', rule: 'the i + j diagonal. In the plane of i and j, det J changes sign across it.', where: '<a class="fref" href="#fig-hand"></a>: the i + j points', run: async c => { coneMode(false); lit(['R']); await toQ(c, 45, 0, 1800); } },
+  { key: 'fold', label: 'fold', color: '#c9d3e6', standing: 'two senses', note: 'In the project\'s glossary: the −45° plane i = −j, the project\'s one true mirror plane. In singularity theory the fold set is the whole critical set, which this page calls the crossing cone: two senses.', rule: 'the plane i = −j. In the plane of i and j it meets the crossing cone along i − j, where det J only touches 0.', where: '<a class="fref" href="#fig-hand"></a>: the i − j points', run: async c => { coneMode(false); lit(['R']); await toQ(c, -45, 0, 1800); } },
+  { key: 'commutator', label: 'commutator', color: '#ffd650', standing: 'standard', rule: 'q·v − v·q. It is 0 for every v exactly when order never matters.', where: 'the O cell: its size over every v', run: async c => { lit(['O']); await toQ(c, ...QN.one, 1800); await toQ(c, ...QN.conch, 1800); } },
+  { key: 'associator', label: 'associator', color: '#9dff3f', standing: 'standard', rule: '(a·b)·c − a·(b·c). It is 0 for every triple exactly when brackets never matter.', where: 'the T cell: the dashed gap', run: async c => { lit(['T']); await c.wait(1800); } },
+  { key: 'witness triple', label: 'witness triple', color: '#9dff3f', standing: 'posed', note: 'The full instrument uses the same one.', rule: 'one fixed triple, q, i, j, where T is read. Other triples give other gaps.', where: 'the T cell', run: async c => { lit(['T']); await c.wait(1600); } },
+  { key: 'r', map: 'r', label: 'r', cs: true, color: '#ffdb6b', standing: 'notation', rule: 'the ball\'s radius, in the same units as q. The page holds |q| at 1, so r is r/|q|, the number that sets the brotoid\'s shape (③ is at r = |q| = 1).', where: 'the r slider under <a class="fref" href="#fig-brotoid"></a>, and the wheel over the cone view', run: async c => { hereB(); const r = S.r; await toR(c, 0.22, 1400); await toR(c, r, 1800); } },
+  { key: 'skin', label: 'skin', color: '#eee9e0', standing: 'posed', note: "A working name.", rule: "the ball's surface, the sphere |x − q| = r. Squared, it is the brotoid you see.", where: '<a class="fref" href="#fig-brotoid"></a>', run: async c => { hereB(); await turnB(c, Math.PI * 0.6, 3000); } },
+  { key: 'opposite algebra', label: 'opposite algebra', color: '#eee9e0', standing: 'standard', rule: 'the same numbers with every product read the other way round: a·b becomes b·a. Same squares, so the same fractal; its commutator is minus B2\'s, and its associator differs.', note: 'Not a relabelling: swapping the names i and j turns one roll of B2 into the other, the same algebra; reading a·b as b·a is a different algebra. The glossary files the pair as a false friend.', where: 'section 5; checked in section 9', run: async c => { lit(['fractal']); await c.wait(1800); } },
+  { key: 'reversal automorphism', label: 'reversal automorphism', color: '#c9d3e6', standing: 'canon', note: 'The glossary\'s math.chirality_lock calls it φ: it exists, has order 2, and is hand-blind.', rule: 'φ(x + yi + zj) = x − zi − yj: the fold mirror, the mirror through the fold plane. It keeps every product, φ(a·b) = φ(a)·φ(b), so q and φ(q) have the same B, R, O and hand.', where: 'the reverse box in section 7', run: async c => { lit(['B', 'R', 'O']); await toQ(c, ...QN.thin, 1800); await toQ(c, 180, 27, 2400); } },
+  { key: 'Bristorbrot', label: 'Bristorbrot', cs: true, color: '#eee9e0', standing: 'project', note: 'The brot for short. Bn is the same brot at every rank n; this page is B2.',
+    rule: 'the fractal drawn by repeating z ← z² + c with Bristorian numbers.', where: 'not drawn here: section 5 says what it can and cannot see', run: async c => { lit(['fractal']); await c.wait(1800); } },
+  { key: 'i-roll', label: 'i-roll', color: '#eee9e0', standing: 'project', note: 'The product rule the Algebra page names.', rule: 'the product in use: e_a·e_a = −1, and e_a·e_b = sgn(b − a)·e_b for a ≠ b.', where: 'section 0: the numbers; section 9: the square written out', run: async c => { await c.wait(1200); } },
+  { key: 'brotoid', map: 'brotoid', label: 'brotoid', aliases: ['brotoids'], color: '#eee9e0', standing: 'canon', note: "Named 19 October: '-brot-' carries more meaning.", rule: "the image of a ball under one Bristorian squaring; its skin is the squared sphere.", where: '<a class="fref" href="#fig-brotoid"></a>', run: async c => { hereB(); await turnB(c, Math.PI, 4000); } },
+  { key: 'brim', label: 'brim', aliases: ['brims'], color: '#ff4fa3', map: 'brim', standing: 'posed', note: "The crossing cone's picture word (Doug, 21 October): the ball is a hat's crown and the cone its brim. Crossing cone stays the maths name.", rule: 'the crossing cone, as a picture: every point where det J = 0. It is the same for every q and r.', where: 'the pink cone in the setter, the cone view beside or above the model in <a class="fref" href="#fig-flow"></a>' },
+  { key: 'eye', label: 'eye', aliases: ['eyes'], color: '#ff4fa3', map: 'eye', standing: 'posed', note: "Filed 21 October; on 23 October the brim's own points in it took a word of their own, the plate, and the eye is the hole. At first use, \u201cthe eye of the brim\u201d: rendering docs use \u201cthe eye\u201d for the viewer's.", rule: 'the hole in the hat: the hole the rim edges, where the plate is taken out of the brim. Born as one point at ①; from ③ it holds 0.', where: 'where the plate is, on <a class="fref" href="#fig-brotoid"></a>: the plate fills it',
+    run: async c => { hereB(); const M = momOf(); await toR(c, M.touch.r + 0.17, 1600); await turnB(c, Math.PI * 0.5, 2400); } },
+  { key: 'plate', label: 'plate', aliases: ['plates'], color: '#ff4fa3', map: 'plate', standing: 'posed', note: "Doug, 23 October: \u201cthe part of brim encircled by the rim, with the eye being the hole[s] edged by the rim\u201d. Not a dish or a sheet of metal.", rule: 'the part of the brim inside the ball, which the rim encircles: the stuff, where the eye is the gap. From ③ it holds 0.', where: 'the pink and violet sheet on <a class="fref" href="#fig-brotoid"></a>, squared: pink where the brim\'s top faces you, violet where its underside does' },
+  { key: 'rim', label: 'rim', aliases: ['rims'], color: '#ff4fa3', map: 'rim', standing: 'posed', note: "Filed 21 October for the ball's side; this page said crossing loop until 22 October. The moments module still names the merge \u201ctwo crossing loops meet\u201d.", rule: 'on the ball, before squaring: the loop where its sphere meets the brim. Born as one point at ①; squared, it is the crossing.', where: 'pink, where the ball cuts the cone, in the setter, the cone view beside or above the model in <a class="fref" href="#fig-flow"></a>',
+    run: async c => { hereB(); const M = momOf(); await toR(c, M.touch.r - 0.045, 1200); await toR(c, M.touch.r + 0.067, 2600); } },
+  { key: 'crossing', map: 'crossing', label: 'crossing', aliases: ['crossings'], color: '#ff4fa3', standing: 'two senses', note: "The project's glossary (19 October) files crossing for the brotoid's side: the line on the skin where det J = 0. The brotoid explorer uses crossing for the ball's side and caustic for the brotoid's. This page says rim on the ball (the vocabulary's word, 21 October) and crossing on the brotoid.",
+    rule: "on the brotoid: the line where det J = 0, between keep and mirror. It is the rim after squaring.", where: 'pink on <a class="fref" href="#fig-brotoid"></a>', run: async c => { hereB(); const M = momOf(); await toR(c, M.touch.r + 0.13, 1600); await turnB(c, Math.PI * 0.5, 2400); } },
+  { key: 'caustic', label: 'caustic', color: '#ff4fa3', standing: 'two names', note: "The brotoid explorer's word for what the glossary calls the crossing (the brotoid's side): two names for one thing.", rule: "on the brotoid: the image of the rim.", where: 'pink on <a class="fref" href="#fig-brotoid"></a>', run: async c => { hereB(); await turnB(c, Math.PI * 0.5, 2400); } },
+  { key: 'moment', map: 'moment', label: 'moment', aliases: ['moments'], color: '#eee9e0', standing: 'canon', note: 'The project\'s glossary marks it a false friend: in standard maths a moment is something else, so first use says what it means here.', rule: 'an r where the brotoid changes kind: ① the crossing is born, ② a weft is born, ④ a self weft is born, ③ the skin passes through 0.', where: 'the buttons under <a class="fref" href="#fig-brotoid"></a>',
+    run: async c => { hereB(); const L = momList(momOf()); for (const m of L) { await toR(c, m.r + 0.011, 1600); c.say(`${m.k} at r ${f3(m.r)}: ${m.what}.`); await c.wait(1400); } } },
+  { key: 'weft', map: 'weft', label: 'weft', aliases: ['wefts'], color: '#ffdb6b', standing: 'canon', note: 'Named 19 October, from weaving: the weft passes through the warp without cutting it. Standard name: double curve.', rule: 'where the skin passes through itself. Each point is the square of two ball points, x = m + t·n and y = m − t·n.', where: 'gold (cross) and green (self) on <a class="fref" href="#fig-brotoid"></a>; gold in the cone view in the corner of <a class="fref" href="#fig-flow"></a>',
+    run: async c => { hereB(); const M = momOf(); if (M.birth) { await toR(c, M.birth.r - 0.022, 1200); await toR(c, M.birth.r + 0.11, 2600); } } },
+  { key: 'crease', map: 'crease', label: 'crease', aliases: ['creases'], color: '#7af0ff', standing: 'canon', note: 'Filed 19 October for this meaning, ruled current 21 October (Doug: "the pinch deform region, and where wefts happen"). Its first meaning, the det J = 0 line, is retired: that is the crossing. Not a pinch point: that is the umbrella.', rule: 'where a weft will be born: the skin folds sharply toward itself but has not yet passed through. Its gap is how far r still has to grow; at 0 the weft is born there.', where: 'cyan rings with their gap on the model, and cyan lines (each as long as its gap) in the cone view, both in <a class="fref" href="#fig-flow"></a>' },
+  { key: 'gap', label: 'gap', aliases: ['gaps'], color: '#eee9e0', standing: 'three senses', note: 'On this page, the T gap: how far apart the two bracketings land (section 4). On the model and its cone view, a crease\'s gap: how far r still has to grow before a weft is born there. The project\'s glossary has a third, unrelated gap: the difference between odd and even maths.', rule: 'how far apart two things still are: in the T cell, the two bracketings; at a crease, the ball and G.', where: 'the T cell; the creases in <a class="fref" href="#fig-flow"></a>' },
+  { key: 'G', label: 'G', cs: true, color: '#d9d3c7', standing: 'notation', note: 'From the crease entry of the project\'s glossary.', rule: 'on each line of the crossing cone, the midpoint m of the two ball points that square alike; G depends only on q. The ball swallows G where a weft is: h = |m − q| < r.', where: 'the pale curve in the cone view in the corner of <a class="fref" href="#fig-flow"></a>, gold where swallowed' },
+  { key: 'X', label: 'X', cs: true, color: '#8cff7a', standing: 'posed', note: "insights' working letter (19 October), G's twin.", rule: "on each cone line, the switch point where that line's weft turns from cross to self; ④ is where the ball first reaches X.", where: 'the green dotted curve in the cone view in the corner of <a class="fref" href="#fig-flow"></a>, with ④\'s r beside it' },
+  { key: 'umbrella', map: 'umbrella', label: 'umbrella', aliases: ['umbrellas'], color: '#ffffff', standing: 'canon', note: 'Standard: a Whitney umbrella. The brotoid\'s skin stays two-sided.', rule: 'each end of a weft, where its two ball points become one.', where: 'white rings on <a class="fref" href="#fig-brotoid"></a>', run: async c => { hereB(); const M = momOf(); if (M.birth) await toR(c, M.birth.r + 0.056, 1600); await c.wait(1400); } },
+];
+const slug = k => k.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const GLOSSARY = Object.fromEntries(W.map(w => [w.key.toLowerCase(), { label: w.label, title: `${w.label}: ${w.rule}`, aliases: (w.aliases || []).map(a => a.toLowerCase()), color: w.color, say: `**${w.label}**: ${w.rule}`, run: w.run }]));
+const TERMS = { cyan: '#19e0ff', orange: '#ff5a1f', pink: '#ff4fa3', gold: '#ffdb6b', green: '#3fd16b' };
+const SCLS = s => s === 'clash' ? 'clash' : /^(two|three) /.test(s) ? 'two' : s;
+const CATCH = ['clash', 'two names', 'two senses', 'three senses'];
+// standings from brotdocs' vocabulary map, live (Doug 10-22: "updates of terms feed in"). A word with map: takes its standing from the map each
+// load: filed or posed (its label's status), then the label. Its rule and where stay the page's. If the map can't be read, the typed one stands.
+const MAPURL = '/brotdocs/docs/notation_vocabulary_map.md';
+let MAPST = null;   // term → 'filed · coined' …; null until read, false if it can't be
+const mapStandings = md => Object.fromEntries(md.split(/\n## /).slice(1).map(s => { const t = s.slice(0, s.indexOf('\n')).trim().toLowerCase(), f = s.split(/\n- \*\*/).find(x => x.startsWith('label**')) || '';
+  const lab = (f.match(/STANDARD|NARROWER|FALSE FRIEND|OVERLOADED|COINED/) || [''])[0].toLowerCase(), st = (f.match(/\bstatus (\w+)/) || [])[1] || 'filed';
+  return lab ? [t, `${st} · ${lab}`] : null; }).filter(Boolean));
+const ownChip = w => `<span class="st ${SCLS(w.standing)}">${w.standing === 'canon' ? 'glossary' : w.standing}</span>`;
+const chipOf = w => { const m = w.map && MAPST && MAPST[w.map]; if (!m) return ownChip(w);
+  const c = `<span class="st map ${/^posed/.test(m) ? 'posed' : 'canon'}" title="from the vocabulary map">${m}</span>`; return CATCH.includes(w.standing) ? c + ownChip(w) : c; };
+function words() { const catches = W.filter(w => CATCH.includes(w.standing));
+  $('catches').innerHTML = `<h3>Caught: ${catches.length} words to settle</h3><ul>${catches.map(w => `<li><button class="tw" data-t="${w.key}" style="color:${w.color}">${w.label}</button> <span class="st ${SCLS(w.standing)}">${w.standing}</span> ${w.note}</li>`).join('')}</ul>`;
+  $('words').innerHTML = W.map(w => `<div class="wd" id="w-${slug(w.key)}"><dt><button class="tw" data-t="${w.key}" style="color:${w.color}">${w.label}</button><span class="stw" data-k="${w.key}">${chipOf(w)}</span></dt>
+    <dd>${w.rule[0].toUpperCase() + w.rule.slice(1)}<br><span class="wh">Where: ${w.where}.</span>${w.note ? `<br><span class="nt">${w.note}</span>` : ''}</dd></div>`).join(''); }
+words();
+// only the chips change once the map is read, so the figure refs in each "where" stay filled
+fetch(MAPURL, { cache: 'no-cache' }).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(md => { MAPST = mapStandings(md); }).catch(() => { MAPST = false; }).then(() => {
+  document.querySelectorAll('#words .stw').forEach(s => { s.innerHTML = chipOf(W.find(w => w.key === s.dataset.k)); });
+  const n = W.filter(w => w.map && MAPST && MAPST[w.map]).length;
+  $('mapsrc').textContent = MAPST ? ` Read from the map just now: ${n} words.` : ' The vocabulary map could not be read, so every standing below is as this page set it (22 October).'; });
+document.addEventListener('click', e => { const a = e.target.closest('a.w, button.tw'); if (!a) return; e.preventDefault(); FLOW.showTerm(a.dataset.t); });
+
+// ---- figures (S10)
+let GAL = null;   // the gallery (built below, after the figures; its chip reads it)
+const chipQ = () => `q (${Math.round(S.lon)}°, ${Math.round(S.lat)}°)`;
+const FIGS = Pageflow.figs({ list: '#figlist', states: {
+    'fig-brot': () => `live · one of many · B2 · ${chipQ()} · ${LIT.includes('fractal') ? 'marked: what the fractal cannot see' : LIT.length && LIT.length < 4 ? 'lit: ' + LIT.join(', ') : 'all four'}`,
+    'fig-flow': () => `live · one of many · B2 · ${chipQ()} · r ${f3(S.r)} · insights' brotoid_flow · drag to turn`,
+    'fig-hand': () => `live · one of many · B2 · ${S.cone ? 'cone, with the ball: r ' + f3(S.r) : 'map'} · ring at ${chipQ()}`,
+    'fig-c': () => 'fixed · ℂ = B1 (one imaginary unit) · the circle |z − ½| = ½',
+    'fig-brotoid': () => `live · one of many · B2 · ${chipQ()} · r ${f3(S.r)}`,
+    'fig-gallery': () => { const g = GAL?.state(); return `live · one of many · B2 · ${g ? g.cast + ' of ' + g.total + ' q cast' : 'not cast yet'} · r ${f3(g?.r ?? S.r)} · ${g?.open ? 'open, full window' : g?.cast ? 'its stills, left in the figure' : 'open it to cast'}`; } },
+  shows: { 'fig-brot': 'the q setter and the four readings B, R, O, T for that q, each with its picture and what ℂ answers',
+    'fig-flow': 'the model: the squared ball at the panel\'s q and the page\'s r, drawn as dust flowing on its skin (insights\' brotoid_flow, as in the brotoid explorer), under the settings and the four readings; in its own frame beside it (above it on a tall window), the q setter: the ball before squaring on the crossing cone (insights\' cone view), its rim in pink, its weft in gold and its creases in cyan, with the q sphere on its corner; on the model, creases are cyan rings',
+    'fig-hand': 'the hand of every direction, keep or mirror; the border is det J = 0; cone view: the crossing cone through 0',
+    'fig-c': 'ℂ: a circle through 0 and its square, a cardioid with its sharp point at 0',
+    'fig-brotoid': 'the squared ball at the panel\'s q and radius r: hand colours, the crossing, the weft and its umbrellas',
+    'fig-gallery': 'the finale: a large live seed brotoid visits the named q\'s, then the rest of the sphere, and casts off a still at each, which flies out to its place at q and shrinks as it goes; closed, the stills stay here' } });
+function printNote() { $('printnote1').textContent = `Fig 1 is live: ${location.origin}${location.pathname} at q (${Math.round(S.lon)}°, ${Math.round(S.lat)}°): B ${f2(RQ.B)}, R ${RQ.R.toFixed(0)}° (${handWord(RQ)}), O ${f3(RQ.O)}, T ${f3(RQ.T)}.`; }
+addEventListener('beforeprint', () => { document.documentElement.classList.add('printing'); printNote(); HANDIMG = null; drawCells(); drawHand(); drawBrotoid(); });
+addEventListener('afterprint', () => { document.documentElement.classList.remove('printing'); HANDIMG = null; drawCells(); drawHand(); drawBrotoid(); });
+PRINT.addEventListener?.('change', () => { HANDIMG = null; drawCells(); drawHand(); drawBrotoid(); });
+
+// ---- the track (Doug's order, S3). Every number from the atoms (S5); every claim on screen when it is said (S4).
+const BEATS = [
+  { title: 'BROT: one number, four readings', target: '#s0', say: 'One number, **q**. Four questions about it: **B**, Bristor; **R**, Rotation; **O**, Order; **T**, Torsion.', enter: () => { lit(['B', 'R', 'O', 'T']); GAL?.reset(); },   // a replay restocks the gallery (Doug 10-20)
+    run: async c => { await toQ(c, ...QN.conch, 900); await c.say('Roll q, and all four answers change together.'); await toQ(c, 40, 20, 3000); await toQ(c, ...QN.conch, 2400); } },
+  { title: 'B: a tiny ball comes out as an ellipsoid', target: '#s1', say: 'B, Bristor: square a tiny **ball** round q. It comes out stretched.', enter: () => lit(['B']),
+    run: async c => { await toQ(c, ...QN.conch, 900); await c.say(`At the conch, B is ${NUM['conch.B']}.`); await c.wait(1800);
+      await c.say('Now to the thin one, q at (90°, 27°)…'); await toQ(c, ...QN.thin, 3000); await c.say(`At the thin one, B is ${NUM['thin.B']}: nearly flat.`); await c.wait(2000); } },
+  { title: 'R: the turn, and its hand', target: '#s2', say: 'R, Rotation: take the stretch away, and a turn is left.', enter: () => lit(['R']),
+    run: async c => { await toQ(c, ...QN.conch, 1600); await c.say(`At the conch it turns ${NUM['conch.R']} and **keeps** the hand.`); await c.wait(2000);
+      await c.say('Now to (83°, 5°)…'); await toQ(c, ...QN.mirrorq, 3000); await c.say(`At (83°, 5°) it turns ${NUM['mirrorq.R']} and **mirrors**.`); await c.wait(2000); } },
+  { title: 'The hand over every direction, and the crossing cone', target: '#fig-hand', say: 'Every direction q can point: cyan **keeps**, orange **mirrors**.', enter: () => { lit(['R']); coneMode(false); },
+    run: async c => { await toQ(c, ...QN.conch, 1600); await c.say('Now to the border, at i + j…'); await toQ(c, 45, 0, 2000); await c.say('The border is where **det J** is 0: there q has neither hand.'); await c.wait(1600);
+      coneMode(true); await c.say('Lines from 0 through that border: the **crossing cone**.'); const y0 = S.cyaw; await c.tween(4200, k => { S.cyaw = y0 + Math.PI * ease(k); want('hand'); }); } },
+  { title: 'O: order matters in B2', target: '#s3', say: 'O, Order: does q·v equal v·q?', enter: () => lit(['O']),
+    run: async c => { await toQ(c, ...QN.one, 2200); await c.say(`At q = 1, O is ${NUM['one.O']}: real numbers commute.`); await c.wait(1800);
+      await c.say('Now back to the conch…'); await toQ(c, ...QN.conch, 2600); await c.say(`At the conch, O is ${NUM['conch.O']}.`); await c.wait(1600); } },
+  { title: 'T: brackets matter in B2', target: '#s4', say: 'T, the brackets: (q·i)·j against q·(i·j).', enter: () => lit(['T']),
+    run: async c => { await toQ(c, ...QN.conch, 1400); await c.say(`At the conch the gap is ${NUM['conch.T']}.`); await c.wait(2000);
+      await c.say(`The two answers are the same size, turned ${NUM['conch.Tturn']}.`); await c.wait(1800);
+      await c.say('Now to (0°, 60°)…'); await toQ(c, ...QN.t60, 3000); await c.say(`There they point the same way: the brackets change only the size. One is ${NUM['t60.Tsize']} the size of the other.`); await c.wait(1800); } },
+  { title: 'What the fractal cannot see: O, T and the mirror', target: '#s5', say: 'z ← z² + c multiplies a number by itself.', enter: () => lit(['B', 'R', 'O', 'T']),
+    run: async c => { await c.wait(1400); await c.say('So it cannot see **O**, **T**, or the mirror half of **R**.'); lit(['fractal']); await c.wait(3000); } },
+  { title: 'B up close: the brotoid and its moments', target: '#fig-brotoid', say: 'Grow the ball: the **brotoid**.', enter: () => lit(['B']),
+    run: async c => { await toQ(c, ...QN.conch, 900); await toR(c, 0.22, 900); const L = momList(momOf());
+      for (const m of L) { await c.say(`Now to ${m.k}…`); await toR(c, m.r + 0.011, 2000); await c.say(`${m.k} r ${f3(m.r)}: ${m.what}.`); await c.wait(1500); } } },
+  // the summary, then the finale (Doug 10-20). The gallery casts on its own clock; this beat waits on each named cast to name it. Its captions do not
+  // start "At …": the panel's q does not move here, only the seed's (the gallery's corner says the seed's q).
+  { title: 'So what makes a brotoid? The gallery', target: '#s6sum', say: 'So what makes a **brotoid** worth looking at?', enter: () => lit(['B']),
+    run: async c => { await toR(c, 0.667, 900);
+      // while the intro is said, the controls wiggle (Doug 10-20): q round where it is, r about 0.6, both back where they began (every sine ends at 0)
+      const lo0 = S.lon, la0 = S.lat, wig = c.tween(6400, k => { const w = 2 * Math.PI * k; setDir(lo0 + 32 * Math.sin(2 * w), la0 + 16 * Math.sin(w)); setR(0.667 + 0.18 * Math.sin(3 * w)); });
+      await c.say('Its shape depends on which way q points. It has a **hand**: cyan **keeps**, orange **mirrors**. And it changes hand along a whole cone.'); await wig; setDir(lo0, la0); setR(0.667); await c.wait(1000);
+      await c.say('Here it is at many q: the seed casts off a still at each, and the still flies out to its place, its q.'); GAL.open();
+      const SAY = ['The conch, i.', 'j: a different q, a different shape, not the same shape turned.', 'q = 1.', 'i + j: on the border between keep and mirror.', 'i − j.', 'The thin one: nearly flat.', '(83°, 5°): it mirrors.'];
+      for (let k = 0; k < SAY.length; k++) { await c.until(GAL.when(k + 1)); await c.say(SAY[k]); }
+      await c.until(GAL.when(SAY.length + 1)); await c.say('Then the rest of the sphere, each still at its own q.'); await c.until(GAL.when(GAL.state().total));
+      await c.say('One number, four readings, and a shape for every way it can point.'); await c.wait(2400); } },
+];
+// fact show-mes (#f1-#f3): mini-beats on the figure
+const SHOWS = [
+  async c => { hereB(); lit(['B']); await toQ(c, ...QN.conch, 900); await toQ(c, ...QN.thin, 3200); await toQ(c, ...QN.conch, 2400); },
+  async c => { hereB(); const M = momOf(); await toR(c, M.touch.r - 0.033, 1000); await toR(c, M.touch.r + 0.17, 3000); await turnB(c, Math.PI * 0.6, 2400); },
+  async c => { hereB(); await toQ(c, ...QN.mirrorq, 2400); await toQ(c, ...QN.conch, 2400); },
+];
+const AMB = { t: 0 };
+const FLOW = Pageflow.mount({ panes: { guide: 'off', tree: 'off', sign: 'inset' }, beats: BEATS, contents: 'section h2', terms: TERMS, glossary: GLOSSARY, returns: true,
+  ambient: dt => { if (HOLD || document.hidden) return; S.yaw += dt * 0.00025; S.byaw += dt * 0.0002; want('cells'); want('br'); },
+  snapshot: () => ({ lon: S.lon, lat: S.lat, r: S.r, lit: [...LIT], cone: S.cone }),
+  restore: s => { if (!s) return; setDir(s.lon, s.lat); setR(s.r); coneMode(!!s.cone); lit(s.lit || []); } });
+document.querySelectorAll('button.show[data-show]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.show; FLOW.showTerm && runShow(i); }));
+// a show-me runs on its own generation: a reader's press (SHOWGEN++) stops the whole chain where it is, not just the tween in flight (S9)
+// the page rests after 60 s with no reader (S20, rest.js), but not while a show-me plays or the gallery casts: the track is pageflow's own
+let SHOWING = 0; window.Rest?.busy(() => SHOWING > 0 || (GAL?.state().open && !GAL.state().done));
+async function runShow(i) { SHOWING++; try { await runShow1(i); } finally { SHOWING--; } }
+async function runShow1(i) { FLOW.markReturn(); const g = ++SHOWGEN, stop = () => g !== SHOWGEN;
+  const ctx = { tween: (ms, f) => new Promise((res, rej) => { const t0 = performance.now(); const st = now => { if (stop()) return rej(new Error('stopped')); const k = Math.min(1, (now - t0) / ms); f(k); k < 1 ? requestAnimationFrame(st) : res(); }; requestAnimationFrame(st); }),
+    wait: ms => new Promise((res, rej) => setTimeout(() => stop() ? rej(new Error('stopped')) : res(), ms)), say: () => {} };
+  try { await SHOWS[i](ctx); } catch (e) { if (e.message !== 'stopped') throw e; } }
+let SHOWGEN = 0;
+// reader input: hold ambient; a press anywhere cancels a running show-me where it is (S9)
+for (const t of ['pointerdown', 'wheel', 'keydown', 'touchstart']) addEventListener(t, e => { if (!e.isTrusted) return; HOLD = true; if (!e.target.closest?.('button.show')) SHOWGEN++; }, { capture: true, passive: true });
+
+// an embedded brotoid_flow, quietened: its caption line gives r as a fraction of |q|; the page's chips say r in the page's units.
+// (Its 'ball around …' readout is off in embed mode since insights 10-20, so the page no longer filters it.)
+function quietBF(fr) { try { const d = fr.contentDocument, st = d.createElement('style'); st.textContent = '#cap{display:none!important}'; d.head.appendChild(st); } catch (e) {} }
+// ---- the flow brotoid (Doug 10-20, recut: "have it with the brot settings ... to show how the settings and the reading and the model relate").
+// insights' brotoid_flow in its embed mode, driven the way the crease explorer drives it (crease_live.js liveBrot): each frame its S takes the
+// panel's q and the page's r (mag = |q|, r_frac = r / |q|). It loads only while Fig 2 is displayed (not in the narrow band); a touch on it pauses the track.
+const FLOWGXT = (() => { const fig = $('fig-flow'), fr = $('flowfr'); if (!fig || !fr) return null; let ready = false, rShown = -1;
+  const on = () => fig.offsetParent !== null, bf = () => { try { return fr.contentWindow?.__bf || null; } catch (e) { return null; } };
+  // ?model=0 leaves Fig 2 unloaded (the spectest: its headless GL is software; on Intel and NVIDIA the brotoid costs the page nothing)
+  const load = () => { if (fr.src || !on() || new URLSearchParams(location.search).get('model') === '0') return; fr.src = `/insights/brotoid_flow/?embed=1&join=1&crease=1&lon=${S.lon}&lat=${S.lat}&mag=${MAG}&r_frac=${S.r / MAG}`; };
+  fr.addEventListener('load', () => { ready = true; try { const d = fr.contentDocument; quietBF(fr);
+    d.addEventListener('pointerdown', () => { HOLD = true; SHOWGEN++; FLOW?.pause?.('reader'); }, { capture: true }); } catch (e) {} });
+  const sync = () => { if (S.r !== rShown) { rShown = S.r; $('rr2').value = S.r; $('rval2').textContent = `${f3(S.r)} = r/|q|`; }
+    const b = bf(); if (!b) return; const s = b.S, r_frac = S.r / MAG; if (s.lon !== S.lon || s.lat !== S.lat || s.mag !== MAG || s.r_frac !== r_frac) Object.assign(s, { lon: S.lon, lat: S.lat, mag: MAG, r_frac }); };
+  const tick = () => { requestAnimationFrame(tick); sync(); }; tick();
+  $('rr2').addEventListener('input', e => setR(+e.target.value));
+  const hdr = () => document.documentElement.style.setProperty('--hdr', document.querySelector('header.top').offsetHeight + 'px');
+  addEventListener('resize', () => { hdr(); load(); }); hdr(); load();
+  return { hold: on => { const b = bf(); if (b) b.S.paused = on; }, state: () => { const b = bf(), r = fr.getBoundingClientRect(); return { ready: ready && !!b, on: on(), fr: [r.left, r.top, r.width, r.height], H: innerHeight,
+    bf: b ? { lon: b.S.lon, lat: b.S.lat, mag: b.S.mag, r_frac: b.S.r_frac } : null, want: { lon: S.lon, lat: S.lat, mag: MAG, r_frac: S.r / MAG } }; } }; })();
+
+// ---- the q setter (Doug 10-20: "TL PIP q sphere on the cone ball", S16; 10-21: its own frame, not a PIP). insights' cone-ball view, loaded live
+// from crease_what, in its own frame beside the model, at the page's q and r: r in q's units (the page's S.r, not brotoid_flow's r / |q|). The ball is r's indicator, the crossing loop (pink)
+// is where it meets the crossing cone, gold G is the weft. The panel's q sphere moves onto the setter's corner while Fig 2 shows, back in the band.
+const PIP = (() => { const box = $('qpip'), cv = $('conecv'), qs = $('qset'), home = qs.parentNode, homeNext = qs.nextSibling;
+  const get = () => ({ Qd: [S.lon, S.lat], r: S.r, hover: null });
+  let CV = null, key = '', draws = 0, err = null;
+  // if the cone view can't load (a host without crease_what), the PIP goes and the q sphere stays in the panel
+  // the cone view reads |q| from crease_live (insights 10-23: setMag, a live binding): set to the page's before it mounts, so q and r agree
+  import('/insights/crease_what/crease_live.js').then(L => { L.setMag(MAG); return import('/insights/crease_what/crease_cone.js'); }).then(m => { CV = m.coneView(cv, get); }).catch(e => { err = String(e); box.hidden = true; place(); });
+  const place = () => { const into = $('fig-flow').offsetParent !== null && !err ? box : home; if (qs.parentNode === into) return;
+    if (into === box) box.appendChild(qs); else home.insertBefore(qs, homeNext); QS.draw(); key = ''; };
+  const tick = () => { requestAnimationFrame(tick); if (!CV || box.offsetParent === null) return;
+    const k = `${S.lon},${S.lat},${S.r},${cv.clientWidth},${cv.clientHeight}`; if (k !== key) { key = k; CV.draw(); draws++; } };
+  box.addEventListener('wheel', e => { e.preventDefault(); setR(Math.round((S.r - Math.sign(e.deltaY) * 0.022) * 1000) / 1000); }, { passive: false });
+  addEventListener('resize', place); place(); tick();
+  // the frame flips between beside and above with Fig 2's shape: the q sphere redraws at its new size
+  if (window.ResizeObserver) new ResizeObserver(() => { if (qs.parentNode === box) QS.draw(); key = ''; }).observe(box);
+  return { get, state: () => { const b = box.getBoundingClientRect(), st = box.parentNode.getBoundingClientRect(), md = box.parentNode.querySelector('.flowstage').getBoundingClientRect(), bar = box.parentNode.querySelector('.flowctl').getBoundingClientRect();
+    return { ready: !!CV, err, draws, ...get(), on: box.offsetParent !== null, inPip: qs.parentNode === box, inPanel: !!qs.closest('#panel'), qsShown: qs.offsetParent !== null,
+      nQs: document.querySelectorAll('canvas#qset').length, box: [b.left, b.top, b.right, b.bottom], stage: [st.left, st.top, st.right, st.bottom], model: [md.left, md.top, md.right, md.bottom], barTop: bar.top,
+      side: getComputedStyle(box.parentNode).flexDirection === 'column' ? 'above' : 'beside' }; } }; })();
+
+// ---- the gallery (Doug 10-20, the finale). A large live seed (brotoid_flow in its own frame, made on open, removed on close) visits the
+// page's named q's, then a sweep of the sphere. At each it casts off a still: its canvas copied (brotoid_flow keeps its drawing buffer), its
+// background made clear, flown out from the seed to its place at q, shrinking as it goes. A place is q's direction in the seed's own frame
+// (its viewM), so turning the seed turns the gallery. The page's q is not moved: the panel is where the reader left it when the gallery closes.
+// The cast runs on its own clock (a touch on it does not pause it); the track's last beat waits on its casts to name them. ?model=0: no seed
+// (the spectest), the cast still counts its q's.
+GAL = (() => { const box = $('galbox'), cv = $('galcv'); if (!box) return null; const RMo = Pageflow.reducedMotion, NOSEED = new URLSearchParams(location.search).get('model') === '0';
+  const ang = (a, b) => { const u = dirOf(...a), w = dirOf(...b); return Math.acos(Math.max(-1, Math.min(1, u[0] * w[0] + u[1] * w[1] + u[2] * w[2]))) * 180 / Math.PI; };
+  const NAMED = [['the conch, i', 0, 0], ['j', 90, 0], ['1', 0, 90], ['i + j', 45, 0], ['i − j', -45, 0], ['the thin one', 90, 27], ['(83°, 5°)', 83, 5]];
+  const SWEEP = (() => { const out = [], n = 30, ga = Math.PI * (3 - Math.sqrt(5)); for (let k = 0; k < n; k++) { const z = 1 - 2 * (k + 0.5) / n, lo = Math.round(((k * ga * 180 / Math.PI) % 360 + 540) % 360 - 180), la = Math.round(Math.asin(z) * 180 / Math.PI);
+    if (!NAMED.some(m => ang([m[1], m[2]], [lo, la]) < 16)) out.push([null, lo, la]); } return out; })();
+  const G = { open: false, list: [...NAMED, ...SWEEP], stills: [], k: 0, run: 0, fr: null, view: [[0, 1, 0], [1, 0, 0], [0, 0, -1]], bg: null, r: null, seedQ: null, waits: [], D: 0 };
+  const FLY = 1700, bf = () => { try { return G.fr?.contentWindow?.__bf || null; } catch (e) { return null; } };
+  const sleep = (ms, run) => new Promise(r => setTimeout(r, RMo ? Math.min(ms, 250) : ms)).then(() => G.run === run);
+  const tell = () => { G.waits = G.waits.filter(w => G.k >= w.k ? (w.res(), false) : true); FIGS?.refresh(); };
+  function lay() { const W = innerWidth, H = innerHeight, D = Math.round(0.62 * Math.min(W, H)); G.D = D; if (G.fr) Object.assign(G.fr.style, { width: D + 'px', height: D + 'px', left: (W - D) / 2 + 'px', top: (H - D) / 2 + 'px' }); }
+  // the seed to (lo, la), the short way round
+  function seedTo(lo, la, ms, run) { const b = bf(); G.seedQ = [lo, la]; if (!b) return sleep(ms, run); const a0 = b.S.lon, b0 = b.S.lat, dl = ((lo - a0 + 540) % 360) - 180;
+    return new Promise(res => { const t0 = performance.now(), T = RMo ? 0 : ms; const step = now => { if (G.run !== run) return res(false); const k = T ? Math.min(1, (now - t0) / T) : 1, e = ease(k);
+      b.S.lon = a0 + dl * e; b.S.lat = lerp(b0, la, e); k < 1 ? requestAnimationFrame(step) : (b.S.lon = lo, b.S.lat = la, res(true)); }; requestAnimationFrame(step); }); }
+  // a still: the seed's drawing, a centred square, its background made clear (it would show as a dark box over the seed)
+  function snap() { try { const g = G.fr.contentDocument.getElementById('gl'), s = Math.min(g.width, g.height), N = 220, c = document.createElement('canvas'); c.width = c.height = N;
+      const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(g, (g.width - s) / 2, (g.height - s) / 2, s, s, 0, 0, N, N);
+      const im = x.getImageData(0, 0, N, N), d = im.data, br = d[0], bgc = d[1], bb = d[2]; if (!G.bg) { G.bg = `rgb(${br},${bgc},${bb})`; box.style.background = G.bg; }
+      for (let i = 0; i < d.length; i += 4) { const p = i / 4, rr = Math.hypot(p % N - N / 2, Math.floor(p / N) - N / 2) / N;   // a round fade at the rim: its glow is not cut square
+        d[i + 3] = Math.min(255, 255 * Math.max(Math.abs(d[i] - br), Math.abs(d[i + 1] - bgc), Math.abs(d[i + 2] - bb)) / 40) * Math.max(0, Math.min(1, (0.5 - rr) / 0.1)); }
+      x.putImageData(im, 0, 0); return c; } catch (e) { return null; } }
+  async function cast(run) { while (!NOSEED && !bf() && G.run === run) await sleep(200, run);
+    if (!NOSEED) { await sleep(1200, run); }   // its first frames: the dust settles on the skin
+    while (G.run === run && G.k < G.list.length) { const [name, lo, la] = G.list[G.k];
+      if (!(await seedTo(lo, la, name ? 1100 : 650, run))) return; if (!(await sleep(name ? 900 : 450, run))) return;
+      G.stills.push({ name, lon: lo, lat: la, img: NOSEED ? null : snap(), t0: performance.now() }); G.k++; tell();
+      if (!(await sleep(name ? 1500 : 600, run))) return; }
+    if (G.run === run && await seedTo(0, 0, 1800, run)) { G.done = true; tell(); } }   // the seed ends where the story began, at the conch
+  function open(o = {}) { if (G.open) return; G.open = true; G.run++; const run = G.run; G.list = o.list || [...NAMED, ...SWEEP]; G.stills = []; G.k = 0; G.done = false; G.r = S.r; tell();
+    box.classList.add('open', 'has'); document.documentElement.classList.add('galopen'); FLOWGXT?.hold(true);
+    if (!NOSEED) { const fr = G.fr = document.createElement('iframe'); fr.title = 'the seed: the brotoid, live; drag to turn it and the gallery'; const [, lo, la] = G.list[0];
+      fr.src = `/insights/brotoid_flow/?embed=1&join=1&crease=1&lon=${lo}&lat=${la}&mag=${MAG}&r_frac=${S.r / MAG}`; G.held = false;
+      // the reader's drag on the seed holds the slow turn (insights 10-20: brotoid_flow sets no flag of its own, so the page keeps one)
+      fr.addEventListener('load', () => { quietBF(fr); try { const d = fr.contentDocument; d.addEventListener('pointerdown', () => { G.held = true; }, { capture: true }); d.addEventListener('keydown', e => { if (e.key === 'Escape' && G.open) close(); });
+        for (const t of ['pointerup', 'pointercancel']) d.addEventListener(t, () => { G.held = false; }, { capture: true }); } catch (e) {} }); box.appendChild(fr); }
+    lay(); cast(run); }
+  // a replay: the stills are hidden, and cast again when the last beat opens the gallery (Doug 10-20: "hide and restock each brotoid on replay")
+  function reset() { close(); G.run++; G.stills = []; G.k = 0; G.done = false; box.classList.remove('has'); tell(); }
+  function close() { if (!G.open) return; G.open = false; G.run++; G.fr?.remove(); G.fr = null; box.classList.remove('open'); document.documentElement.classList.remove('galopen'); FLOWGXT?.hold(false); tell(); }
+  $('galopen').addEventListener('click', () => open()); $('galx').addEventListener('click', close);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && G.open) close(); }); addEventListener('resize', lay);
+  const dt = (u, v) => u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+  function draw(now) { requestAnimationFrame(draw); const dp = devicePixelRatio, W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
+    if (cv.width !== Math.round(W * dp) || cv.height !== Math.round(H * dp)) { cv.width = Math.round(W * dp); cv.height = Math.round(H * dp); }
+    const b = bf(); if (b && G.open) { try { G.view = b.viewM(); } catch (e) {} if (G.done && !G.held) b.S.yaw += 0.0012; }   // cast: a slow turn, the gallery with it
+    const x = cv.getContext('2d'), M = Math.min(W, H), Rg = 0.43 * M, cx = W / 2, cy = H / 2, V = G.view; x.setTransform(dp, 0, 0, dp, 0, 0); x.clearRect(0, 0, W, H);
+    const pr = d => [cx + Rg * dt(V[0], d), cy - Rg * dt(V[1], d), dt(V[2], d)];
+    x.lineWidth = 1; x.strokeStyle = 'rgba(141,138,160,.28)'; x.beginPath(); x.arc(cx, cy, Rg, 0, 7); x.stroke(); x.font = '12px ui-monospace, monospace'; x.textAlign = 'center';
+    for (const [lab, d] of [['1', [1, 0, 0]], ['i', [0, 1, 0]], ['j', [0, 0, 1]]]) { const p = pr(d); x.setLineDash([3, 5]); x.beginPath(); x.moveTo(cx, cy); x.lineTo(p[0], p[1]); x.stroke(); x.setLineDash([]);
+      x.fillStyle = 'rgba(141,138,160,.8)'; x.fillText(lab, cx + (p[0] - cx) * 1.07, cy + (p[1] - cy) * 1.07 + 4); }
+    const shown = G.stills.map(s => { const p = pr(dirOf(s.lon, s.lat)), e = G.open && !RMo ? ease(Math.min(1, (now - s.t0) / FLY)) : 1, sz = M * 0.12 * (1 + 0.25 * p[2]);
+      return { s, z: p[2], e, x: lerp(cx, p[0], e), y: lerp(cy, p[1], e), sz: lerp(G.D * 0.9, sz, e) }; }).sort((a, b) => a.z - b.z);
+    for (const t of shown) { x.globalAlpha = t.z < 0 ? 0.4 + 0.35 * (1 + t.z) : 1; t.s.at = [t.x, t.y, t.sz, t.e];
+      if (t.s.img) x.drawImage(t.s.img, t.x - t.sz / 2, t.y - t.sz / 2, t.sz, t.sz); else { x.fillStyle = '#29c7ff'; x.beginPath(); x.arc(t.x, t.y, 3, 0, 7); x.fill(); }
+      if (t.s.name && t.e >= 1) { x.fillStyle = '#d9d3c7'; x.fillText(t.s.name, t.x, t.y + t.sz * 0.42 + 12); } }
+    x.globalAlpha = 1; if (G.open) { x.textAlign = 'left'; x.fillStyle = '#d9d3c7'; const q = G.seedQ;
+      x.fillText(`the seed: q ${q ? `(${Math.round(q[0])}°, ${Math.round(q[1])}°)` : '…'} · r ${f3(G.r)} · ${G.k} of ${G.list.length} cast${G.done ? ' · drag the seed to turn the gallery' : ''}`, 16, 24); } }
+  requestAnimationFrame(draw);
+  return { open, close, reset, NAMED, when: k => new Promise(res => G.k >= k ? res() : G.waits.push({ k, res })),
+    state: () => ({ open: G.open, cast: G.k, total: G.list.length, done: !!G.done, r: G.r, seed: !!G.fr, seedQ: G.seedQ, view: G.view,
+      stills: G.stills.map(s => ({ name: s.name, lon: s.lon, lat: s.lat, img: !!s.img, at: s.at || null })), D: G.D }) }; })();
+
+// ---- reverse (§7): four readings and a hand back to every direction of q that has them. Readings from the atom; the search is the page's.
+// A whole-sphere grid finds near starts, then a least-squares fit (Levenberg–Marquardt) from each, then a Chebyshev polish (Nelder–Mead on the
+// worst reading's miss over its typed half-digit: brotbot g21, the least-squares minimum of rounded targets can sit outside one band). |q| never comes back.
+const REV = (() => {
+  const key = r => [Math.log(r.B), r.R / 90, r.O, r.T], lola = v => [Math.atan2(v[2], v[1]) * 180 / Math.PI, Math.asin(Math.max(-1, Math.min(1, v[0] / nrm(v)))) * 180 / Math.PI];
+  const phi = v => [v[0], -v[2], -v[1]], ang = (a, b) => { const u = dirOf(...a), w = dirOf(...b); return Math.acos(Math.max(-1, Math.min(1, u[0] * w[0] + u[1] * w[1] + u[2] * w[2]))) * 180 / Math.PI; };
+  const ok = r => isFinite(r.B) && r.B < 1e6;
+  let G = null; const grid = () => G || (G = (() => { const g = []; for (let la = -89.5; la < 90; la += 1) for (let lo = -180; lo < 180; lo += 1 / Math.max(0.02, Math.cos(la * Math.PI / 180))) { const r = readings(dirOf(lo, la)); if (ok(r)) g.push([lo, la, key(r), r.chi]); } return g; })());
+  // t: { B, R, O, T, chi }; tol: half a unit of the last digit typed, for [B, R°, O, T]
+  const cheb = (t, tol, useT) => p => { const r = readings(dirOf(...p)); if (!ok(r) || r.chi !== t.chi) return Infinity;
+    return Math.max(Math.abs(r.B - t.B) / tol[0], Math.abs(r.R - t.R) / tol[1], Math.abs(r.O - t.O) / tol[2], useT ? Math.abs(r.T - t.T) / tol[3] : 0); };
+  const nelder = (f, p0, s0) => { let P = [p0, [p0[0] + s0, p0[1]], [p0[0], p0[1] + s0]].map(p => [p, f(p)]);
+    for (let it = 0; it < 400; it++) { P.sort((a, b) => a[1] - b[1]); const [b, g, w] = P, c = [(b[0][0] + g[0][0]) / 2, (b[0][1] + g[0][1]) / 2], at = k => [c[0] + k * (c[0] - w[0][0]), c[1] + k * (c[1] - w[0][1])];
+      if (Math.hypot(w[0][0] - b[0][0], w[0][1] - b[0][1]) < 1e-10) break; const r = at(1), fr = f(r);
+      if (fr < b[1]) { const e = at(2), fe = f(e); P[2] = fe < fr ? [e, fe] : [r, fr]; } else if (fr < g[1]) P[2] = [r, fr];
+      else { const k = at(-0.5), fk = f(k); if (fk < w[1]) P[2] = [k, fk]; else P = P.map(([p]) => { const q = [(p[0] + b[0][0]) / 2, (p[1] + b[0][1]) / 2]; return [q, f(q)]; }); } }
+    P.sort((a, b) => a[1] - b[1]); return P[0]; };
+  function find(t, tol, useT = true, { polish = true } = {}) {
+    const tk = key(t), w = useT ? 1 : 0, dist = k => Math.hypot(k[0] - tk[0], k[1] - tk[1], k[2] - tk[2], w * (k[3] - tk[3]));
+    const res = (lo, la) => { const r = readings(dirOf(lo, la)); if (!ok(r) || r.chi !== t.chi) return null; const k = key(r); return [k[0] - tk[0], k[1] - tk[1], k[2] - tk[2], w * (k[3] - tk[3])]; };
+    const ss = e => e.reduce((s, x) => s + x * x, 0), seeds = [];
+    for (const g of grid().filter(g => g[3] === t.chi && dist(g[2]) < 0.2).sort((a, b) => dist(a[2]) - dist(b[2]))) { if (!seeds.some(s => ang(s, g) < 3)) seeds.push(g); if (seeds.length >= 16) break; }
+    // and the fold mirror of each start: near the seam B changes too fast for the 1° grid to seed both (brotbot-style run, 10-21: q 0.8° off it)
+    for (const g of seeds.slice()) { const m = lola(phi(dirOf(g[0], g[1]))); if (!seeds.some(s => ang(s, m) < 3)) seeds.push(m); }
+    const out = [];
+    for (const [lo0, la0] of seeds) { let p = [lo0, la0], e = res(...p), c = e ? ss(e) : Infinity, mu = 1e-3;
+      for (let it = 0; it < 80 && e && c > 1e-26; it++) { const h = 1e-6, ea = res(p[0] + h, p[1]), eb = res(p[0], p[1] + h); if (!ea || !eb) break;
+        const ja = ea.map((x, k) => (x - e[k]) / h), jb = eb.map((x, k) => (x - e[k]) / h), dot = (u, v) => u.reduce((s, x, k) => s + x * v[k], 0);
+        const a = dot(ja, ja), b = dot(ja, jb), d = dot(jb, jb), ga = dot(ja, e), gb = dot(jb, e), A = a * (1 + mu), D = d * (1 + mu), det = A * D - b * b; if (!(Math.abs(det) > 0)) break;
+        const q2 = [p[0] - (D * ga - b * gb) / det, p[1] - (A * gb - b * ga) / det], e2 = res(...q2), c2 = e2 ? ss(e2) : Infinity;
+        if (c2 < c) { p = q2; e = e2; c = c2; mu = Math.max(1e-9, mu / 3); } else { mu *= 4; if (mu > 1e9) break; } }
+      if (!e) continue; const f = cheb(t, tol, useT); let sc0 = f(p);
+      if (polish && sc0 > 0.5) for (const s0 of [0.05, 0.005]) { const [p2, v2] = nelder(f, p, s0); if (v2 < sc0) { p = p2; sc0 = v2; } if (sc0 <= 0.5) break; }
+      if (sc0 <= 1) { const at = lola(dirOf(...p)); if (!out.some(o => ang(o, at) < 1)) out.push(at); } }
+    return out; }
+  return { find, phi, lola, ang, grid }; })();
+const rvDigits = s => 0.5 * 10 ** -(((String(s).trim().match(/\.(\d+)/) || [, ''])[1]).length);
+const rvFmt = R => [f3(R.B), R.R.toFixed(2), f3(R.O), f3(R.T)];   // "from the panel": what the box fills, and what check 12 types
+const rvFill = () => { [$('rvB').value, $('rvR').value, $('rvO').value, $('rvT').value] = rvFmt(RQ); $('rvH').value = String(RQ.chi); $('rvOut').textContent = ''; };
+$('rvFill').addEventListener('click', rvFill);
+$('rvGo').addEventListener('click', () => { const v = ['rvB', 'rvR', 'rvO', 'rvT'].map(id => $(id).value), t = { B: +v[0], R: +v[1], O: +v[2], T: +v[3], chi: +$('rvH').value }, useT = !$('rvNoT').checked;
+  if (!(t.B >= 1) || !isFinite(t.R) || !isFinite(t.O) || (useT && !isFinite(t.T))) { $('rvOut').textContent = 'Type a number in each box (B is 1 or more).'; return; }
+  $('rvOut').textContent = 'searching…';
+  setTimeout(() => { const hits = REV.find(t, v.map(rvDigits), useT), here = [S.lon, S.lat];
+    if (!hits.length) { $('rvOut').textContent = `No direction has these readings, to the digits typed${useT ? '' : ' (T left out)'}.`; return; }
+    $('rvOut').innerHTML = `${hits.length === 1 ? 'One direction' : hits.length + ' directions'}${useT ? '' : ' (T left out)'}: ` + hits.map(h => `<button class="rvb rvhit" type="button" data-lo="${h[0]}" data-la="${h[1]}">q at (${h[0].toFixed(1)}°, ${h[1].toFixed(1)}°)${REV.ang(h, here) < 0.3 ? ', the panel\'s q' : ''} · go</button>`).join('');
+    $('rvOut').querySelectorAll('.rvhit').forEach(b => b.addEventListener('click', () => setDir(+b.dataset.lo, +b.dataset.la))); }, 20); });
+rvFill();
+
+// ---- checks (S6): a second path for each claim, and a plant that must fail. Run after the first paint, off the load path.
+const mulOwn = (a, b) => [a[0] * b[0] - a[1] * b[1] - a[2] * b[2], a[0] * b[1] + a[1] * b[0] - a[2] * b[1], a[0] * b[2] + a[2] * b[0] + a[1] * b[2]];
+const mulC = (a, b) => [a[0] * b[0] - a[1] * b[1] - a[2] * b[2], a[0] * b[1] + a[1] * b[0], a[0] * b[2] + a[2] * b[0]];   // plant: a product with no i·j term
+const jOwn = (x, mul = mulOwn) => { const E = [[1, 0, 0], [0, 1, 0], [0, 0, 1]], cols = E.map(e => { const a = mul(x, e), b = mul(e, x); return a.map((v, k) => v + b[k]); }); return [0, 1, 2].map(r => cols.map(col => col[r])); };
+const det3 = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+const rnd = (() => { let s = 11; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+const refineMin1 = (f, a, b) => { const g = (Math.sqrt(5) - 1) / 2; let x1 = b - g * (b - a), x2 = a + g * (b - a), f1 = f(x1), f2 = f(x2);   // golden section, one variable
+  for (let k = 0; k < 80; k++) { if (f1 < f2) { b = x2; x2 = x1; f2 = f1; x1 = b - g * (b - a); f1 = f(x1); } else { a = x1; x1 = x2; f1 = f2; x2 = a + g * (b - a); f2 = f(x2); } } return Math.min(f1, f2); };
+const RQS = Array.from({ length: 60 }, () => sc(dirOf(360 * rnd() - 180, Math.asin(2 * rnd() - 1) * 180 / Math.PI), 0.3 + rnd()));
+const tr3 = A => A[0].map((_, j) => A.map(r => r[j])), mm3 = (A, B) => A.map(r => B[0].map((_, j) => r.reduce((t, v, k) => t + v * B[k][j], 0)));
+const inv3 = M => { const d = det3(M), cof = (r, k) => { const a = [0, 1, 2].filter(i => i !== r), b = [0, 1, 2].filter(i => i !== k); return M[a[0]][b[0]] * M[a[1]][b[1]] - M[a[0]][b[1]] * M[a[1]][b[0]]; };
+  return [0, 1, 2].map(i => [0, 1, 2].map(j => ((i + j) % 2 ? -1 : 1) * cof(j, i) / d)); };
+// the polar factor by Newton, Q ← (Q + Q⁻ᵀ)/2: a different path from the atom's SVD
+const polarOwn = J => { let Q = J; for (let n = 0; n < 80; n++) { const N = tr3(inv3(Q)), Q2 = Q.map((r, i) => r.map((v, j) => (v + N[i][j]) / 2)), dl = Math.max(...Q2.flat().map((v, k) => Math.abs(v - Q.flat()[k]))); Q = Q2; if (dl < 1e-15) break; } return Q; };
+const turnOwn = (Q, chi) => { const t = Q[0][0] + Q[1][1] + Q[2][2]; return Math.acos(Math.max(-1, Math.min(1, chi > 0 ? (t - 1) / 2 : (t + 1) / 2))) * 180 / Math.PI; };
+// the smallest and largest eigenvalue of a symmetric 3×3 in closed form (trigonometric): a different path from the atom's Jacobi
+const eig3ends = A => { const p1 = A[0][1] ** 2 + A[0][2] ** 2 + A[1][2] ** 2, m = (A[0][0] + A[1][1] + A[2][2]) / 3;
+  if (p1 <= 1e-30 * (1 + m * m)) { const d = [A[0][0], A[1][1], A[2][2]]; return [Math.min(...d), Math.max(...d)]; }
+  const p = Math.sqrt(((A[0][0] - m) ** 2 + (A[1][1] - m) ** 2 + (A[2][2] - m) ** 2 + 2 * p1) / 6), Bm = A.map((r, i) => r.map((v, j) => (v - (i === j ? m : 0)) / p)), ph = Math.acos(Math.max(-1, Math.min(1, det3(Bm) / 2))) / 3;
+  return [m + 2 * p * Math.cos(ph + 2 * Math.PI / 3), m + 2 * p * Math.cos(ph)]; };
+const E3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+const own = x => { const n = nrm(x), J = jOwn(x), d = det3(J), [lo, hi] = eig3ends(mm3(tr3(J), J)), C = [0, 1, 2].map(r => E3.map(e => mulOwn(x, e)[r] - mulOwn(e, x)[r])), chi = Math.sign(d);
+  return { chi, B: Math.sqrt(hi / lo), R: turnOwn(polarOwn(J), chi), Q: polarOwn(J), O: Math.sqrt(Math.max(0, eig3ends(mm3(tr3(C), C))[1])) / n, T: nrm(sub(mulOwn(mulOwn(x, E3[1]), E3[2]), mulOwn(x, mulOwn(E3[1], E3[2])))) / n }; };
+const refineMin = (f, a, b) => { let v = f(a, b); for (let st = 0.25; st > 1e-9;) { let moved = false; for (const [da, db] of [[st, 0], [-st, 0], [0, st], [0, -st]]) { const w = f(a + da, b + db); if (w < v) { v = w; a += da; b += db; moved = true; } } if (!moved) st /= 2; } return v; };
+const CONCH = qAt(...QN.conch), MQ = qAt(...QN.mirrorq);
+let OWNNUM = null;
+const ownNums = () => OWNNUM || (OWNNUM = (() => { const o = {}; for (const [k, [lo, la]] of Object.entries(QN)) { const v = own(qAt(lo, la)); for (const L of ['B', 'R', 'O', 'T']) o[k + '.' + L] = v[L];
+    const q0 = qAt(lo, la), Lb = mulOwn(mulOwn(q0, [0, 1, 0]), [0, 0, 1]), Rb = mulOwn(q0, mulOwn([0, 1, 0], [0, 0, 1])), t = tSplit({ left: Lb, right: Rb }); o[k + '.Tturn'] = t.turn; o[k + '.Tsize'] = t.size; }
+  let lo = Infinity, hi = 0; for (let a = -180; a < 180; a += 1) for (let b = -90; b <= 90; b += 1) { const u = dirOf(a, b), s = nrm(mulOwn(u, u)); lo = Math.min(lo, s); hi = Math.max(hi, s); }
+  let nl = 0, nm = 0; for (const L of SPH) (Math.abs(L[0][0] - L[L.length - 1][0]) < 1e-9 && Math.abs(L[0][1] - L[L.length - 1][1]) < 1e-9 ? nl++ : nm++);   // a circle of latitude closes; a meridian runs pole to pole
+  return { ...o, 'size.lo': lo, 'size.hi': hi, 'sph.lines': SPH.length, 'sph.lat': nl, 'sph.lon': nm, 'sph.pts': SPH[0].length }; })());
+const CHECKS = [
+  { name: `a number of size 1 squares to a size from ${NUM['size.lo']} to ${NUM['size.hi']}; the smallest is 1/√3, to six places`, how: 'own product over a 0.25° grid of directions, the smallest refined by pattern search; plant: a product with no i·j term (it keeps sizes, as ℂ does)',
+    run: plant => { const mul = plant ? mulC : mulOwn, f = (a, b) => { const u = dirOf(a, b); return nrm(mul(u, u)); }; let lo = Infinity, hi = 0, at = [0, 0];
+      for (let a = -180; a < 180; a += 0.25) for (let b = -90; b <= 90; b += 0.5) { const v = f(a, b); if (v < lo) { lo = v; at = [a, b]; } hi = Math.max(hi, v); }
+      return Math.abs(refineMin(f, ...at) - 1 / Math.sqrt(3)) < 5e-7 && f2(lo) === NUM['size.lo'] && f2(hi) === NUM['size.hi']; } },
+  { name: 'det J is odd, det J(−q) = −det J(q), and the module\'s det J is the page\'s own', how: 'own product and Jacobian at 60 random points against brotoid_weft\'s detJ; plant: det of J + I',
+    run: plant => RQS.every(x => { const d = M => det3(plant ? M.map((r, i) => r.map((v, j) => v + (i === j ? 1 : 0))) : M), a = d(jOwn(x)), b = d(jOwn(sc(x, -1)));
+      return Math.abs(a + b) < 1e-9 * (1 + Math.abs(a)) && Math.abs(a - detJ(x)) < 1e-9 * (1 + Math.abs(a)); }) },
+  { name: 'in the plane of i and j, det J = 4(y − z)(y + z)²: it flips across the seam, only touches 0 at the fold', how: 'own Jacobian at 60 points of the plane; plant: the factor written 4(y + z)(y − z)²',
+    run: plant => RQS.every(([, y, z]) => { const a = det3(jOwn([0, y, z])), f = plant ? 4 * (y + z) * (y - z) ** 2 : 4 * (y - z) * (y + z) ** 2; return Math.abs(a - f) < 1e-9 * (1 + Math.abs(a)); }) },
+  { name: 'the hand is the sign of the page\'s own det J: keeps at the conch, mirrors at (83°, 5°), and the module agrees at 60 random q', how: 'own product and Jacobian against the readings module\'s χ; plant: the module\'s χ flipped at the conch',
+    run: plant => { const chiAt = x => { const c = readings(x).chi; return plant && x === CONCH ? -c : c; };
+      return det3(jOwn(CONCH)) > 0 && det3(jOwn(MQ)) < 0 && [CONCH, MQ, ...RQS].every(x => Math.sign(det3(jOwn(x))) === chiAt(x)); } },
+  { name: 'R is the turn of the page\'s own polar factor of J, at 60 random q', how: 'own Jacobian, polar factor by Newton (Q ← (Q + Q⁻ᵀ)/2), its angle against the module\'s R and its matrix against the module\'s Q; plant: the module\'s R plus 10°',
+    run: plant => RQS.every(x => { const R = readings(x); if (!R.Q || R.B > 1e3) return true; const o = own(x), Ra = plant ? R.R + 10 : R.R;
+      return Math.abs(o.R - Ra) < 1e-5 && o.Q.every((r, i) => r.every((v, j) => Math.abs(v - R.Q[i][j]) < 1e-8)); }) },
+  { name: 'B, O and T are the page\'s own exact values at 60 random q', how: 'own Jacobian: B from the eigenvalues of JᵀJ (closed form), O from the top singular value of the own commutator map, T from the own witness pair; plant: the module\'s O scaled by 1.01',
+    run: plant => RQS.every(x => { const R = readings(x), o = own(x), Ro = plant ? R.O * 1.01 : R.O;
+      return (!isFinite(R.B) || R.B > 1e3 || Math.abs(o.B - R.B) < 1e-6 * R.B) && Math.abs(o.O - Ro) < 1e-9 * (1 + Ro) && Math.abs(o.T - R.T) < 1e-12; }) },
+  { name: 'the thin example, q at (90°, 27°): B = 141.21, as the direction-field instrument computes it', how: 'the readings module at the instrument\'s vector; plant: the vector rounded to two places',
+    run: plant => Math.abs(readings(plant ? [.41, 0, .80] : [.4085914498, 0, .8019058718]).B - 141.21) < 0.01 },
+  { name: 'exactly half the directions mirror', how: 'own det J over 20 000 Fibonacci-sphere directions, 0.5 ± 0.01; plant: |det J| (even, never mirrors)',
+    run: plant => { const N = 20000; let m = 0; for (let k = 0; k < N; k++) { const z = 1 - 2 * (k + 0.5) / N, rr = Math.sqrt(1 - z * z), a = k * Math.PI * (3 - Math.sqrt(5)), d = det3(jOwn([z, rr * Math.cos(a), rr * Math.sin(a)]));
+      if ((plant ? Math.abs(d) : d) < 0) m++; } return Math.abs(m / N - 0.5) < 0.01; } },
+  { name: 'a weft point is two ball points that square to one point (the conch, r 0.6)', how: 'own product squares both, both on the skin and far apart; plant: one point moved 0.01',
+    run: plant => { const Q = qAt(...QN.conch), X = crossing(Q, 0.6, { kinds: false }), run = X.runs[0], p = run[Math.floor(run.length / 2)], y = plant ? p.y.map((v, k) => v + (k === 1 ? 0.01 : 0)) : p.y;
+      return nrm(sub(mulOwn(p.x, p.x), mulOwn(y, y))) < 1e-9 && nrm(sub(p.x, y)) > 0.05 && Math.abs(nrm(sub(p.x, Q)) - 0.6) < 1e-6 && Math.abs(nrm(sub(y, Q)) - 0.6) < 1e-6; } },
+  { name: 'the two bracketings, by angle and size ratio: at the conch 180° and ×1, at (0°, 60°) 0° and a size below 1, at q = 1 0° and ×1, and on the fold one answer is 0', how: 'own product: both bracketings, their angle and size ratio, against the readings module\'s pair at those q and at 60 random q; plant: the module\'s pair swapped',
+    run: plant => { const pair = q => { const P = readings(q).Tpair; return plant ? { left: P.right, right: P.left } : P; }, I = [0, 1, 0], Jv = [0, 0, 1];
+      const ownT = q => tSplit({ left: mulOwn(mulOwn(q, I), Jv), right: mulOwn(q, mulOwn(I, Jv)) }), same = (a, b) => (isNaN(a.turn) ? isNaN(b.turn) : Math.abs(a.turn - b.turn) < 1e-6) && Math.abs(a.size - b.size) < 1e-9;
+      const c = tSplit(pair(qAt(...QN.conch))), t = tSplit(pair(qAt(...QN.t60))), o1 = tSplit(pair(qAt(...QN.one))), f = pair(qAt(-45, 0));
+      return Math.abs(c.turn - 180) < 1e-6 && Math.abs(c.size - 1) < 1e-9 && t.turn < 1e-6 && t.size < 1 && o1.turn < 1e-6 && Math.abs(o1.size - 1) < 1e-9 && nrm(f.left) < 1e-12
+        && [...RQS.slice(0, 60), qAt(...QN.conch), qAt(...QN.t60)].every(q => same(tSplit(pair(q)), ownT(q))); } },
+  { name: 'the fractal cannot tell B2 from its opposite algebra (a·b read as b·a): the escape count agrees at every one of 2000 points c, J is the same, the commutator flips sign and the associator changes', how: 'own product and its opposite: z ← z² + c for 200 steps from 0 at 2000 seeded c; J and the commutator from both at 60 random q; the associator (q, i, j) at the conch; plant: the opposite replaced by a product with no i·j term (its order-free half differs, so its fractal must too)',
+    run: plant => { const opp = plant ? mulC : (a, b) => mulOwn(b, a), Z = [0, 0, 0], I = [0, 1, 0], Jv = [0, 0, 1];
+      const esc = (m, c) => { let z = Z; for (let n = 0; n < 200; n++) { z = add3(m(z, z), c); if (nrm(z) > 4) return n; } return 200; };
+      let s = 7, mid = 0; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+      for (let k = 0; k < 2000; k++) { const c = [rnd() * 3 - 2, rnd() * 3 - 1.5, rnd() * 3 - 1.5], a = esc(mulOwn, c); if (a !== esc(opp, c)) return false; if (a > 2 && a < 200) mid++; }
+      const E3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]], gap = (f, g, q) => Math.max(...E3.map(v => nrm(sub(f(q, v), g(q, v)))));
+      const Jm = m => (q, v) => add3(m(q, v), m(v, q)), Cm = m => (q, v) => sub(m(q, v), m(v, q)), neg = f => (q, v) => sc(f(q, v), -1), zero = () => Z;
+      const asc = (m, a, b, c) => sub(m(m(a, b), c), m(a, m(b, c))), q0 = qAt(...QN.conch);
+      return mid > 100 && nrm(sub(asc(mulOwn, q0, I, Jv), asc(opp, q0, I, Jv))) > 1e-6
+        && RQS.slice(0, 60).every(q => gap(Jm(mulOwn), Jm(opp), q) < 1e-12 && gap(Cm(opp), neg(Cm(mulOwn)), q) < 1e-12 && gap(Cm(mulOwn), zero, q) > 1e-6); } },
+  { name: 'the reverse box: from the four readings and hand of the conch, the thin one, (83°, 5°) and 6 random q, typed as "from the panel" fills them, the search finds exactly one direction, the one they came from; with T left out it also finds the fold mirror of q; q and three times q read the same; and the fold mirror keeps every product of the page\'s own', how: 'a whole-sphere grid, a least-squares fit from each near start, then a polish on the worst reading\'s miss in its typed half-digits; the mirror (x, y, z) → (x, −z, −y) against the page\'s own product at 60 random pairs; plant: the search without the polish (it misses q at (83°, 5°) from the panel\'s digits)',
+    run: plant => { const qs = [qAt(...QN.conch), qAt(...QN.thin), qAt(...QN.mirrorq), ...RQS.slice(0, 6)], opt = { polish: !plant };
+      const auto = RQS.slice(0, 60).every((a, k) => { const b = RQS[(k + 7) % 60]; return nrm(sub(REV.phi(mulOwn(a, b)), mulOwn(REV.phi(a), REV.phi(b)))) < 1e-12; });
+      return auto && qs.every(q => { const r = readings(q), r3 = readings(sc(q, 3)), at = REV.lola(q), tw = REV.lola(REV.phi(q));
+        if (!ok4(r, r3)) return false; const v = rvFmt(r), t = { B: +v[0], R: +v[1], O: +v[2], T: +v[3], chi: r.chi }, tol = v.map(rvDigits), all = REV.find(t, tol, true, opt), noT = REV.find(t, tol, false, opt);
+        return all.length === 1 && REV.ang(all[0], at) < 0.3 && noT.some(h => REV.ang(h, tw) < 0.3) && noT.some(h => REV.ang(h, at) < 0.3); }); } },
+  { name: 'the moments the page shows are the atom\'s, by a second path: ① is the distance from q to the crossing cone, and ③ is |q|, at the conch, the thin one, (83°, 5°) and 6 random q', how: 'own det J: on each meridian (0.5° apart) the one cone line found by bisection, then the distance from q to it, the smallest refined by golden section; plant: the atom\'s ① + 0.01',
+    run: plant => { const line = lo => { let a = -90, b = 90; const g = la => det3(jOwn(dirOf(lo, la))), ga = g(a); for (let k = 0; k < 60; k++) { const m = (a + b) / 2; if (g(m) * ga > 0) a = m; else b = m; } return dirOf(lo, (a + b) / 2); };
+      const own1 = Q => { const d = lo => { const u = line(lo), s = Q[0] * u[0] + Q[1] * u[1] + Q[2] * u[2]; return nrm(sub(Q, sc(u, s))); }; let best = 0, bv = Infinity;
+        for (let lo = 0; lo < 180; lo += 0.5) { const v = d(lo); if (v < bv) { bv = v; best = lo; } } return refineMin1(d, best - 0.5, best + 0.5); };
+      return [qAt(...QN.conch), qAt(...QN.thin), qAt(...QN.mirrorq), ...RQS.slice(0, 6).map(v => sc(v, MAG / nrm(v)))].every(Q => { const M = moments(Q), m1 = M.touch.r + (plant ? 0.01 : 0);
+        return Math.abs(m1 - own1(Q)) < 1e-6 && Math.abs(M.apex.r - nrm(Q)) < 1e-12; }); } },
+  { name: 'every number in the text is the page\'s own value, by its own path', how: 'each filled number read back from the page against the own paths above (own B, polar-factor R, own O and T, own size grid, the skin\'s own lines counted); plant: a typed 2.30 for the conch\'s B',
+    run: plant => { const o = ownNums(), Sp = [...document.querySelectorAll('[data-n]')];
+      return Sp.length > 0 && Sp.every(sp => { const t = plant && sp.dataset.n === 'conch.B' ? '2.30' : sp.textContent, v = parseFloat(t), dp = ((t.match(/\.(\d+)/) || [, ''])[1]).length, w = o[sp.dataset.n];
+        return w != null && isFinite(v) && Math.abs(v - w) <= 0.5 * 10 ** -dp + 1e-9; }); } },
+];
+const ok4 = (r, r3) => ['B', 'R', 'O', 'T'].every(k => Math.abs(r[k] - r3[k]) < 1e-9 * (1 + Math.abs(r[k]))) && r.chi === r3.chi;
+let CHK = [];
+async function runChecks(sabotage = null) { const out = [];
+  for (const c of CHECKS) { await new Promise(r => setTimeout(r, 0)); let pass = false, caught = null;
+    try { pass = !!c.run(false); } catch (e) { pass = false; }
+    if (!c.noPlant) { try { caught = sabotage === c.name ? !c.run(false) : !c.run(true); } catch (e) { caught = true; } }
+    out.push({ name: c.name, how: c.how, pass, caught }); }
+  if (!sabotage) { CHK = out; $('checks').innerHTML = out.map(c => `<li class="${c.pass && c.caught !== false ? '' : 'fail'}"><b>${c.pass ? '✓' : '✗'} ${c.name}</b><br>${c.how} · ${c.caught == null ? 'no plant' : c.caught ? 'plant caught' : 'PLANT NOT CAUGHT'}</li>`).join(''); }
+  return out; }
+$('srcline').textContent = `Readings from the shared module brot_readings (${RSRC}); the weft and moments from the modules brotoid_weft and brotoid_moments.`;
+
+// ---- go
+QS.set(dirOf(S.lon, S.lat)); QS.draw(); changed(); lit(['B', 'R', 'O', 'T']); secTick();
+const RO = new ResizeObserver(() => { document.documentElement.style.setProperty('--band', (bandMode() ? Math.ceil($('stagecol').getBoundingClientRect().height) : 0) + 'px');
+  QS.draw(); want('cells'); want('hand'); want('br'); }); RO.observe(document.body); RO.observe($('stagecol'));
+(window.requestIdleCallback || setTimeout)(() => runChecks(), { timeout: 2500 });   // a timeout, so a busy page (the live flow frame) still runs them
+window.__brot = { gal: GAL, flowgxt: () => FLOWGXT?.state(), pip: () => PIP.state(), br: () => { drawBrotoid(); return BR; }, rim: () => ballSeam(),S, q, RQ: () => RQ, readings, momAt: (lo, la) => momList(moments(qAt(lo, la))), bandMode, handWord, RSRC, NUM, QN, lit, LIT: () => LIT, unseenNow, setDir, setR, coneMode, W, GLOSSARY, mapSt: () => MAPST, BEATS, FLOW, FIGS, checks: () => CHK, runChecks, REV, rvFmt, rvDigits, momOf, momList, BR: () => BR, HOLD: () => HOLD, drawCells };
+</script>
+</body>
+</html>

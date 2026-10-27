@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pane</title>
+<!-- proto_pane.html — one pane of a pageflow page in its own window (fable 2026-10-13). ?pane=<guide|tree|sign>&for=<page path>.
+     The page keeps it in step over BroadcastChannel('pageflow'); see proto_panes.js P3. -->
+<style>
+  html, body { margin: 0; height: 100%; background: #0d0e12; color: #e8e8ee; color-scheme: dark; font: 12px ui-monospace, monospace; }
+  body { display: flex; flex-direction: column; }
+  #h { display: flex; align-items: center; gap: 6px; padding: 5px 8px 5px 12px; background: #14161c; border-bottom: 1px solid #23252d; flex: none; }
+  #h b { margin-right: auto; letter-spacing: .05em; }
+  #h button { font: 12px ui-monospace, monospace; background: none; color: inherit; border: 1px solid #23252d; border-radius: 10px; padding: 2px 9px; cursor: pointer; }
+  #h button:hover { border-color: #19e0ff; color: #19e0ff; }
+  #b { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; } #b > * { flex: 1 1 auto; min-height: 0; }
+  .wait { padding: 16px; color: #8a8a93; }
+</style>
+</head>
+<body>
+<div id="h"><b id="t">pane</b><span id="pg" style="color:#8a8a93"></span><button id="dock" type="button" title="put it back beside the page">dock</button><button id="x" type="button" aria-label="close">×</button></div>
+<div id="b"><div class="wait">waiting for the page… (it answers when it is open)</div></div>
+<script type="module">
+import { PANES } from './proto_panes.js';
+const Q = new URLSearchParams(location.search), id = Q.get('pane'), path = Q.get('for') || '', P = PANES[id];
+const bc = new BroadcastChannel('pageflow'), send = d => bc.postMessage({ ...d, pane: id, path });
+const B = document.getElementById('b');
+if (!P) B.innerHTML = `<div class="wait">no pane called “${String(id).replace(/[<>&"]/g, '')}”</div>`;
+else {
+  document.getElementById('t').textContent = P.title; document.getElementById('pg').textContent = path; document.title = P.title + ' · ' + path;
+  const M = await import('./' + P.module); B.innerHTML = '';
+  const host = document.createElement('div'); B.append(host);
+  const inst = M.mountPane(host, { host: 'window', send: m => send({ type: 'pane-up', msg: m }) });
+  bc.onmessage = e => { const d = e.data || {}; if (d.path !== path || d.pane !== id) return;
+    if (d.type === 'pane') { if (d.msg?.type === 'close') window.close(); else inst.recv(d.msg); }
+    else if (d.type === 'pane-ping') send({ type: 'pane-hello' }); };   // the page reloaded: say we are still here
+  document.getElementById('dock').onclick = () => { send({ type: 'pane-dock' }); window.close(); };
+  document.getElementById('x').onclick = () => window.close();
+  send({ type: 'pane-hello' }); addEventListener('pagehide', () => send({ type: 'pane-bye' }));
+  window.__pane = inst;
+}
+</script>
+</body>
+</html>
