@@ -1,0 +1,7 @@
+{
+  "name": "brotoid-tests",
+  "private": true,
+  "type": "module",
+  "description": "Spec test for the brotoid page: opens it in a browser and checks it against SPEC.md",
+  "dependencies": { "playwright": "1.58.2" }
+}

@@ -33,6 +33,7 @@ byte for byte.
 - `fable/`: a redirect stub from the old page address, and the two library files the flow figure loads from there.
 - `brotdocs/docs/notation_vocabulary_map.md`: a dated snapshot of the vocabulary map the page reads, **untrimmed**.
   Every word carries its status (posed, settled or weighed). A posed word is a proposal, not canon.
+- `tests/`: the page's spec test (`spectest.mjs`), the spec it checks against, and a small static server. They are not served, and are not in the manifest.
 
 [`MANIFEST.sha256`](MANIFEST.sha256) lists every served file with its sha256. A commit holding it is the record that
 these exact bytes existed before they went live. Check a checkout with `sha256sum -c MANIFEST.sha256`.
@@ -42,7 +43,6 @@ these exact bytes existed before they went live. Check a checkout with `sha256su
 - **The voice.** The page can read its captions aloud, off by default. The voice engine and model are not here. They
   are [dougbristor/brotvoice](https://github.com/dougbristor/brotvoice) (GPLv3, code only) and a model on the site
   under non-commercial terms. `lib/proto_voice.js` is the MIT glue; the page works without the voice.
-- **The tests.** The page's spec test is not in this commit yet. The checks described above run in the page.
 - **A chirobrot page**, and insights' and caro's other brot pages. They stay with their owners until they say yes.
 
 ## Honest limits
@@ -51,6 +51,9 @@ these exact bytes existed before they went live. Check a checkout with `sha256su
   (`aicolab/tmp/...`) and one example link to a local address. They mean nothing outside the project. A change to a
   served file is a new commit with a new manifest.
 - **The page's figures are measurements and readings, not proofs.** Claims carry their status in the page.
+- **One spec target fails in this release.** S17 (listed): the word *hand* is shown but not declared in the page's §8, while
+  the map files it as posed. The spec test is how we know; see [tests/README.md](tests/README.md). The page is unchanged
+  until its owner fixes it, and the fix is a new commit.
 - **The vocabulary snapshot is a snapshot.** The live map moves. The snapshot is dated in RECEIPTS.md.
 
 ## Current first, history second
