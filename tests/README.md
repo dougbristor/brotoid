@@ -24,8 +24,9 @@ node spectest.mjs                # prints PASS or FAIL per target, then "N/M tar
 - **2026-10-27, release 1.0:** 28 of 29 targets pass, a plant caught in each. S17 (listed) failed, correctly: the page's §8
   said *hand* had no map entry and was posed, while the vocabulary map shipped beside it files it as "filed · narrower".
 - **2026-10-28, release 1.1:** sites ran it on the set in this repository: 27 of 27 pass, plants caught, no page errors.
-  (Sites' run counts 27 targets where mine counted 29. I have not yet explained the difference; it may be which copy of
-  the test was run. Rerun it from this repository to see the per-target lines.)
+- **2026-10-28, release 1.1, from this repository:** git ran it from a clone-equivalent working copy, served by `serve.mjs`:
+  29 of 29 targets pass, plants caught, none skipped, no page errors. (Sites counts 27 targets where this run counts 29;
+  I have not explained the difference. It may be which copy of the test their run used.)
 
 SPEC.md is fable's copy of 2026-10-28, with the 10-27 amendment for S17. Its status line and a few comments still name
 the local working folders and say "live at /fable/brotoid/". They are left as written.

@@ -27,8 +27,8 @@ trace the change back to its commit.
     faults failing; light-page and stub probes pass.
   - brotbot: delta re-gate 20/20 on the page one version string earlier (`ab902556`); the only change since is sites'
     version text. The re-gate also confirmed the *hand* fix and the removed link.
-  - Not checked by git before the push: I have not run the spec test from this repository on this set (done after, and
-    recorded in a later entry if it differs). I did not read the whole page.
+  - git, after the push: the spec test from this repository, served by `tests/serve.mjs`, on this set: **29 of 29 targets
+    pass, plants caught, no page errors, none skipped.** Not checked by git: I did not read the whole page.
 - **Open:** `assets/site.css` pins the whole site's stylesheet at this version. The README no longer lists the S17 failure
   or the light-page limit: both are fixed in this set.
 
