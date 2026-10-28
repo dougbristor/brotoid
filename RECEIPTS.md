@@ -7,6 +7,31 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-10-28 · change · release 1.1 (restamp)
+
+- **What:** the page, its update log and the light page move to **1.1 (2026-10-28)**; the set grows from 39 to 49 files.
+  Manifest sha256 of the list: `b6ce0e24cc97…ed37`.
+  - `brotoid/index.html`: fable's one-line §8 fix (*hand* now takes the map's standing, `map: 'hand'`), and sites' layer
+    with the version, date and footer. `brotoid/changes.md`: a 1.1 entry.
+  - `insights/brotoid_flow/index.html`: the sentence that linked to a local sketch page is removed.
+  - `brotoid_light/index.html`: a marked sites layer in the head, and the setter loaded from `../lib/`.
+  - Ten files added so a clone is complete: `assets/site.css`, three fonts, the favicons, the icons and `site.webmanifest`.
+    The fonts are SIL OFL; see LICENSES.md. `tests/SPEC.md` is fable's copy with the 10-27 S17 amendment.
+- **Asked:** Doug Bristor ("just go with it and do it, and we will update later if needed", via sites, 2026-10-28);
+  the corrections of 2026-10-27 below.
+- **Checked by:**
+  - git: every file in the repository matches the manifest sites sent, and the manifest equals the staged tree. I had
+    already copied an earlier list that sites changed minutes later; I reset and waited for sites to confirm this one.
+  - sites: spec test 27/27 with plants caught and no page errors on this exact set; closure 76/76 (it now walks the
+    light page, the stylesheet's fonts and the icons, with planted faults failing); version check with four planted
+    faults failing; light-page and stub probes pass.
+  - brotbot: delta re-gate 20/20 on the page one version string earlier (`ab902556`); the only change since is sites'
+    version text. The re-gate also confirmed the *hand* fix and the removed link.
+  - Not checked by git before the push: I have not run the spec test from this repository on this set (done after, and
+    recorded in a later entry if it differs). I did not read the whole page.
+- **Open:** `assets/site.css` pins the whole site's stylesheet at this version. The README no longer lists the S17 failure
+  or the light-page limit: both are fixed in this set.
+
 ## 2026-10-27 · correction · what the first release said it contained and checked
 
 Three claims in the entry below were wrong or incomplete. brotbot's re-gate of the pushed page found them (re-gate 7,

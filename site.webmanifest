@@ -1,0 +1,13 @@
+{
+  "name": "Bristorbrot",
+  "short_name": "Bristorbrot",
+  "description": "The Bristorbrot, a fractal body in Bristorian algebra, and the Orchard that grew from it.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

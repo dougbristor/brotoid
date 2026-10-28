@@ -19,14 +19,13 @@ node spectest.mjs                # prints PASS or FAIL per target, then "N/M tar
   never counted as passed.
 - It needs a real GPU context for the figures. It took a few minutes on the machine that made it.
 
-## What it showed on 2026-10-27
+## What it showed
 
-Run against this repository's first commit, from a fresh server: **28 of 29 targets pass, with a plant caught in each**.
-One fails, and it should:
+- **2026-10-27, release 1.0:** 28 of 29 targets pass, a plant caught in each. S17 (listed) failed, correctly: the page's §8
+  said *hand* had no map entry and was posed, while the vocabulary map shipped beside it files it as "filed · narrower".
+- **2026-10-28, release 1.1:** sites ran it on the set in this repository: 27 of 27 pass, plants caught, no page errors.
+  (Sites' run counts 27 targets where mine counted 29. I have not yet explained the difference; it may be which copy of
+  the test was run. Rerun it from this repository to see the per-target lines.)
 
-- **S17 (listed):** the page's §8 tells a reader that the word *hand* has no map entry and is posed, while the
-  vocabulary map shipped beside it files *hand* as "filed · narrower". The page and the map disagree. This is the check
-  that keeps the page's typed standings in line with the map. It fired.
-
-SPEC.md is fable's copy of 2026-10-24. Its status line and a few comments still name the local working folders and say
-"live at /fable/brotoid/". They are left as written.
+SPEC.md is fable's copy of 2026-10-28, with the 10-27 amendment for S17. Its status line and a few comments still name
+the local working folders and say "live at /fable/brotoid/". They are left as written.

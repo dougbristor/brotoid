@@ -26,7 +26,8 @@ The repository mirrors the served paths of bristorbrot.org, so the files you rea
 byte for byte.
 
 - `brotoid/`: the page (`index.html`), its eye (`brim_eye/v1.js`) and the update log (`changes.md`).
-- `brotoid_light/`: the light page.
+- `brotoid_light/`: the light page. It loads its setter from `lib/` and its look from `assets/`, so it runs from a clone.
+- `assets/`, `favicon.*`, the icons and `site.webmanifest`: the site's stylesheet, its three fonts and its icons, which the pages load.
 - `lib/`: the page's shared libraries (the glyph grammar, pageflow, panes, the rest rule, the sphere setter).
 - `codetree/blocks/`: the algebra and figure atoms the page imports, as built copies. Edit them at their source, not here.
 - `insights/brotoid_flow/` and `insights/crease_what/`: the flow figure and the crease cone it uses.
@@ -48,15 +49,12 @@ these exact bytes existed before they went live. Check a checkout with `sha256su
 ## Honest limits
 
 - **The bytes are not edited for tidiness.** The hash is the stamp, so some comments still name local working paths
-  (`aicolab/tmp/...`), one example link to a local address and one rendered link to a `/tmp/` page. They mean nothing
-  outside the project; the rendered link is fixed in the next release. A change to a
+  (`aicolab/tmp/...`) and one example link to a local address. They mean nothing
+  outside the project. A change to a
   served file is a new commit with a new manifest.
-- **`brotoid_light/` is not self-contained.** It loads `../assets/sphere_setter.js` and `../assets/site.css` from the site, and they
-  are not in this repository, so run from a clone it has no setter. `brotoid/` runs from a clone.
 - **The page's figures are measurements and readings, not proofs.** Claims carry their status in the page.
-- **One spec target fails in this release.** S17 (listed): the page's §8 says the word *hand* has no map entry and calls it posed,
-  while the map shipped beside it files it as "filed · narrower". The spec test is how we know; see
-  [tests/README.md](tests/README.md). fable has fixed the page; the fix reaches the repository with the next restamp.
+- **`assets/site.css` is the whole site's stylesheet.** This repository pins this version of it. The fonts are under the SIL
+  Open Font Licence; see [LICENSES.md](LICENSES.md).
 - **The vocabulary snapshot is a snapshot.** The live map moves. The snapshot is dated in RECEIPTS.md.
 
 ## Current first, history second

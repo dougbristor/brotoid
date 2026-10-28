@@ -196,6 +196,9 @@ files neither takes the map's standing nor declares its own senses (plant: brim 
 loads", which would be untrue wherever the map isn't served; it says the standing is read as the page loads wherever the map is served, and
 otherwise is the one filed with the page. The text stays true at both origins, with or without a published copy of the map; S17·live's
 checks are unchanged.
+*Amended 10-27 (sites and git: S17·listed failed on the staged copy).* brotdocs filed `hand` on 10-25 (NARROWER, plus a clash with
+chirality), and §8's hand still said "no map entry". hand now carries `map: hand`; its typed standing is canon (the map reads "filed ·
+narrower"); the note says what the map files. Backup index_pre_hand_20261027.html.
 
 **S18. The eye of the brim, squared, on the brotoid (Doug 10-22: "show the pink plate", proto_brim Fig 1's eye strip).** Fig 5 fills the
 eye (the part of the brim inside the ball) after squaring, pink where the brim's top faces you and violet where its underside does, from

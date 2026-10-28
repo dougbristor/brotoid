@@ -6,6 +6,14 @@ Newest first. Each entry is `## <version> · <date>`; the top entry is the versi
 Versions are `major.minor`: major when a claim or a figure changes meaning, minor for wording, fixes and additions.
 This log is plain Markdown so a person or an agent can read it, diff it, or poll it for changes.
 
+## 1.1 · 2026-10-28
+
+First version served on bristorbrot.org (1.0 is the stamped GitHub copy, dougbristor/brotoid).
+
+- §8: the entry for "hand" now takes the vocabulary map's standing; it said "no map entry" after brotdocs filed the word on 10-25.
+- The flow figure's notes panel no longer links to a local sketch page that did not exist on the site.
+- No change to the readings, figures or checks.
+
 ## 1.0 · 2026-10-27
 
 First public release.

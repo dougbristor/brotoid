@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Brotoid: light and collapse</title>
 <meta name="description" content="A bright ball travelling over the surface of the brotoid, and the brotoid flattened to rank 2 by multiplying on the right.">
+<!-- sites layer (head only): replaces fable's DRAFT comment and dev stylesheet link (/sites/bristorbrot-ng/assets/site.css); everything else is fable's bytes -->
 <link rel="canonical" href="https://bristorbrot.org/brotoid_light/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Bristorbrot">
@@ -22,6 +23,7 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
 <link rel="stylesheet" href="../assets/site.css?v=82b121b90b">
+<!-- /sites layer -->
 <style>
   section.text { padding-top: 40px; padding-bottom: 28px; }
   section.wide { max-width: 1100px; padding-top: 24px; padding-bottom: 40px; }
@@ -301,7 +303,7 @@
     toward you = −j), never a mirror, so the hand you see is the hand the algebra has.</p>
 </section>
 
-<script src="../assets/sphere_setter.js"></script>
+<script src="../lib/sphere_setter.js"></script>
 <script>
 'use strict';
 const mulI = (a, b) => [a[0]*b[0] - a[1]*b[1] - a[2]*b[2], a[0]*b[1] + a[1]*b[0] - a[2]*b[1], a[0]*b[2] + a[2]*b[0] + a[1]*b[2]];

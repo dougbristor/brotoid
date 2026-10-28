@@ -22,15 +22,15 @@
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
-<meta name="version" content="1.0">
-<meta name="date" content="2026-10-27">
-<meta name="dcterms.modified" content="2026-10-27">
+<meta name="version" content="1.1">
+<meta name="date" content="2026-10-28">
+<meta name="dcterms.modified" content="2026-10-28">
 <meta property="article:published_time" content="2026-10-27">
-<meta property="article:modified_time" content="2026-10-27">
-<meta property="og:updated_time" content="2026-10-27T00:00:00Z">
+<meta property="article:modified_time" content="2026-10-28">
+<meta property="og:updated_time" content="2026-10-28T00:00:00Z">
 <meta name="author" content="Doug Bristor">
 <link rel="alternate" type="text/markdown" href="https://bristorbrot.org/brotoid/changes.md" title="BROT page: update log">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"BROT: one number, four readings","url":"https://bristorbrot.org/brotoid/","version":"1.0","datePublished":"2026-10-27","dateModified":"2026-10-27","author":{"@type":"Person","name":"Doug Bristor"},"isPartOf":{"@type":"WebSite","name":"Bristorbrot","url":"https://bristorbrot.org/"},"subjectOf":{"@type":"DataFeed","name":"BROT page: update log","url":"https://bristorbrot.org/brotoid/changes.md","encodingFormat":"text/markdown"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"BROT: one number, four readings","url":"https://bristorbrot.org/brotoid/","version":"1.1","datePublished":"2026-10-27","dateModified":"2026-10-28","author":{"@type":"Person","name":"Doug Bristor"},"isPartOf":{"@type":"WebSite","name":"Bristorbrot","url":"https://bristorbrot.org/"},"subjectOf":{"@type":"DataFeed","name":"BROT page: update log","url":"https://bristorbrot.org/brotoid/changes.md","encodingFormat":"text/markdown"}}</script>
 <!-- /sites layer -->
 <!--
   fable 2026-10-19: the clean rewrite of /fable/brotoid/, with BROT as the whole (Doug: "a, BROT as the whole. write the spec first").
@@ -390,7 +390,7 @@ ol.figlist b, ul.checks b { color: var(--fg); } ul.checks li { margin: 6px 0; } 
 </article>
 </div></div>
 <!-- sites footer: version and date come from brotoid/changes.md -->
-<footer id="pageversion" class="foot" style="text-align:center;font-size:11px;padding:6px 0 14px">Version 1.0 · updated 2026-10-27 · <a href="/brotoid/changes.md" rel="alternate" type="text/markdown">update log</a></footer>
+<footer id="pageversion" class="foot" style="text-align:center;font-size:11px;padding:6px 0 14px">Version 1.1 · updated 2026-10-28 · <a href="/brotoid/changes.md" rel="alternate" type="text/markdown">update log</a></footer>
 <!-- /sites footer -->
 
 <script src="../lib/rest.js"></script>
@@ -708,7 +708,7 @@ const W = [
   { key: 'ball', label: 'ball', aliases: ['balls'], color: '#eee9e0', standing: 'standard', rule: 'every number within r of q: with three parts it is an ordinary solid ball.', where: 'the B cell (a tiny one); <a class="fref" href="#fig-brotoid"></a> and the cone view in the corner of <a class="fref" href="#fig-flow"></a> (radius r)', run: async c => { lit(['B']); await c.wait(1600); } },
   { key: 'stretch', label: 'stretch', aliases: ['stretches', 'stretching'], color: '#eee9e0', standing: 'standard', rule: 'how much squaring lengthens a tiny step from q, by direction. Its extremes are the singular values of J.', where: 'the B cell: the ellipsoid\'s axes, l the longest and w the shortest',
     run: async c => { lit(['B']); await toQ(c, ...QN.conch, 1200); await toQ(c, ...QN.thin, 2400); } },
-  { key: 'hand', label: 'hand', color: '#ffe14d', standing: 'posed', note: 'Posed: the word has no map entry (brotdocs 10-21); its measure is filed, the BROT legend\'s det Q = χ (keep = rotation, mirror = reflection). Not chirality. In the project\'s glossary, chirality asks whether the whole fractal has a distinct mirror twin, and B2\'s does not. The hand asks which way round one squaring turns a small shape at one point: χ = sign det J (keep +1, mirror −1). Standard name: the orientation, preserved or reversed.', rule: 'which way round a small shape comes out: squaring keeps it or mirrors it.', where: 'cyan and orange, in every figure',
+  { key: 'hand', map: 'hand', label: 'hand', color: '#ffe14d', standing: 'canon', note: 'Filed in the project\'s vocabulary map on 25 October: narrower than the standard idea (the sign of a Jacobian determinant, orientation kept or reversed), plus a clash with chirality. Not chirality. In the project\'s glossary, chirality asks whether the whole fractal has a distinct mirror twin, and B2\'s does not. The hand asks which way round one squaring turns a small shape at one point: χ = sign det J (keep +1, mirror −1).', rule: 'which way round a small shape comes out: squaring keeps it or mirrors it.', where: 'cyan and orange, in every figure',
     run: async c => { lit(['R']); await toQ(c, ...QN.conch, 1400); await c.say('At the conch squaring **keeps** the hand.'); await c.wait(1800); await c.say('Now to (83°, 5°)…'); await toQ(c, ...QN.mirrorq, 2000); await c.say('At (83°, 5°) it **mirrors**.'); await c.wait(1800); } },
   { key: 'keep', label: 'keep', aliases: ['keeps', 'kept'], color: '#19e0ff', standing: 'posed', note: 'A working name.', rule: 'squaring leaves a small shape the same way round (det J > 0): cyan.', where: 'cyan, in every figure', run: async c => { lit(['R']); await toQ(c, ...QN.conch, 1600); } },
   { key: 'mirror', label: 'mirror', aliases: ['mirrors', 'mirrored'], color: '#ff5a1f', standing: 'posed', note: 'A working name.', rule: 'squaring turns a small shape the other way round (det J < 0): orange.', where: 'orange, in every figure', run: async c => { lit(['R']); await toQ(c, ...QN.mirrorq, 1600); } },
