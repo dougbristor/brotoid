@@ -7,6 +7,16 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-10-28 · change · release 1.1 uploaded and verified live
+
+- **What:** sites uploaded the 41 new or changed files of the stamped commit `e75668a` to bristorbrot.org (the ten
+  self-containment files were already live and identical). No repository file changed.
+- **Checked by:** sites. FTP read-back of the 41 uploaded files equals the local files (0 differ). The host hashed its
+  own copies of all 49 files in one request, and 49 of 49 equal `MANIFEST.sha256` (0 missing, 0 differing).
+  `/brotoid/changes.md` answers 200. Reported to git by sites on 2026-10-28; git did not fetch the live site (the shared
+  web gate limits requests after a throttle).
+- **Not checked:** Doug's retest of the mobile Chrome load bar sticking near 40% is still to come.
+
 ## 2026-10-28 · change · release 1.1 (restamp)
 
 - **What:** the page, its update log and the light page move to **1.1 (2026-10-28)**; the set grows from 39 to 49 files.
