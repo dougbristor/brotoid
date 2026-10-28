@@ -1,3 +1,4 @@
+// git 10-28: the neutral "first touch" clicks moved from (30,30) / (10,10) to (5,60), below the site menu bar (assets/topnav.js), whose brand link sits at the top left and navigated the page away.
 // fable 10-19: proto_brotoid against its spec (tests/SPEC.md here; S1-S20). Each target is a check function over an
 // observation of the live page; each also runs over a planted observation (one thing broken on purpose) and must fail there.
 // A target passes only if its check passes AND its plant is caught. Chromium; S10 also fits in Firefox.
@@ -17,7 +18,7 @@ const open = async (w, h) => { const p = await (await b.newContext({ viewport: {
   p.on('pageerror', e => errs.push(String(e))); await p.goto(URL + '?model=0&t=' + Date.now()); await p.waitForFunction(() => window.__brot, null, { timeout: 60000 });
   await p.waitForFunction(() => __brot.checks().length > 0, null, { timeout: 120000 }); return p; };
 const p = await open(1400, 900);
-await p.mouse.click(30, 30);   // a reader's first touch: ambient holds, so pictures move only when q moves
+await p.mouse.click(5, 60);   // a reader's first touch: ambient holds, so pictures move only when q moves
 
 // ---- S1 the whole first, and in view; the section's letter lit
 async function s1obs(pg) { const out = {};
@@ -30,8 +31,8 @@ async function s1obs(pg) { const out = {};
         dim: document.getElementById('cells').classList.contains('anylit'), qs: [...new Set(cells.map(c => c.dataset.q))] }; }); }
   return out; }
 const s1check = o => Object.entries(o).every(([L, v]) => v.inView && v.lit.join() === L && v.dim && v.qs.length === 1) || JSON.stringify(o);
-{ const wide = await s1obs(p), pn = await open(390, 844); await pn.mouse.click(10, 10); const narrow = await s1obs(pn);
-  const pm = await open(1200, 800); await pm.mouse.click(10, 10); const mid = await s1obs(pm); await pm.context().close();
+{ const wide = await s1obs(p), pn = await open(390, 844); await pn.mouse.click(5, 60); const narrow = await s1obs(pn);
+  const pm = await open(1200, 800); await pm.mouse.click(5, 60); const mid = await s1obs(pm); await pm.context().close();
   // a beat about one letter lights it too
   await p.evaluate(() => __brot.FLOW.play(4, true)); await p.waitForTimeout(2500); const beatO = await p.evaluate(() => __brot.LIT()); await p.evaluate(() => __brot.FLOW.pause('api'));
   const obs = { wide, narrow, mid, beatO }, plant = clone(obs); plant.mid.R.lit = ['B'];
@@ -233,7 +234,7 @@ if (SKIP.includes('S15')) console.log('SKIP S15'); else { const pg = await (awai
     o => o.n === 4 && o.names.join('|') === 'the conch, i|j|1|' && o.imgs && o.off <= 1 && o.shrank && !o.after.open && o.after.seed === 0 && o.after.held === false && o.after.q.join() === o.q0.join() || JSON.stringify(o), obs, plant); }
 
 // ---- S16 the q setter: insights' cone view in its own frame in Fig 2 (beside or above the model, never over it), at the page's q and r (r in q's units, not r / |q|); the q sphere on its corner
-if (SKIP.includes('S16')) console.log('SKIP S16'); else { const pw = await open(1400, 900); await pw.mouse.click(30, 30); await pw.evaluate(() => scrollTo(0, 0));
+if (SKIP.includes('S16')) console.log('SKIP S16'); else { const pw = await open(1400, 900); await pw.mouse.click(5, 60); await pw.evaluate(() => scrollTo(0, 0));
   await pw.waitForFunction(() => __brot.pip().ready && __brot.pip().draws > 0 || __brot.pip().err, null, { timeout: 30000 });
   await pw.evaluate(() => { __brot.setDir(30, 20); __brot.setR(0.5); }); await pw.waitForTimeout(300);
   const a = await pw.evaluate(() => ({ pip: __brot.pip(), S: [__brot.S.lon, __brot.S.lat, __brot.S.r] }));
@@ -253,9 +254,9 @@ if (SKIP.includes('S16')) console.log('SKIP S16'); else { const pw = await open(
     const tilt = d => { const p = nz([d[1], -d[0], 0].some(Boolean) ? [d[1], -d[0], 0] : [0, d[2], -d[1]]), a = Math.PI / 180; return d.map((t, k) => t * Math.cos(a) + p[k] * Math.sin(a)); };
     let on = 0, offMax = 0, n = 0; for (let i = 0; i < CONE.length; i += 12) { n++; on = Math.max(on, rel(CONE[i].d)); offMax = Math.max(offMax, rel(tilt(CONE[i].d))); }
     return { n, on, offMax }; });
-  const pn = await open(390, 844); await pn.mouse.click(10, 10); await pn.waitForTimeout(400); const narrow = await pn.evaluate(() => __brot.pip());
+  const pn = await open(390, 844); await pn.mouse.click(5, 60); await pn.waitForTimeout(400); const narrow = await pn.evaluate(() => __brot.pip());
   // its own frame at two window shapes: beside the model on a short window, above it on a tall one
-  const frames = []; for (const [w, h] of [[1366, 768], [1920, 1000]]) { const pf = await open(w, h); await pf.mouse.click(30, 30); await pf.evaluate(() => scrollTo(0, 0)); await pf.waitForTimeout(500); frames.push({ w, h, ...(await pf.evaluate(() => __brot.pip())) }); await pf.context().close(); }
+  const frames = []; for (const [w, h] of [[1366, 768], [1920, 1000]]) { const pf = await open(w, h); await pf.mouse.click(5, 60); await pf.evaluate(() => scrollTo(0, 0)); await pf.waitForTimeout(500); frames.push({ w, h, ...(await pf.evaluate(() => __brot.pip())) }); await pf.context().close(); }
   await pn.context().close(); await pw.context().close();
   const obs = { a, rolled, wheeled, narrow }, plant = clone(obs); plant.a.pip.r = obs.a.pip.r * 0.9;   // the named risk at |q| = 1: the cone view's own 0.9 unit (crease_live's MAG) leaking into the setter's r
   const same = (s, pip) => pip.Qd[0] === s[0] && pip.Qd[1] === s[1] && pip.r === s[2];

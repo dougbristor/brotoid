@@ -7,6 +7,28 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-10-28 · change · release 1.2 (voice preload, site menu bar)
+
+- **What:** page and light page move to **1.2**; the set grows from 49 to 50 files. Manifest sha256 of the list is in the commit's
+  `MANIFEST.sha256`.
+  - `lib/pageflow.js`: an opt-in `voice.preload` block (sites' patch). When a page asks for it, the voice engine loads once the page is
+    idle so the voice button is ready; skipped on a data-saver or 2g link. Off for any page that does not pass it.
+  - `brotoid/index.html`: asks for the preload, loads the menu bar, and offsets its two sticky parts by the bar. `brotoid_light/index.html`:
+    loads the menu bar. `assets/topnav.js` (new): the site's one foldable menu bar, with its own CSS.
+  - `brotoid/changes.md`: a 1.2 entry. The page's version strings (meta, JSON-LD, footer) read 1.2.
+- **Asked:** Doug Bristor ("option 1, restamp 1.2 with the preload"; a top nav bar on all site pages), through sites.
+- **Checked by:**
+  - git: every file matches the manifest. I built this set myself from sites' staged tree plus the three version strings and the
+    log entry, so **`brotoid/index.html` here is not byte-identical to the page sites tested** (`e906ca12`): the only difference is
+    the version text 1.1 → 1.2. Sites uploads from this commit.
+  - git: spec test run from this repository on this set: **29 of 29 pass, plants caught, no page errors.** The first run crashed:
+    the test's neutral "first touch" click at (30,30) landed on the new menu bar's brand link and navigated the page away. The
+    test's clicks now land at (5,60), below the bar (a change to fable's test, marked at the top of `tests/spectest.mjs`), and
+    the second run passed. The test did not notice the bar covering the page; it only crashed.
+  - sites: staged test of the preload (engine up after load with no press; press then ready in 0.6 s). The menu bar and
+    `brotoid_light` are already uploaded live by sites. Not run by git: the preload on a real device or a slow link, the menu bar on a phone.
+- **Not checked:** the voice engine, model and wasm are not in this repository and not in the manifest (host only, brotvoice for the code).
+
 ## 2026-10-28 · change · release 1.1 uploaded and verified live
 
 - **What:** sites uploaded the 41 new or changed files of the stamped commit `e75668a` to bristorbrot.org (the ten

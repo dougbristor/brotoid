@@ -27,7 +27,8 @@ byte for byte.
 
 - `brotoid/`: the page (`index.html`), its eye (`brim_eye/v1.js`) and the update log (`changes.md`).
 - `brotoid_light/`: the light page. It loads its setter from `lib/` and its look from `assets/`, so it runs from a clone.
-- `assets/`, `favicon.*`, the icons and `site.webmanifest`: the site's stylesheet, its three fonts and its icons, which the pages load.
+- `assets/`, `favicon.*`, the icons and `site.webmanifest`: the site's stylesheet, its three fonts, its icons and `assets/topnav.js`
+  (the site's foldable menu bar, which both pages load).
 - `lib/`: the page's shared libraries (the glyph grammar, pageflow, panes, the rest rule, the sphere setter).
 - `codetree/blocks/`: the algebra and figure atoms the page imports, as built copies. Edit them at their source, not here.
 - `insights/brotoid_flow/` and `insights/crease_what/`: the flow figure and the crease cone it uses.

@@ -30,3 +30,6 @@ node spectest.mjs                # prints PASS or FAIL per target, then "N/M tar
 
 SPEC.md is fable's copy of 2026-10-28, with the 10-27 amendment for S17. Its status line and a few comments still name
 the local working folders and say "live at /fable/brotoid/". They are left as written.
+
+- **2026-10-28, release 1.2 (voice preload, site menu bar):** 29 of 29 targets pass, run from this repository. The test's neutral clicks
+  moved below the menu bar, because the old position hit the bar's brand link.

@@ -22,7 +22,7 @@
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
-<meta name="version" content="1.1">
+<meta name="version" content="1.2">
 <meta name="date" content="2026-10-28">
 <meta name="dcterms.modified" content="2026-10-28">
 <meta property="article:published_time" content="2026-10-27">
@@ -30,7 +30,7 @@
 <meta property="og:updated_time" content="2026-10-28T00:00:00Z">
 <meta name="author" content="Doug Bristor">
 <link rel="alternate" type="text/markdown" href="https://bristorbrot.org/brotoid/changes.md" title="BROT page: update log">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"BROT: one number, four readings","url":"https://bristorbrot.org/brotoid/","version":"1.1","datePublished":"2026-10-27","dateModified":"2026-10-28","author":{"@type":"Person","name":"Doug Bristor"},"isPartOf":{"@type":"WebSite","name":"Bristorbrot","url":"https://bristorbrot.org/"},"subjectOf":{"@type":"DataFeed","name":"BROT page: update log","url":"https://bristorbrot.org/brotoid/changes.md","encodingFormat":"text/markdown"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"BROT: one number, four readings","url":"https://bristorbrot.org/brotoid/","version":"1.2","datePublished":"2026-10-27","dateModified":"2026-10-28","author":{"@type":"Person","name":"Doug Bristor"},"isPartOf":{"@type":"WebSite","name":"Bristorbrot","url":"https://bristorbrot.org/"},"subjectOf":{"@type":"DataFeed","name":"BROT page: update log","url":"https://bristorbrot.org/brotoid/changes.md","encodingFormat":"text/markdown"}}</script>
 <!-- /sites layer -->
 <!--
   fable 2026-10-19: the clean rewrite of /fable/brotoid/, with BROT as the whole (Doug: "a, BROT as the whole. write the spec first").
@@ -72,7 +72,7 @@ button.tw { background: none; border: 0; padding: 0; font: inherit; font-weight:
 ul.facts { padding-left: 20px; } ul.facts li { margin: 8px 0; }
 /* the flow brotoid (Doug 10-20, recut): insights' brotoid_flow, live, in the sticky column under the BROT panel, at the panel's q and the page's r:
    settings (q), readings (B R O T), model (the brotoid), top to bottom. It takes the height the panel leaves, so all three fit in the window. */
-#stagecol .stick { position: sticky; top: 8px; height: calc(100vh - 16px - var(--pfroom)); display: flex; flex-direction: column; gap: 8px; }
+#stagecol .stick { position: sticky; top: calc(8px + var(--tn-off, 0px)); height: calc(100vh - 16px - var(--tn-off, 0px) - var(--pfroom)); display: flex; flex-direction: column; gap: 8px; }
 :root { --pfroom: 100px; }   /* the track's bar and sign sit in the window's bottom band: the column stops above it */
 #fig-flow { margin: 0; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
 .flowstage { position: relative; flex: 1 1 auto; min-height: 180px; border-radius: 8px; overflow: hidden; background: #05070c; }
@@ -178,7 +178,7 @@ ol.figlist b, ul.checks b { color: var(--fg); } ul.checks li { margin: 6px 0; } 
 /* narrow: Fig 1 becomes a sticky band on top */
 @container (max-width: 1040px) {
   .wrap { grid-template-columns: minmax(0, 1fr); gap: 10px; }
-  #stagecol { grid-column: 1; grid-row: 1; position: sticky; top: 0; z-index: 5; background: var(--bg); padding-top: 4px; }
+  #stagecol { grid-column: 1; grid-row: 1; position: sticky; top: var(--tn-off, 0px); z-index: 5; background: var(--bg); padding-top: 4px; }
   #text { grid-row: 2; max-width: none; }
   #fig-brot { position: static; }
   #fig-brot figcaption { display: none; }
@@ -202,6 +202,7 @@ ol.figlist b, ul.checks b { color: var(--fg); } ul.checks li { margin: 6px 0; } 
   .printnote { display: block; font: 12px var(--mono); color: #222; margin: 4px 0; }
 }
 </style>
+<script src="../assets/topnav.js" defer></script>
 </head>
 <body>
 <header class="top">
@@ -390,7 +391,7 @@ ol.figlist b, ul.checks b { color: var(--fg); } ul.checks li { margin: 6px 0; } 
 </article>
 </div></div>
 <!-- sites footer: version and date come from brotoid/changes.md -->
-<footer id="pageversion" class="foot" style="text-align:center;font-size:11px;padding:6px 0 14px">Version 1.1 · updated 2026-10-28 · <a href="/brotoid/changes.md" rel="alternate" type="text/markdown">update log</a></footer>
+<footer id="pageversion" class="foot" style="text-align:center;font-size:11px;padding:6px 0 14px">Version 1.2 · updated 2026-10-28 · <a href="/brotoid/changes.md" rel="alternate" type="text/markdown">update log</a></footer>
 <!-- /sites footer -->
 
 <script src="../lib/rest.js"></script>
@@ -840,7 +841,7 @@ const SHOWS = [
   async c => { hereB(); await toQ(c, ...QN.mirrorq, 2400); await toQ(c, ...QN.conch, 2400); },
 ];
 const AMB = { t: 0 };
-const FLOW = Pageflow.mount({ panes: { guide: 'off', tree: 'off', sign: 'inset' }, beats: BEATS, contents: 'section h2', terms: TERMS, glossary: GLOSSARY, returns: true,
+const FLOW = Pageflow.mount({ panes: { guide: 'off', tree: 'off', sign: 'inset' }, beats: BEATS, contents: 'section h2', terms: TERMS, glossary: GLOSSARY, returns: true, voice: { preload: true },
   ambient: dt => { if (HOLD || document.hidden) return; S.yaw += dt * 0.00025; S.byaw += dt * 0.0002; want('cells'); want('br'); },
   snapshot: () => ({ lon: S.lon, lat: S.lat, r: S.r, lit: [...LIT], cone: S.cone }),
   restore: s => { if (!s) return; setDir(s.lon, s.lat); setR(s.r); coneMode(!!s.cone); lit(s.lit || []); } });

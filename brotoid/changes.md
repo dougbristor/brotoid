@@ -6,6 +6,13 @@ Newest first. Each entry is `## <version> · <date>`; the top entry is the versi
 Versions are `major.minor`: major when a claim or a figure changes meaning, minor for wording, fixes and additions.
 This log is plain Markdown so a person or an agent can read it, diff it, or poll it for changes.
 
+## 1.2 · 2026-10-28
+
+- The Brot voice can load in the background after the page loads, so the voice button is ready when pressed. It is off by
+  default for other pages and skipped on slow or data-saving connections.
+- A site menu bar, foldable, now sits at the top of the page and of the light page; the page's sticky parts are offset by it.
+- No change to the readings, figures or checks.
+
 ## 1.1 · 2026-10-28
 
 First version served on bristorbrot.org (1.0 is the stamped GitHub copy, dougbristor/brotoid).
