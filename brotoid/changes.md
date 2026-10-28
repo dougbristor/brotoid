@@ -6,6 +6,11 @@ Newest first. Each entry is `## <version> · <date>`; the top entry is the versi
 Versions are `major.minor`: major when a claim or a figure changes meaning, minor for wording, fixes and additions.
 This log is plain Markdown so a person or an agent can read it, diff it, or poll it for changes.
 
+## 1.3 · 2026-10-28
+
+- The site menu bar shows the Bristorbrot icon at its left (icon only on phones).
+- No change to the page, the readings, figures or checks.
+
 ## 1.2 · 2026-10-28
 
 - The Brot voice can load in the background after the page loads, so the voice button is ready when pressed. It is off by

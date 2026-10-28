@@ -18,7 +18,8 @@
     '#topnav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: var(--tn-h); display: flex; align-items: center; gap: 6px; padding: 0 8px 0 14px;',
     '  background: rgba(5,5,6,.92); border-bottom: 1px solid #23252d; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);',
     '  font: 12px/1 "JetBrains Mono", ui-monospace, monospace; text-transform: uppercase; letter-spacing: .08em; }',
-    '#topnav .tn-brand { color: #eee9e0; font: 13px/1 "Archivo Black", Impact, sans-serif; letter-spacing: .04em; text-decoration: none; margin-right: 10px; white-space: nowrap; }',
+    '#topnav .tn-brand { display: flex; align-items: center; gap: 8px; color: #eee9e0; font: 13px/1 "Archivo Black", Impact, sans-serif; letter-spacing: .04em; text-decoration: none; margin-right: 10px; white-space: nowrap; }',
+    '#topnav .tn-brand img { width: 22px; height: 22px; display: block; }',
     '#topnav .tn-links { display: flex; flex: 1; min-width: 0; gap: 2px; overflow-x: auto; scrollbar-width: none; }',
     '#topnav .tn-links::-webkit-scrollbar { display: none; }',
     '#topnav a.tn-l { color: #8a8a93; text-decoration: none; padding: 14px 9px; white-space: nowrap; border-bottom: 2px solid transparent; }',
@@ -31,13 +32,14 @@
     '#topnav.folded button { border: 0; width: 38px; height: 26px; }',
     'html.tn-open { scroll-padding-top: calc(var(--tn-h) + 8px); }',
     'html.tn-open body:not(.home) { padding-top: var(--tn-h); }',
-    '@media (max-width: 560px) { #topnav .tn-brand { display: none; } #topnav { padding-left: 4px; } #topnav a.tn-l { padding: 14px 7px; } }',
+    '@media (max-width: 560px) { #topnav .tn-brand span { display: none; } #topnav .tn-brand { margin-right: 4px; } #topnav { padding-left: 8px; } #topnav a.tn-l { padding: 14px 7px; } }',
     '@media print { #topnav { display: none; } html.tn-open body:not(.home) { padding-top: 0; } }'
   ].join('\n');
   document.head.appendChild(css);
 
   var bar = document.createElement('nav'); bar.id = 'topnav'; bar.setAttribute('aria-label', 'Site');
-  var brand = document.createElement('a'); brand.className = 'tn-brand'; brand.href = root; brand.textContent = 'Bristorbrot';
+  var brand = document.createElement('a'); brand.className = 'tn-brand'; brand.href = root; brand.title = 'Bristorbrot home';
+  var ico = document.createElement('img'); ico.src = new URL('favicon.svg', root).href; ico.alt = ''; var nm = document.createElement('span'); nm.textContent = 'Bristorbrot'; brand.append(ico, nm);
   var ul = document.createElement('div'); ul.className = 'tn-links';
   LINKS.forEach(function (l) {
     var a = document.createElement('a'); a.className = 'tn-l'; a.textContent = l[0];

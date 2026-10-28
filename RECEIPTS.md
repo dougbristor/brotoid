@@ -7,6 +7,16 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-10-28 · change · release 1.3 (icon in the menu bar)
+
+- **What:** `assets/topnav.js` shows the site's `favicon.svg` (22 px) at the left of the menu bar, with the name beside it on desktop and the
+  icon alone on phones. `brotoid/changes.md` has a 1.3 entry and the page's version text reads 1.3 (meta, JSON-LD, footer). 50 files; no
+  other file changed. As with 1.2, `brotoid/index.html` here differs from sites' staged page by the version text only.
+- **Asked:** Doug Bristor ("add the favicon to the nav bar, left"), through sites.
+- **Checked by:** sites: staged test (icon loads, no 4xx, no sideways scroll at 1280 and 390). git: every file matches the manifest; spec test
+  run from this repository on this set: 29 of 29 pass, plants caught, no page errors.
+- **Not checked:** the bar on a real phone.
+
 ## 2026-10-28 · change · release 1.2 (voice preload, site menu bar)
 
 - **What:** page and light page move to **1.2**; the set grows from 49 to 50 files. Manifest sha256 of the list is in the commit's
