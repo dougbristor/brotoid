@@ -7,6 +7,16 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-11-01 · correction · which graphics chip the 1.4 spec test ran on
+
+- **Claimed (1.4 entry below):** the spec test ran "on NVIDIA", Chromium plus Firefox.
+- **Wrong or unproven:** I set the NVIDIA GLX variables for both browsers. Conductor and brotbot have since found that
+  headless Chromium on EGL ignores those and stays on the Intel chip; Firefox honours them. The run logged no renderer, so
+  the Chromium half is **unproven** to have been on NVIDIA. Firefox is the half that was.
+- **What it changes:** nothing in the result is known to be wrong. The checks are width and layout checks, not graphics
+  tests, and 29 of 29 passed with plants caught. Only the "NVIDIA" wording was too strong.
+- **Tell:** conductor's safety message of 2026-11-01 on the EGL variable. A re-run with the renderer logged would settle it.
+
 ## 2026-10-31 · change · release 1.4 (the voice package; set rebuilt on the live bytes)
 
 - **What:** `lib/pageflow.js` (f2228841…, adds the page's voice say/hold/wake), `lib/proto_voice.js` (c27e3f98…), and two new files,
