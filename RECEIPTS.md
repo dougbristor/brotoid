@@ -7,6 +7,27 @@ trace the change back to its commit.
   the commit.
 - **correction**: what was claimed before, what was wrong with it, and what made someone look.
 
+## 2026-10-31 · change · release 1.4 (the voice package; set rebuilt on the live bytes)
+
+- **What:** `lib/pageflow.js` (f2228841…, adds the page's voice say/hold/wake), `lib/proto_voice.js` (c27e3f98…), and two new files,
+  `lib/proto_voicepick.js` (a0987332…) and `lib/proto_linkread.js` (a9ed4e52…): the voice decider and picker, with the Brot voice as the
+  default. `brotoid/index.html` is sites' live page (52cb8617…) with the version text only changed to 1.4 and 2026-10-31 (meta, JSON-LD,
+  footer): the page is `voice: { preload: 'auto' }` and carries sites' topnav style layer. `brotoid/changes.md` has a 1.4 entry (wording by
+  git from sites' note; sites to check). 52 files; manifest sha256 `06ee40ceceeb…`. `assets/topnav.js` is unchanged here (sites' newer
+  copy is staged, not live).
+- **Asked:** Doug Bristor, through sites (T-182, "Doug's direct go", uploaded 10-30 ~23:22Z) and fable (the pageflow and voice sources).
+- **A first attempt was thrown away:** on 10-29 I prepared 1.4 as fable's `pageflow.js` (134be9be…) alone. By 10-31 the host differed in
+  three files, not one, so I asked sites which bytes were live and rebuilt from theirs. The tell was `webhost versions --diff` against
+  my 1.3 manifest: 47/50, not 49/50.
+- **Checked by:** git: every file matches the manifest (52/52); the pre-push scan finds no local address, home path, personal address or
+  `.relay/` text, and three comments that name local test paths under `aicolab/tmp/` (same kind as before, none rendered). git: spec test
+  run from this repository on NVIDIA (Quadro P4000, one job, Chromium plus Firefox for the width checks): 29 of 29 pass, plants caught,
+  page errors: none. An earlier run on the stale set was cut by my own timeout after 15 passes, no failure; a second run of the
+  interim set (fable's `pageflow.js` only) was 29 of 29.
+- **Not checked:** the voice decider and picker. The spec test does not exercise them. Per brotbot (reflect e22fc714a1), headless Chromium
+  always reports a connection speed, so the "unknown link" case only exists in Firefox and Safari; brotbot's gate now plants that browser.
+  I did not hear audio. The model and phonemizer files are on the host only and are not in this repository.
+
 ## 2026-10-28 · change · release 1.3 (icon in the menu bar)
 
 - **What:** `assets/topnav.js` shows the site's `favicon.svg` (22 px) at the left of the menu bar, with the name beside it on desktop and the

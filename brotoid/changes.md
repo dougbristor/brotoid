@@ -6,6 +6,13 @@ Newest first. Each entry is `## <version> · <date>`; the top entry is the versi
 Versions are `major.minor`: major when a claim or a figure changes meaning, minor for wording, fixes and additions.
 This log is plain Markdown so a person or an agent can read it, diff it, or poll it for changes.
 
+## 1.4 · 2026-10-31
+
+- The voice is chosen by a small decider that reads the connection, and the Brot voice is the default (new files `lib/proto_voicepick.js` and `lib/proto_linkread.js`); the background load is now `auto`, and the page's voice can be asked to say, hold or wake.
+- Figure captions yield to a host page's own `figure.fig` styles.
+- The site menu bar's offsets for the sticky parts now sit in one style block marked as the sites layer, with no visible change.
+- No change to the readings, figures or checks.
+
 ## 1.3 · 2026-10-28
 
 - The site menu bar shows the Bristorbrot icon at its left (icon only on phones).
